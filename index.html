@@ -2,7 +2,9 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
   <title>Welcome App — Elegant Loft</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -197,7 +199,8 @@
 /* Tab bar (bottom) */
 .tabbar {
   position: absolute;
-  left: 10px; right: 10px; bottom: 8px;
+  left: 10px; right: 10px;
+  bottom: max(8px, env(safe-area-inset-bottom));
   height: 70px;
   border-radius: 28px;
   display: flex;
@@ -324,21 +327,12 @@
 
   </style>
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; background: #ECE8E1; font-family: "Inter", system-ui, sans-serif; }
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-    #stage { display: flex; gap: 40px; align-items: center; justify-content: center; flex-wrap: wrap; }
-    .phone-wrap { position: relative; transform-origin: center center; }
-    .phone-inset { position: absolute; inset: 0; border-radius: 48px; overflow: hidden; top: 0; left: 0; right: 0; bottom: 0; }
-    .content-layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; border-radius: 48px; }
-    .label { text-align: center; font-size: 12px; color: rgba(0,0,0,0.5); margin-top: 12px; letter-spacing: 0.3px; font-weight: 500; text-transform: uppercase; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #F2EFEA; font-family: "Inter", system-ui, sans-serif; }
+    #root-host { width: 100vw; height: 100dvh; overflow: hidden; }
   </style>
 </head>
 <body>
-  <div id="stage">
-    <div class="phone-wrap">
-      <div id="root-host"></div>
-    </div>
-  </div>
+  <div id="root-host"></div>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -4317,11 +4311,7 @@ Object.assign(window, { App, TabBar, Settings });
 
   <script type="text/babel" data-presets="react">
     function AppShell() {
-      return (
-        <IOSDevice>
-          {typeof App !== "undefined" ? <App /> : null}
-        </IOSDevice>
-      );
+      return typeof App !== "undefined" ? <App /> : null;
     }
     function mount() {
       if (typeof App === "undefined") { setTimeout(mount, 50); return; }
@@ -4329,20 +4319,6 @@ Object.assign(window, { App, TabBar, Settings });
       hostRoot.render(<AppShell />);
     }
     setTimeout(mount, 50);
-  </script>
-
-  <script>
-    function fit() {
-      const phone = document.querySelector(".phone-wrap");
-      if (!phone) return;
-      const vh = window.innerHeight - 40;
-      const vw = window.innerWidth - 40;
-      const scale = Math.min(vh / 874, vw / 402, 1);
-      phone.style.transform = "scale(" + scale + ")";
-    }
-    window.addEventListener("resize", fit);
-    setTimeout(fit, 200);
-    setTimeout(fit, 800);
   </script>
 </body>
 </html>
