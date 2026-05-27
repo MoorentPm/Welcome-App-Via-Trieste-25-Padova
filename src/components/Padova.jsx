@@ -138,7 +138,7 @@ const PadovaLeafletMap = React.memo(function PadovaLeafletMap({ selected, onPin 
       center: [45.403, 11.877],
       zoom: 14,
       minZoom: 13,
-      maxZoom: 17,
+      maxZoom: 19,
       zoomControl: false,
       attributionControl: true,
       maxBounds: PADOVA_BOUNDS,
