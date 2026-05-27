@@ -131,11 +131,18 @@ const PadovaLeafletMap = React.memo(function PadovaLeafletMap({ selected, onPin 
   React.useEffect(() => {
     if (mapRef.current || !containerRef.current) return
 
+    // Padova centro bounds: N 45.43 / S 45.38 / W 11.84 / E 11.92
+    const PADOVA_BOUNDS = L.latLngBounds([45.38, 11.84], [45.43, 11.92])
+
     const map = L.map(containerRef.current, {
       center: [45.403, 11.877],
       zoom: 14,
+      minZoom: 13,
+      maxZoom: 17,
       zoomControl: false,
       attributionControl: true,
+      maxBounds: PADOVA_BOUNDS,
+      maxBoundsViscosity: 1.0,
     })
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -169,7 +176,17 @@ const PadovaLeafletMap = React.memo(function PadovaLeafletMap({ selected, onPin 
     })
   }, [selected])
 
-  return <div ref={containerRef} style={{ position: 'absolute', inset: 0 }} />
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        position: 'absolute', inset: 0,
+        // isolation: isolate keeps Leaflet's z-index stack from leaking outside
+        isolation: 'isolate',
+        overflow: 'hidden',
+      }}
+    />
+  )
 })
 
 // ─── Schermata principale Padova ───
