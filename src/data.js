@@ -55,12 +55,12 @@ export const TODAY_PICKS = [
 ];
 
 export const PLACES = [
-  { id: "scrovegni", name: "Cappella degli Scrovegni",  sub: "Giotto · prenotazione obbligatoria", dist: "12 min a piedi", tag: "Arte" },
-  { id: "prato",     name: "Prato della Valle",          sub: "La piazza più grande d'Europa",      dist: "8 min a piedi",  tag: "Iconico" },
-  { id: "orto",      name: "Orto Botanico",              sub: "Patrimonio UNESCO dal 1545",         dist: "10 min a piedi", tag: "Verde" },
-  { id: "basilica",  name: "Basilica di Sant'Antonio",   sub: "Il Santo — pellegrinaggio storico",  dist: "15 min a piedi", tag: "Storia" },
-  { id: "pedrocchi", name: "Caffè Pedrocchi",            sub: "Dal 1831, simbolo della città",      dist: "7 min a piedi",  tag: "Cibo" },
-  { id: "ragione",   name: "Palazzo della Ragione",      sub: "Mercati storici attorno",            dist: "9 min a piedi",  tag: "Storia" },
+  { id: "scrovegni", name: "Cappella degli Scrovegni",  sub: "Giotto · prenotazione obbligatoria", dist: "12 min a piedi", tag: "Arte",    maps_url: "https://maps.google.com/?q=Cappella+degli+Scrovegni,+Padova" },
+  { id: "prato",     name: "Prato della Valle",          sub: "La piazza più grande d'Europa",      dist: "8 min a piedi",  tag: "Iconico", maps_url: "https://maps.google.com/?q=Prato+della+Valle,+Padova" },
+  { id: "orto",      name: "Orto Botanico",              sub: "Patrimonio UNESCO dal 1545",         dist: "10 min a piedi", tag: "Verde",   maps_url: "https://maps.google.com/?q=Orto+Botanico+di+Padova" },
+  { id: "basilica",  name: "Basilica di Sant'Antonio",   sub: "Il Santo — pellegrinaggio storico",  dist: "15 min a piedi", tag: "Storia",  maps_url: "https://maps.google.com/?q=Basilica+di+Sant+Antonio,+Padova" },
+  { id: "pedrocchi", name: "Caffè Pedrocchi",            sub: "Dal 1831, simbolo della città",      dist: "7 min a piedi",  tag: "Cibo",    maps_url: "https://maps.google.com/?q=Caffè+Pedrocchi,+Padova" },
+  { id: "ragione",   name: "Palazzo della Ragione",      sub: "Mercati storici attorno",            dist: "9 min a piedi",  tag: "Storia",  maps_url: "https://maps.google.com/?q=Palazzo+della+Ragione,+Padova" },
 ];
 
 export const CHECKIN_STEPS = [

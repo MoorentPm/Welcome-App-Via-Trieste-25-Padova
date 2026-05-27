@@ -424,9 +424,13 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
                   <div className="t-15 w-600" style={{ lineHeight: 1.3 }}>{step.title}</div>
                   <div className="t-13 muted" style={{ marginTop: 4, lineHeight: 1.45 }}>{step.sub}</div>
                   <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                    <button className="chip-ghost chip" style={{ cursor: "pointer" }}>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(step.title + ', Padova')}`}
+                      target="_blank" rel="noreferrer"
+                      className="chip-ghost chip" style={{ cursor: "pointer", textDecoration: "none" }}
+                    >
                       <IconMap size={12} stroke={2.5} /> Indicazioni
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -443,9 +447,13 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
         }}>
           {saved ? <><IconCheck size={16} stroke={3}/> Salvato</> : "Salva"}
         </button>
-        <button className="btn btn-accent grow">
+        <a
+          href={`https://maps.google.com/maps/dir/?api=1&destination=${encodeURIComponent(plan[plan.length - 1]?.title + ', Padova')}&waypoints=${plan.slice(0, -1).map(s => encodeURIComponent(s.title + ', Padova')).join('|')}`}
+          target="_blank" rel="noreferrer"
+          className="btn btn-accent grow" style={{ textDecoration: "none" }}
+        >
           <IconMap size={18} stroke={2} /> Apri navigazione
-        </button>
+        </a>
       </div>
     </div>);
 
@@ -602,7 +610,7 @@ export function ArrivalCheckin({ back, go }) {
               <div style={{
                 fontFamily: "ui-monospace, monospace", fontSize: 26, fontWeight: 800,
                 letterSpacing: 4, color: "var(--ink)"
-              }}>1470</div>
+              }}>0425</div>
               <div className="t-11 muted">codice apertura</div>
             </div>
           </div>
@@ -1525,10 +1533,21 @@ export function Review({ back, guest, go }) {
       </div>
 
       {isHigh &&
-      <div style={{ padding: "20px 16px 0" }}>
-          <button className="btn btn-ghost btn-lg btn-full" style={{ background: "var(--surface)" }}>
-            <IconHeart size={18} /> Condividi su Booking / Airbnb
-          </button>
+      <div style={{ padding: "20px 16px 0", display: "flex", flexDirection: "column", gap: 8 }}>
+          <a
+            href="https://www.booking.com/searchresults.it.html?ss=Via+Trieste+25+Padova"
+            target="_blank" rel="noreferrer"
+            className="btn btn-ghost btn-lg btn-full" style={{ background: "var(--surface)", textDecoration: "none" }}
+          >
+            <IconHeart size={18} /> Lascia recensione su Booking
+          </a>
+          <a
+            href="https://www.airbnb.it/s/Padova--Italy/homes"
+            target="_blank" rel="noreferrer"
+            className="btn btn-ghost btn-lg btn-full" style={{ background: "var(--surface)", textDecoration: "none" }}
+          >
+            <IconHeart size={18} /> Lascia recensione su Airbnb
+          </a>
         </div>
       }
 
@@ -1556,9 +1575,25 @@ export function DailyTip({ back, go }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState(false);
 
+  const STATIC_TIPS = [
+    { title: "Caffè al Pedrocchi", subtitle: "Il caffè 'senza porte' dal 1831 · 7 min a piedi", body: "Ordina un caffè alla menta — è la loro specialità storica. Non è sul menu standard, chiedi al banco. L'atmosfera è quella di sempre, immutabile.", tag: "Iconico", emoji: "☕" },
+    { title: "Prato della Valle", subtitle: "La piazza più grande d'Europa · 8 min a piedi", body: "82 statue, un'isola verde al centro, e tantissimi padovani in giro. Perfetto in qualsiasi ora. Portati qualcosa da mangiare e siediti sull'erba.", tag: "Piazza", emoji: "🌿" },
+    { title: "Cappella degli Scrovegni", subtitle: "Prenota online · 12 min a piedi", body: "Giotto. 20 minuti là dentro cambiano il modo in cui guardi un muro. Prenotazione obbligatoria — falla ora sul sito del museo.", tag: "Arte", emoji: "🎨" },
+    { title: "Mercato di Piazza delle Erbe", subtitle: "Aperto la mattina · 9 min a piedi", body: "Il mercato più vivo della città. Frutta, verdura, formaggi, e i padovani che litigano sui prezzi. Meglio di qualsiasi museo.", tag: "Mercato", emoji: "🛒" },
+    { title: "Spritz al tramonto", subtitle: "Piazza delle Erbe, dalle 18 · 9 min a piedi", body: "Trova un tavolino all'aperto nella piazza, ordina uno spritz Aperol, e guarda la città rallentare. Questo è il momento.", tag: "Aperitivo", emoji: "🥂" },
+    { title: "Orto Botanico", subtitle: "Patrimonio UNESCO · 10 min a piedi", body: "Il più antico orto botanico universitario del mondo, dal 1545. Piccolo, tranquillo, bellissimo. Ci vuole un'ora e ci si dimentica di tutto.", tag: "Verde", emoji: "🌱" },
+  ];
+
   const fetchTip = async () => {
     setLoading(true); setErr(false);
     try {
+      if (!window.claude?.complete) {
+        const now = new Date();
+        const idx = (now.getHours() + now.getDay()) % STATIC_TIPS.length;
+        await new Promise(r => setTimeout(r, 600));
+        setTip(STATIC_TIPS[idx]);
+        return;
+      }
       const now = new Date();
       const hh = now.getHours();
       const timeContext = hh < 11 ? "mattina presto" : hh < 14 ? "mezzogiorno" : hh < 18 ? "pomeriggio" : hh < 21 ? "ora di aperitivo" : "sera";
@@ -1568,7 +1603,7 @@ export function DailyTip({ back, go }) {
       const reply = await window.claude.complete({
         messages: [{
           role: "user",
-          content: `Sei un amico padovano che dà UN solo consiglio breve e ispirante su cosa fare a Padova ORA. 
+          content: `Sei un amico padovano che dà UN solo consiglio breve e ispirante su cosa fare a Padova ORA.
 Contesto: è ${dayName}, ${timeContext}, mese di ${month}.
 L'ospite alloggia in Via Trieste 25.
 Suggerisci UNA cosa specifica (un locale, un luogo, un'attività) che si possa fare nelle prossime 1-3 ore. Sii creativo: varia tra cose iconiche e perle nascoste.
@@ -1585,7 +1620,6 @@ Solo JSON, nessun altro testo.`
         }]
       });
 
-      // Parse JSON, fallback to plain text
       const match = reply.match(/\{[\s\S]*\}/);
       if (match) {
         const data = JSON.parse(match[0]);
@@ -1594,7 +1628,9 @@ Solo JSON, nessun altro testo.`
         setTip({ title: "Un giro per il centro", subtitle: "Adesso è un buon momento", body: reply, tag: "Padova", emoji: "✨" });
       }
     } catch (e) {
-      setErr(true);
+      const now = new Date();
+      const idx = (now.getHours() + now.getDay()) % STATIC_TIPS.length;
+      setTip(STATIC_TIPS[idx]);
     } finally {
       setLoading(false);
     }
@@ -1742,6 +1778,11 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
     setTyping(true);
 
     try {
+      if (!window.claude?.complete) {
+        await new Promise(r => setTimeout(r, 800));
+        setMsgs((m) => [...m, { from: "ai", text: `Scusa, il Concierge AI non è disponibile in questo momento. Per qualsiasi necessità scrivi direttamente a Mattia al +39 351 988 6489 — risponde sempre. 🙏` }]);
+        return;
+      }
       const conversation = newMsgs.slice(-10).map((m) => ({
         role: m.from === "me" ? "user" : "assistant",
         content: m.text
@@ -1750,7 +1791,6 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
         messages: [
         { role: "user", content: systemContext() + "\n\n---\n\nRispondi al prossimo messaggio dell'utente con tono breve e diretto." },
         ...conversation]
-
       });
       setMsgs((m) => [...m, { from: "ai", text: (reply || "Scusa, riprova tra un attimo 🙏").trim() }]);
     } catch (e) {
@@ -2412,9 +2452,13 @@ export function PlaceDetail({ back, place }) {
       </div>
 
       <div style={{ padding: "20px 16px 0", display: "flex", gap: 10 }}>
-        <button className="btn btn-accent btn-lg grow">
+        <a
+          href={p.maps_url || `https://maps.google.com/?q=${encodeURIComponent(p.name + ', Padova')}`}
+          target="_blank" rel="noreferrer"
+          className="btn btn-accent btn-lg grow" style={{ textDecoration: "none" }}
+        >
           <IconMap size={18} stroke={2} /> Indicazioni
-        </button>
+        </a>
         <button className="btn btn-ghost btn-lg" style={{ flexShrink: 0, width: 56 }}>
           <IconHeart size={20} stroke={2} />
         </button>

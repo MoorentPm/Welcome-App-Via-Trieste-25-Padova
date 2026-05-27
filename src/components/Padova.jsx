@@ -150,7 +150,15 @@ export default function Padova({ go }) {
             <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
               <button onClick={() => go("place", PLACES.find(p => p.id === sel.id) || sel)}
                 className="btn btn-accent grow">Scopri di più</button>
-              <button className="btn btn-ghost" style={{ width: 50 }}>
+              <button
+                className="btn btn-ghost"
+                style={{ width: 50 }}
+                onClick={() => {
+                  const place = PLACES.find(p => p.id === sel.id);
+                  const url = place?.maps_url || `https://maps.google.com/?q=${encodeURIComponent(sel.name + ', Padova')}`;
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
+              >
                 <IconMap size={18} stroke={2}/>
               </button>
             </div>
