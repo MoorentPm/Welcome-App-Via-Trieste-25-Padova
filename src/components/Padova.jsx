@@ -2,7 +2,7 @@ import React from 'react'
 import { PLACES } from '../data'
 import { IconMap, IconChevronR } from './Icons'
 
-// padova.jsx — Map-first Padova tab with sliding bottom sheet
+// padova.jsx — Map-first Padova tab with draggable bottom sheet
 
 export function MapBg({ pins = [], path = null, selected, onPin, userPin, numbered = false }) {
   return (
@@ -31,7 +31,6 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
         <rect x="240" y="540" width="100" height="60" rx="10" fill="#A8C0CC" opacity="0.5"/>
       </svg>
 
-      {/* Path line (for itinerary) */}
       {path && (
         <svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
@@ -40,7 +39,6 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
         </svg>
       )}
 
-      {/* User pin */}
       {userPin && (
         <div style={{ position: "absolute", left: userPin.left, top: userPin.top, transform: "translate(-50%,-50%)" }}>
           <div style={{ width: 22, height: 22, borderRadius: 999, background: "var(--accent)", border: "4px solid #fff", boxShadow: "0 4px 14px rgba(0,0,0,0.25)" }}/>
@@ -87,7 +85,44 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
 
 export default function Padova({ go }) {
   const [selected, setSelected] = React.useState(null);
-  const [sheetExpanded, setSheetExpanded] = React.useState(false);
+
+  // Three snap points: peeking, mid (default), expanded
+  const SNAP_PEEK = 110;
+  const SNAP_MID  = 260;
+  const SNAP_FULL = Math.round(window.innerHeight * 0.72);
+  const SNAPS = [SNAP_PEEK, SNAP_MID, SNAP_FULL];
+
+  const [sheetH, setSheetH] = React.useState(SNAP_MID);
+  const [dragging, setDragging] = React.useState(false);
+  const drag = React.useRef({ startY: 0, startH: 0 });
+
+  const snapTo = (h) => {
+    const closest = SNAPS.reduce((a, b) => Math.abs(b - h) < Math.abs(a - h) ? b : a);
+    setSheetH(closest);
+  };
+
+  const onTouchStart = (e) => {
+    drag.current = { startY: e.touches[0].clientY, startH: sheetH };
+    setDragging(true);
+  };
+
+  const onTouchMove = (e) => {
+    const dy = drag.current.startY - e.touches[0].clientY;
+    const next = Math.max(SNAP_PEEK - 20, Math.min(drag.current.startH + dy, SNAP_FULL + 20));
+    setSheetH(next);
+  };
+
+  const onTouchEnd = () => {
+    setDragging(false);
+    snapTo(sheetH);
+  };
+
+  // Tap on handle cycles through snap points
+  const onHandleTap = () => {
+    if (sheetH <= SNAP_PEEK + 20) snapTo(SNAP_MID);
+    else if (sheetH <= SNAP_MID + 20) snapTo(SNAP_FULL);
+    else snapTo(SNAP_PEEK);
+  };
 
   const pins = [
     { id: "scrovegni", top: "26%", left: "32%", name: "Scrovegni",    tag: "Arte",    dist: "12 min" },
@@ -126,64 +161,84 @@ export default function Padova({ go }) {
         </div>
       </div>
 
-      {/* Bottom sheet */}
+      {/* Bottom sheet — draggable */}
       <div style={{
         position: "absolute", left: 0, right: 0,
         bottom: 0, zIndex: 5,
         background: "#fff",
         borderTopLeftRadius: 28, borderTopRightRadius: 28,
         boxShadow: "0 -8px 32px rgba(0,0,0,0.12)",
-        maxHeight: sheetExpanded ? "70%" : sel ? 250 : 200,
-        transition: "max-height .35s cubic-bezier(.2,.8,.2,1)",
+        height: sheetH,
+        transition: dragging ? "none" : "height .32s cubic-bezier(.2,.8,.2,1)",
+        display: "flex",
+        flexDirection: "column",
         overflow: "hidden",
-        paddingBottom: 90,
       }}>
-        <div onClick={() => setSheetExpanded(!sheetExpanded)} style={{ padding: "12px 0", cursor: "pointer" }}>
-          <div style={{ width: 40, height: 5, background: "#E5E0D7", borderRadius: 3, margin: "0 auto" }}/>
+        {/* Drag handle — touch target */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onClick={onHandleTap}
+          style={{
+            padding: "14px 0 10px",
+            cursor: "grab",
+            flexShrink: 0,
+            touchAction: "none",
+            userSelect: "none",
+          }}
+        >
+          <div style={{
+            width: 40, height: 5, background: "#E5E0D7", borderRadius: 3, margin: "0 auto",
+            transition: dragging ? "none" : "background .2s",
+          }}/>
         </div>
 
-        {sel ? (
-          <div style={{ padding: "0 20px 16px" }}>
-            <div className="chip" style={{ marginBottom: 8 }}>{sel.tag}</div>
-            <div className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.15 }}>{sel.name}</div>
-            <div className="t-13 muted" style={{ marginTop: 4 }}>{sel.dist} a piedi dal loft</div>
-            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-              <button onClick={() => go("place", PLACES.find(p => p.id === sel.id) || sel)}
-                className="btn btn-accent grow">Scopri di più</button>
-              <button
-                className="btn btn-ghost"
-                style={{ width: 50 }}
-                onClick={() => {
-                  const place = PLACES.find(p => p.id === sel.id);
-                  const url = place?.maps_url || `https://maps.google.com/?q=${encodeURIComponent(sel.name + ', Padova')}`;
-                  window.open(url, '_blank', 'noopener,noreferrer');
-                }}
-              >
-                <IconMap size={18} stroke={2}/>
-              </button>
+        {/* Scrollable content */}
+        <div style={{ flex: 1, overflowY: "auto", paddingBottom: 90 }}>
+          {sel ? (
+            <div style={{ padding: "0 20px 16px" }}>
+              <div className="chip" style={{ marginBottom: 8 }}>{sel.tag}</div>
+              <div className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.15 }}>{sel.name}</div>
+              <div className="t-13 muted" style={{ marginTop: 4 }}>{sel.dist} a piedi dal loft</div>
+              <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+                <button onClick={() => go("place", PLACES.find(p => p.id === sel.id) || sel)}
+                  className="btn btn-accent grow">Scopri di più</button>
+                <button
+                  className="btn btn-ghost"
+                  style={{ width: 50 }}
+                  onClick={() => {
+                    const place = PLACES.find(p => p.id === sel.id);
+                    const url = place?.maps_url || `https://maps.google.com/?q=${encodeURIComponent(sel.name + ', Padova')}`;
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                  }}
+                >
+                  <IconMap size={18} stroke={2}/>
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div style={{ padding: "0 20px 16px" }}>
-            <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Vicino a te</div>
-            <div className="t-13 muted" style={{ marginTop: 2 }}>Tocca un pin sulla mappa, o scorri qui sotto</div>
-            <div style={{ display: "flex", gap: 10, overflowX: "auto", marginTop: 14, paddingBottom: 4 }}>
-              {PLACES.map(p => (
-                <div key={p.id} onClick={() => go("place", p)} style={{ minWidth: 140, cursor: "pointer" }}>
-                  <div style={{
-                    height: 80, borderRadius: 14,
-                    backgroundImage: "repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)",
-                    display: "flex", alignItems: "flex-end", padding: 8, color: "#fff",
-                    fontSize: 10, fontFamily: "ui-monospace, monospace",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.3)",
-                  }}>📸</div>
-                  <div className="t-13 w-600" style={{ marginTop: 6, lineHeight: 1.25 }}>{p.name}</div>
-                  <div className="t-11 muted">{p.dist}</div>
-                </div>
-              ))}
+          ) : (
+            <div style={{ padding: "0 20px 16px" }}>
+              <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Vicino a te</div>
+              <div className="t-13 muted" style={{ marginTop: 2 }}>Tocca un pin sulla mappa, o scorri qui sotto</div>
+              <div style={{ display: "flex", gap: 10, overflowX: "auto", marginTop: 14, paddingBottom: 4 }}>
+                {PLACES.map(p => (
+                  <div key={p.id} onClick={() => go("place", p)} style={{ minWidth: 140, cursor: "pointer" }}>
+                    <div style={{
+                      height: 80, borderRadius: 14,
+                      backgroundImage: "repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)",
+                      display: "flex", alignItems: "flex-end", padding: 8, color: "#fff",
+                      fontSize: 10, fontFamily: "ui-monospace, monospace",
+                      textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                    }}>📸</div>
+                    <div className="t-13 w-600" style={{ marginTop: 6, lineHeight: 1.25 }}>{p.name}</div>
+                    <div className="t-11 muted">{p.dist}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
