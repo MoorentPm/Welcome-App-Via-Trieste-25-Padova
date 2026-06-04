@@ -1547,7 +1547,7 @@ export function Review({ back, guest, go }) {
           style={{
             width: "100%", minHeight: 110, padding: 16, borderRadius: 18,
             background: "var(--surface)", border: "none", fontFamily: "inherit",
-            fontSize: 15, color: "var(--ink)", resize: "none", boxSizing: "border-box",
+            fontSize: 16, color: "var(--ink)", resize: "none", boxSizing: "border-box",
             boxShadow: "0 2px 10px rgba(26,25,22,0.04)", lineHeight: 1.5
           }} />
         </div>
@@ -1999,7 +1999,7 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
         placeholder="Chiedi qualunque cosa…"
         style={{
           flex: 1, padding: "14px 16px", borderRadius: 22, border: "none",
-          background: "var(--surface)", fontSize: 15, fontFamily: "inherit",
+          background: "var(--surface)", fontSize: 16, fontFamily: "inherit",
           boxShadow: "0 1px 4px rgba(0,0,0,0.05)", outline: "none"
         }} />
         <button onClick={() => send()} disabled={typing} className="nav-btn" style={{
