@@ -38,7 +38,10 @@ export function Places({ back, go }) {
                   <IconHeart size={14} stroke={2} style={{ fill: "#fff", color: "#fff" }} />
                 </div>
               )}
-              <div className="img-placeholder" style={{ height: 150 }}>📸 {p.name}</div>
+              {p.photo
+                ? <img src={p.photo} alt={p.name} style={{ width: "100%", height: 150, objectFit: "cover", display: "block" }} />
+                : <div className="img-placeholder" style={{ height: 150 }}>📸 {p.name}</div>
+              }
               <div style={{ padding: 16 }}>
                 <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.4 }}>{p.tag}</div>
                 <div className="t-17 w-600" style={{ marginTop: 4 }}>{p.name}</div>
@@ -61,9 +64,10 @@ export function PlaceDetail({ back, place }) {
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <div style={{ position: "relative" }}>
-        <div className="img-placeholder" style={{ height: 300, borderRadius: 0 }}>
-          📸 {p.name}
-        </div>
+        {p.photo
+          ? <img src={p.photo} alt={p.name} style={{ width: "100%", height: 300, objectFit: "cover", display: "block" }} />
+          : <div className="img-placeholder" style={{ height: 300, borderRadius: 0 }}>📸 {p.name}</div>
+        }
         <button onClick={back} className="nav-btn" style={{
           position: "absolute", top: 56, left: 12, background: "rgba(255,255,255,0.9)",
           backdropFilter: "blur(10px)"
