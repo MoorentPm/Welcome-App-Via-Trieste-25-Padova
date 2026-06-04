@@ -315,6 +315,11 @@ export default function Padova({ go }) {
                 <div className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.15 }}>{sel.name}</div>
                 <div className="t-13 muted" style={{ marginTop: 3 }}>{sel.dist} a piedi dal loft</div>
               </>
+            ) : sheetH >= SNAP_FULL - 20 ? (
+              <>
+                <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Da non perdere</div>
+                <div className="t-13 muted" style={{ marginTop: 2 }}>I posti che consigliamo davvero</div>
+              </>
             ) : (
               <>
                 <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Vicino a te</div>
@@ -326,7 +331,46 @@ export default function Padova({ go }) {
 
         {/* ── ZONA SCROLL — bottoni e card, non interferisce col drag ── */}
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-          {sel ? (
+          {sheetH >= SNAP_FULL - 20 ? (
+            /* Sheet completamente aperto: mostra "Da non perdere" */
+            <div style={{ padding: '4px 20px 16px' }}>
+              <button onClick={() => { setSheetH(SNAP_MID); setSelected(null); }}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: 'var(--accent-soft)', color: 'var(--accent-deep)',
+                  border: 'none', borderRadius: 999, padding: '6px 14px',
+                  fontSize: 12, fontWeight: 700, cursor: 'pointer', marginBottom: 14,
+                }}>
+                <IconMap size={14} stroke={2.5} /> Torna alla mappa
+              </button>
+              <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>
+                Padova da non perdere
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {PLACES.map(p => (
+                  <button key={p.id} onClick={() => go('place', p)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      background: 'var(--bg)', border: 'none', borderRadius: 16,
+                      padding: '12px 14px', cursor: 'pointer', textAlign: 'left', width: '100%',
+                    }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                      backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18,
+                    }}>📸</div>
+                    <div className="grow" style={{ minWidth: 0 }}>
+                      <div className="t-11 w-600" style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 0.4 }}>{p.tag}</div>
+                      <div className="t-14 w-600" style={{ marginTop: 2, lineHeight: 1.25 }}>{p.name}</div>
+                      <div className="t-11 muted" style={{ marginTop: 2 }}>{p.dist}</div>
+                    </div>
+                    <IconMap size={16} stroke={2} style={{ color: 'var(--ink-4)', flexShrink: 0 }} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : sel ? (
             <div style={{ padding: '0 20px 16px' }}>
               <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                 <button

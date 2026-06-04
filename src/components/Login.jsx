@@ -33,7 +33,7 @@ export function DateField({ label, value, onChange }) {
       <input type="date" value={value} onChange={e => onChange(e.target.value)}
         style={{
           width: "100%", border: "none", background: "transparent",
-          color: "#fff", fontSize: 15, fontFamily: "inherit", outline: "none",
+          color: "#fff", fontSize: 16, fontFamily: "inherit", outline: "none",
           padding: 0, marginTop: 2, colorScheme: "dark",
         }}/>
     </label>
@@ -136,7 +136,7 @@ export default function Login({ onLogin }) {
       <div style={{ position: "absolute", left: -120, bottom: 200, width: 320, height: 320, borderRadius: 999,
         background: "radial-gradient(circle, var(--accent-deep) 0%, transparent 65%)", opacity: 0.35 }}/>
 
-      <div style={{ position: "relative", display: "flex", justifyContent: "space-between", padding: "60px 20px 0", zIndex: 2 }}>
+      <div style={{ position: "relative", display: "flex", justifyContent: "space-between", padding: "max(44px, calc(env(safe-area-inset-top, 0px) + 12px)) 20px 0", zIndex: 2 }}>
         <div className="serif" style={{ fontSize: 22, fontWeight: 500, letterSpacing: -0.02 }}>
           Elegant<span style={{ color: "var(--accent)" }}>.</span>
         </div>
@@ -174,7 +174,7 @@ export default function Login({ onLogin }) {
           <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={t.phName}
             style={{
               width: "100%", padding: "14px 18px", borderRadius: 16, border: "1px solid rgba(255,255,255,0.15)",
-              background: "rgba(255,255,255,0.08)", color: "#fff", fontSize: 15, fontFamily: "inherit",
+              background: "rgba(255,255,255,0.08)", color: "#fff", fontSize: 16, fontFamily: "inherit",
               outline: "none", boxSizing: "border-box", backdropFilter: "blur(16px)",
             }}/>
           <button onClick={submit} disabled={loading} style={{

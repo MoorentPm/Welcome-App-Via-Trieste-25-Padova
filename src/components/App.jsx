@@ -63,7 +63,8 @@ export default function App() {
   React.useEffect(() => { applyAccent(tweaks.accent) }, [tweaks.accent])
 
   React.useEffect(() => {
-    if (guest && tweaks.stage && guest.stage !== tweaks.stage) {
+    // Only apply the tweak-panel stage override when the guest has no real dates set
+    if (guest && tweaks.stage && guest.stage !== tweaks.stage && !guest.checkin) {
       const g = { ...guest, stage: tweaks.stage }
       setGuest(g)
       saveGuest(g)
@@ -296,7 +297,7 @@ function SettingsField({ label, value, onChange, placeholder, type = 'text', bor
     <label style={{ display: 'block', padding: '10px 14px', borderTop: border ? '0.5px solid var(--hairline)' : 'none', flex: type === 'date' ? 1 : undefined }}>
       <div className="t-11 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.4 }}>{label}</div>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        style={{ width: '100%', border: 'none', background: 'transparent', fontSize: 15, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none', padding: '3px 0 0', boxSizing: 'border-box' }}/>
+        style={{ width: '100%', border: 'none', background: 'transparent', fontSize: 16, fontFamily: 'inherit', color: 'var(--ink)', outline: 'none', padding: '3px 0 0', boxSizing: 'border-box' }}/>
     </label>
   )
 }

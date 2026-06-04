@@ -41,6 +41,18 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+// Favorites helpers
+const FAV_STORAGE = "elegant-loft-favorites";
+function loadFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAV_STORAGE) || "[]"); } catch { return []; }
+}
+function toggleFavorite(id) {
+  const favs = loadFavorites();
+  const next = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+  try { localStorage.setItem(FAV_STORAGE, JSON.stringify(next)); } catch {}
+  return next;
+}
+
 // Saved itineraries helpers
 const ITIN_STORAGE = "elegant-loft-itineraries";
 function loadItineraries() {
@@ -460,26 +472,28 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
 }
 
 export function ItineraryMap({ plan }) {
-  // Distribute pins along a route
   const positions = [
-  { top: "30%", left: "30%" },
-  { top: "55%", left: "50%" },
-  { top: "40%", left: "68%" },
-  { top: "70%", left: "40%" }];
-
+    { top: "32%", left: "32%" },
+    { top: "58%", left: "52%" },
+    { top: "42%", left: "70%" },
+    { top: "72%", left: "42%" },
+  ];
   const pins = plan.slice(0, 4).map((p, i) => ({
-    id: "p" + i, ...positions[i % positions.length], name: p.title
+    id: "p" + i, ...positions[i % positions.length], name: p.title,
   }));
-  // Build a dashed path through them
-  const coords = pins.map((p, i) => {
-    const x = parseFloat(p.left) * 4;
-    const y = parseFloat(p.top) * 8;
-    return `${i === 0 ? "M" : "L"}${x} ${y}`;
-  }).join(" ");
+  // Overlay SVG uses viewBox 0-100 matching CSS % — avoids coord-system mismatch
+  const points = pins.map(p => `${parseFloat(p.left)},${parseFloat(p.top)}`).join(" ");
   return (
-    <MapBg pins={pins} path={{ d: coords }} numbered={true}
-    userPin={{ top: "50%", left: "15%" }} />);
-
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <MapBg pins={pins} numbered={true} userPin={{ top: "50%", left: "15%" }} />
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+        <polyline points={points}
+          stroke="var(--accent)" strokeWidth="0.9" fill="none"
+          strokeDasharray="2 3" strokeLinecap="round" opacity="0.8" />
+      </svg>
+    </div>
+  );
 }
 
 // ─────────────────────────────────────────────────────
@@ -489,8 +503,14 @@ export function ItineraryMap({ plan }) {
 export function ArrivalCheckin({ back, go }) {
   const steps = CHECKIN_STEPS;
   const [i, setI] = React.useState(0);
+  const [copiedCode, setCopiedCode] = React.useState(false);
   const s = steps[i];
   const checkinRef = React.useRef(null);
+  const copyCode = (val) => {
+    try { navigator.clipboard?.writeText(val); } catch {}
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
@@ -614,12 +634,16 @@ export function ArrivalCheckin({ back, go }) {
               <div className="t-11 muted">codice apertura</div>
             </div>
           </div>
-          <button onClick={() => {try {navigator.clipboard?.writeText("0425");} catch {}}} style={{
-            width: 38, height: 38, borderRadius: 10, border: "none",
-            background: "rgba(26,25,22,0.06)", color: "var(--ink)", cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+          <button onClick={() => copyCode("0425")} style={{
+            height: 38, borderRadius: 10, border: "none",
+            background: copiedCode ? "var(--ok)" : "rgba(26,25,22,0.06)",
+            color: copiedCode ? "#fff" : "var(--ink)", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0, padding: copiedCode ? "0 12px" : "0",
+            width: copiedCode ? "auto" : 38, gap: 4,
+            transition: "all .2s", fontSize: 12, fontWeight: 700,
           }}>
-            <IconCopy size={16} stroke={2.2} />
+            {copiedCode ? <><IconCheck size={14} stroke={3}/> Copiato</> : <IconCopy size={16} stroke={2.2} />}
           </button>
         </div>
       </div>
@@ -754,7 +778,8 @@ export function NavBar({ back, title, right }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "56px 12px 12px", position: "sticky", top: 0, zIndex: 10,
+      padding: "max(44px, calc(env(safe-area-inset-top, 0px) + 12px)) 12px 12px",
+      position: "sticky", top: 0, zIndex: 10,
       background: "linear-gradient(180deg, var(--bg) 75%, rgba(242,239,234,0) 100%)"
     }}>
       <button onClick={back} className="nav-btn" style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(12px)" }}>
@@ -1251,6 +1276,12 @@ export function Appliance({ back, item }) {
 // PLACES (full list)
 // ─────────────────────────────────────────────────────
 export function Places({ back, go }) {
+  const [favs, setFavs] = React.useState(() => loadFavorites());
+  const sorted = [...PLACES].sort((a, b) => {
+    const af = favs.includes(a.id) ? 0 : 1;
+    const bf = favs.includes(b.id) ? 0 : 1;
+    return af - bf;
+  });
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <NavBar back={back} title="Padova" />
@@ -1264,20 +1295,32 @@ export function Places({ back, go }) {
       </div>
 
       <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 12 }}>
-        {PLACES.map((p) =>
-        <div key={p.id} onClick={() => go("place", p)} className="card-tight" style={{ cursor: "pointer" }}>
-            <div className="img-placeholder" style={{ height: 150 }}>📸 {p.name}</div>
-            <div style={{ padding: 16 }}>
-              <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.4 }}>{p.tag}</div>
-              <div className="t-17 w-600" style={{ marginTop: 4 }}>{p.name}</div>
-              <div className="t-13 muted" style={{ marginTop: 4 }}>{p.sub}</div>
-              <div className="t-12 muted" style={{ marginTop: 8 }}>{p.dist}</div>
+        {sorted.map((p) => {
+          const isFav = favs.includes(p.id);
+          return (
+            <div key={p.id} onClick={() => go("place", p)} className="card-tight" style={{ cursor: "pointer", position: "relative" }}>
+              {isFav && (
+                <div style={{
+                  position: "absolute", top: 10, right: 10, zIndex: 2,
+                  width: 28, height: 28, borderRadius: 999,
+                  background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                }}>
+                  <IconHeart size={14} stroke={2} style={{ fill: "#fff", color: "#fff" }} />
+                </div>
+              )}
+              <div className="img-placeholder" style={{ height: 150 }}>📸 {p.name}</div>
+              <div style={{ padding: 16 }}>
+                <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.4 }}>{p.tag}</div>
+                <div className="t-17 w-600" style={{ marginTop: 4 }}>{p.name}</div>
+                <div className="t-13 muted" style={{ marginTop: 4 }}>{p.sub}</div>
+                <div className="t-12 muted" style={{ marginTop: 8 }}>{p.dist}</div>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })}
       </div>
     </div>);
-
 }
 
 // ─────────────────────────────────────────────────────
@@ -1394,7 +1437,7 @@ export function Review({ back, guest, go }) {
   }
 
   if (stage === "rate") {
-    const isHigh = stars >= 4;
+    const isHigh = stars >= 3;
     return (
       <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
         <NavBar back={back} title="Recensione" />
@@ -1471,9 +1514,15 @@ export function Review({ back, guest, go }) {
 
   }
 
-  const isHigh = stars >= 4;
+  const isHigh = stars >= 3;
   const code = isHigh ? "GRAZIE" + (10 + stars * 2) : "GRAZIE5";
   const discount = isHigh ? `-${10 + stars * 2}%` : "-5%";
+  const [copiedCoupon, setCopiedCoupon] = React.useState(false);
+  const copyCoupon = () => {
+    try { navigator.clipboard?.writeText(code); } catch {}
+    setCopiedCoupon(true);
+    setTimeout(() => setCopiedCoupon(false), 2000);
+  };
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <NavBar back={back} title="Il tuo regalo" />
@@ -1524,10 +1573,14 @@ export function Review({ back, guest, go }) {
             <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 20, fontWeight: 700, letterSpacing: 2 }}>
               {code}
             </div>
-            <button onClick={() => navigator.clipboard?.writeText(code)} style={{
-              background: "var(--accent)", color: "#fff", border: "none", borderRadius: 999,
-              padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer"
-            }}>Copia</button>
+            <button onClick={copyCoupon} style={{
+              background: copiedCoupon ? "var(--ok)" : "var(--accent)", color: "#fff",
+              border: "none", borderRadius: 999, padding: "6px 14px", fontSize: 12,
+              fontWeight: 700, cursor: "pointer", display: "inline-flex",
+              alignItems: "center", gap: 4, transition: "background .2s",
+            }}>
+              {copiedCoupon ? <><IconCheck size={12} stroke={3}/> Copiato</> : "Copia"}
+            </button>
           </div>
         </div>
       </div>
@@ -1708,7 +1761,7 @@ Solo JSON, nessun altro testo.`
             <div className="t-13 muted" style={{ lineHeight: 1.5, marginBottom: 14 }}>
               Vuoi un programma completo della giornata?
             </div>
-            <button onClick={() => go("itinerary")} className="btn btn-primary btn-lg btn-full">
+            <button onClick={() => go("itinerary")} className="btn btn-accent btn-lg btn-full">
               Crea un itinerario su misura →
             </button>
           </div>
@@ -1805,7 +1858,7 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
       {/* Compact header bar */}
       <div style={{
         display: "flex", alignItems: "center", gap: 12,
-        padding: "56px 16px 12px",
+        padding: "max(44px, calc(env(safe-area-inset-top, 0px) + 12px)) 16px 12px",
         background: "linear-gradient(180deg, var(--bg) 70%, rgba(242,239,234,0) 100%)",
         position: "sticky", top: 0, zIndex: 5
       }}>
@@ -2427,6 +2480,9 @@ function Arrival({ back }) {
 // ─────────────────────────────────────────────────────
 export function PlaceDetail({ back, place }) {
   const p = place || PLACES[0];
+  const [favs, setFavs] = React.useState(() => loadFavorites());
+  const isFav = favs.includes(p.id);
+  const handleFav = () => setFavs(toggleFavorite(p.id));
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <div style={{ position: "relative" }}>
@@ -2459,8 +2515,12 @@ export function PlaceDetail({ back, place }) {
         >
           <IconMap size={18} stroke={2} /> Indicazioni
         </a>
-        <button className="btn btn-ghost btn-lg" style={{ flexShrink: 0, width: 56 }}>
-          <IconHeart size={20} stroke={2} />
+        <button onClick={handleFav} className="btn btn-ghost btn-lg" style={{
+          flexShrink: 0, width: 56,
+          background: isFav ? "var(--accent-soft)" : undefined,
+          color: isFav ? "var(--accent)" : undefined,
+        }}>
+          <IconHeart size={20} stroke={2} style={{ fill: isFav ? "var(--accent)" : "none" }} />
         </button>
       </div>
 

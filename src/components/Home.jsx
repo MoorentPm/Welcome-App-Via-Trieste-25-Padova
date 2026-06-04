@@ -41,7 +41,7 @@ export default function HomeChiavi({ go, stage, guest }) {
   return (
     <div className="screen-scroll" style={{ paddingBottom: 110 }}>
       {/* Top bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "54px 20px 0" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "max(44px, calc(env(safe-area-inset-top, 0px) + 12px)) 20px 0" }}>
         <div className="serif" style={{ fontSize: 22, fontWeight: 500, letterSpacing: -0.02 }}>
           Elegant<span style={{ color: "var(--accent)" }}>.</span>
         </div>
@@ -53,7 +53,7 @@ export default function HomeChiavi({ go, stage, guest }) {
       </div>
 
       {/* Greeting */}
-      <div style={{ padding: "18px 20px 0" }}>
+      <div style={{ padding: "12px 20px 0" }}>
         {!guest?.demo && (
           <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.4 }}>
             Padova · {guest?.nights || A.guest.nights} notti
