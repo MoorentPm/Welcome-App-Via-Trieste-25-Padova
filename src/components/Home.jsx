@@ -125,14 +125,15 @@ export default function HomeChiavi({ go, stage, guest }) {
               borderRadius: 22, overflow: "hidden", background: "var(--surface)",
               boxShadow: "0 8px 24px rgba(26,25,22,0.06)", cursor: "pointer",
             }}>
-            <div style={{ height: 120, background: p.tint, position: "relative", overflow: "hidden" }}>
+            <div style={{
+              height: 120, position: "relative", overflow: "hidden",
+              background: p.tint,
+              ...(p.photo && { backgroundImage: `url(${p.photo})`, backgroundSize: "cover", backgroundPosition: "center" }),
+            }}>
               <div style={{
                 position: "absolute", inset: 0,
-                background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4))",
+                background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55))",
               }}/>
-              <div style={{ position: "absolute", bottom: 10, left: 12, color: "#fff", fontSize: 11, opacity: 0.85, fontFamily: "ui-monospace, monospace" }}>
-                📸 {p.title}
-              </div>
             </div>
             <div style={{ padding: 14 }}>
               <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>{p.tag}</div>

@@ -7,6 +7,13 @@ import imgOrto       from './assets/places/orto.jpg'
 import imgBasilica   from './assets/places/basilica.jpg'
 import imgPedrocchi  from './assets/places/pedrocchi.jpg'
 import imgRagione    from './assets/places/ragione.jpg'
+import imgPiazzaErbe from './assets/places/piazza_erbe.jpg'
+import imgPalazzoBo  from './assets/places/palazzo_bo.jpg'
+import imgEremitani  from './assets/places/eremitani.jpg'
+import imgBattistero from './assets/places/battistero.jpg'
+
+export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
+         imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione }
 
 export const APARTMENT = {
   name: "Elegant Loft",
@@ -43,6 +50,7 @@ export const TODAY_PICKS = [
     meta: "7 min a piedi · Aperto ora",
     tag: "Iconico",
     tint: "#CFB487",
+    photo: imgPedrocchi,
   },
   {
     id: "scrovegni",
@@ -51,6 +59,7 @@ export const TODAY_PICKS = [
     meta: "Prenota 15:00 · €14",
     tag: "Must-see",
     tint: "#7E6CE8",
+    photo: imgScrovegni,
   },
   {
     id: "spritz",
@@ -59,6 +68,7 @@ export const TODAY_PICKS = [
     meta: "12 min · da €3.50",
     tag: "Come i locali",
     tint: "#E08762",
+    photo: imgPiazzaErbe,
   },
 ];
 

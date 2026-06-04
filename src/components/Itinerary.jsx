@@ -4,7 +4,10 @@ import {
   IconHeart, IconMap, IconSparkle, IconX,
 } from './Icons'
 import { ItineraryLeafletMap } from './Padova'
-import { MOODS } from '../data'
+import { MOODS,
+  imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
+  imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
+} from '../data'
 import { loadItineraries, saveItinerary, deleteItinerary } from '../utils'
 import { NavBar } from './screens/NavBar'
 
@@ -50,6 +53,30 @@ function lookupCoord(title) {
   const lower = title.toLowerCase()
   for (const [key, coord] of Object.entries(PLACE_COORDS)) {
     if (lower.includes(key)) return coord
+  }
+  return null
+}
+
+const PHOTO_MAP = [
+  { keys: ['pedrocchi', 'caffè dell\'argine', 'caffè al'],                              img: imgPedrocchi  },
+  { keys: ['scrovegni', 'giardini dell\'arena', 'dell\'arena'],                          img: imgScrovegni  },
+  { keys: ['eremitani', 'civici agli', 'musei civici', 'palazzo zuckermann', 'zuckermann'], img: imgEremitani },
+  { keys: ['battistero'],                                                                 img: imgBattistero },
+  { keys: ['palazzo bo', 'teatro anatomico', 'galleria borromeo', 'borromeo', 'palazzo bo e'], img: imgPalazzoBo },
+  { keys: ['orto botanico', 'orto'],                                                     img: imgOrto       },
+  { keys: ['prato della valle', 'loggia amulea', 'prato della'],                        img: imgPrato      },
+  { keys: ['sant\'antonio', 'basilica di', 'oratorio di san giorgio', 'san giorgio'],   img: imgBasilica   },
+  { keys: ['palazzo della ragione', 'ragione'],                                          img: imgRagione    },
+  { keys: ['piazza delle erbe', 'piazza dei signori', 'piazzetta', 'spritz', 'mercato',
+            'dalla zita', 'folperia', 'graziati', 'bar nazionale', 'padovanelle',
+            'al sasso', 'belle parti', 'al pero', 'osteria', 'trattoria',
+            'birrificio', 'fabbri', 'via altinate', 'bici', 'piovego'],                  img: imgPiazzaErbe },
+]
+
+function lookupPhoto(title) {
+  const lower = title.toLowerCase()
+  for (const { keys, img } of PHOTO_MAP) {
+    if (keys.some(k => lower.includes(k))) return img
   }
   return null
 }
@@ -388,7 +415,9 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
 
       <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
         style={{ padding: "24px 16px 8px" }}>
-        {plan.map((step, i) =>
+        {plan.map((step, i) => {
+          const stepPhoto = lookupPhoto(step.title)
+          return (
           <div key={i} style={{ display: "flex", gap: 14, position: "relative" }}>
             <div style={{ flexShrink: 0, width: 50, textAlign: "right", paddingTop: 18 }}>
               <div className="t-13 w-600" style={{ color: "var(--accent-deep)" }}>{step.t}</div>
@@ -413,17 +442,15 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
               }}>
                 <div style={{
                   height: 110,
-                  background: `linear-gradient(135deg, ${step.tint} 0%, ${step.tint}AA 70%, ${step.tint}66 100%)`,
-                  position: "relative", overflow: "hidden"
+                  position: "relative", overflow: "hidden",
+                  ...(stepPhoto
+                    ? { backgroundImage: `url(${stepPhoto})`, backgroundSize: "cover", backgroundPosition: "center" }
+                    : { background: `linear-gradient(135deg, ${step.tint} 0%, ${step.tint}AA 70%, ${step.tint}66 100%)` }),
                 }}>
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 6px, transparent 6px 14px)"
-                  }} />
-                  <div style={{
-                    position: "absolute", bottom: 10, left: 14, color: "#fff",
-                    fontSize: 10, opacity: 0.75, fontFamily: "ui-monospace, monospace"
-                  }}>📸 {step.title}</div>
+                  {stepPhoto
+                    ? <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.48) 100%)" }} />
+                    : <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 6px, transparent 6px 14px)" }} />
+                  }
                   <div style={{
                     position: "absolute", top: 12, right: 12,
                     padding: "4px 10px", borderRadius: 999,
@@ -447,7 +474,8 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
               </div>
             </div>
           </div>
-        )}
+          )
+        })}
       </div>
 
       <div style={{ padding: "16px 20px 20px", display: "flex", gap: 10 }}>

@@ -454,11 +454,12 @@ export default function Padova({ go }) {
                         }}>
                         <div style={{
                           width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                          backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 18, position: 'relative',
+                          position: 'relative', overflow: 'hidden',
+                          ...(p.photo
+                            ? { backgroundImage: `url(${p.photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                            : { backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }),
                         }}>
-                          📸
+                          {!p.photo && '📸'}
                           {isFav && (
                             <div style={{
                               position: 'absolute', top: -4, right: -4,
@@ -487,11 +488,11 @@ export default function Padova({ go }) {
                 {PLACES.map(p => (
                   <div key={p.id} onClick={() => go('place', p)} style={{ minWidth: 140, cursor: 'pointer' }}>
                     <div style={{
-                      height: 80, borderRadius: 14,
-                      backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)',
-                      display: 'flex', alignItems: 'flex-end', padding: 8,
-                      fontSize: 10, fontFamily: 'ui-monospace, monospace',
-                    }}>📸</div>
+                      height: 80, borderRadius: 14, overflow: 'hidden',
+                      ...(p.photo
+                        ? { backgroundImage: `url(${p.photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                        : { backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)' }),
+                    }} />
                     <div className="t-13 w-600" style={{ marginTop: 6, lineHeight: 1.25 }}>{p.name}</div>
                     <div className="t-11 muted">{p.dist}</div>
                   </div>
