@@ -1,7 +1,7 @@
 {
-  "name": "welcome-app-template",
+  "name": "welcome-app-via-trieste-25-padova",
   "version": "1.0.0",
-  "description": "",
+  "description": "Welcome App — Elegant Loft, Via Trieste 25 Padova",
   "main": "data.js",
   "scripts": {
     "dev": "vite",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MoorentPm/Welcome-App-Template.git"
+    "url": "git+https://github.com/MoorentPm/Welcome-App-Via-Trieste-25-Padova.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MoorentPm/Welcome-App-Template/issues"
+    "url": "https://github.com/MoorentPm/Welcome-App-Via-Trieste-25-Padova/issues"
   },
-  "homepage": "https://github.com/MoorentPm/Welcome-App-Template#readme",
+  "homepage": "https://moorentpm.github.io/Welcome-App-Via-Trieste-25-Padova/",
   "devDependencies": {
     "@vitejs/plugin-react": "6.0.2",
     "vite": "8.0.14"
