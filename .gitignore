@@ -1,9 +1,7 @@
 node_modules/
 dist/
 
-# Claude Code / project management — not part of the app
-CLAUDE.md
-PROJECT.md
+# Patch files
 *.patch
 
 # Legacy pre-Vite files (active code is in src/)
