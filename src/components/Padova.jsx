@@ -2,7 +2,12 @@ import React from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { PLACES } from '../data'
-import { IconMap } from './Icons'
+import { IconMap, IconHeart } from './Icons'
+
+const FAV_STORAGE = "elegant-loft-favorites"
+function readFavs() {
+  try { return JSON.parse(localStorage.getItem(FAV_STORAGE) || "[]") } catch { return [] }
+}
 
 // ─── MapBg — SVG decorativo (usato negli itinerari in Screens.jsx) ───
 export function MapBg({ pins = [], path = null, selected, onPin, userPin, numbered = false }) {
@@ -194,6 +199,7 @@ export default function Padova({ go }) {
   const [selected, setSelected] = React.useState(null)
   const [sheetH, setSheetH]     = React.useState(SNAP_MID)
   const [dragging, setDragging] = React.useState(false)
+  const [favs, setFavs]         = React.useState(() => readFavs())
   const drag = React.useRef({ startY: 0, startH: 0, lastY: 0, lastTime: 0, velocity: 0 })
 
   const SNAP_FULL = getSnapFull()
@@ -241,6 +247,12 @@ export default function Padova({ go }) {
       return SNAP_PEEK
     })
   }
+
+  // Rileggi i preferiti ogni volta che il sheet raggiunge SNAP_FULL
+  const SNAP_FULL_VAL = React.useMemo(() => getSnapFull(), [])
+  React.useEffect(() => {
+    if (sheetH >= SNAP_FULL_VAL - 20) setFavs(readFavs())
+  }, [sheetH >= SNAP_FULL_VAL - 20]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Selezione pin: auto-raise se lo sheet è nascosto ──
   const handlePinSelect = React.useCallback((id) => {
@@ -347,27 +359,45 @@ export default function Padova({ go }) {
                 Padova da non perdere
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {PLACES.map(p => (
-                  <button key={p.id} onClick={() => go('place', p)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      background: 'var(--bg)', border: 'none', borderRadius: 16,
-                      padding: '12px 14px', cursor: 'pointer', textAlign: 'left', width: '100%',
-                    }}>
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                      backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 18,
-                    }}>📸</div>
-                    <div className="grow" style={{ minWidth: 0 }}>
-                      <div className="t-11 w-600" style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 0.4 }}>{p.tag}</div>
-                      <div className="t-14 w-600" style={{ marginTop: 2, lineHeight: 1.25 }}>{p.name}</div>
-                      <div className="t-11 muted" style={{ marginTop: 2 }}>{p.dist}</div>
-                    </div>
-                    <IconMap size={16} stroke={2} style={{ color: 'var(--ink-4)', flexShrink: 0 }} />
-                  </button>
-                ))}
+                {[...PLACES]
+                  .sort((a, b) => (favs.includes(b.id) ? 1 : 0) - (favs.includes(a.id) ? 1 : 0))
+                  .map(p => {
+                    const isFav = favs.includes(p.id)
+                    return (
+                      <button key={p.id} onClick={() => go('place', p)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          background: 'var(--bg)', border: 'none', borderRadius: 16,
+                          padding: '12px 14px', cursor: 'pointer', textAlign: 'left', width: '100%',
+                          position: 'relative',
+                        }}>
+                        <div style={{
+                          width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                          backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 18, position: 'relative',
+                        }}>
+                          📸
+                          {isFav && (
+                            <div style={{
+                              position: 'absolute', top: -4, right: -4,
+                              width: 18, height: 18, borderRadius: 999,
+                              background: 'var(--accent)', border: '2px solid #fff',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                              <IconHeart size={9} stroke={2} style={{ fill: '#fff', color: '#fff' }} />
+                            </div>
+                          )}
+                        </div>
+                        <div className="grow" style={{ minWidth: 0 }}>
+                          <div className="t-11 w-600" style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 0.4 }}>{p.tag}</div>
+                          <div className="t-14 w-600" style={{ marginTop: 2, lineHeight: 1.25 }}>{p.name}</div>
+                          <div className="t-11 muted" style={{ marginTop: 2 }}>{p.dist}</div>
+                        </div>
+                        <IconMap size={16} stroke={2} style={{ color: 'var(--ink-4)', flexShrink: 0 }} />
+                      </button>
+                    )
+                  })}
               </div>
             </div>
           ) : sel ? (
