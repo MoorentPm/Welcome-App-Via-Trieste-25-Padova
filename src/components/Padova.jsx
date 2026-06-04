@@ -87,12 +87,12 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
 const APT = [45.414239079177634, 11.878254110197757] // Via Trieste 25, Padova
 
 const POI = [
-  { id: "scrovegni", name: "Scrovegni",    coord: [45.4126, 11.8798], tag: "Arte",    dist: "12 min" },
-  { id: "prato",     name: "Prato",         coord: [45.3978, 11.8742], tag: "Iconico", dist: "8 min"  },
-  { id: "pedrocchi", name: "Pedrocchi",     coord: [45.4081, 11.8770], tag: "Caffè",   dist: "7 min"  },
-  { id: "orto",      name: "Orto Botanico", coord: [45.3991, 11.8803], tag: "Verde",   dist: "10 min" },
-  { id: "basilica",  name: "Sant'Antonio",  coord: [45.3983, 11.8762], tag: "Storia",  dist: "15 min" },
-  { id: "ragione",   name: "Ragione",       coord: [45.4075, 11.8752], tag: "Storia",  dist: "9 min"  },
+  { id: "scrovegni", name: "Scrovegni",    coord: [45.4121641286265, 11.879514139033455],  tag: "Arte",    dist: "12 min" },
+  { id: "prato",     name: "Prato",         coord: [45.39872403954103, 11.876184810196865], tag: "Iconico", dist: "8 min"  },
+  { id: "pedrocchi", name: "Pedrocchi",     coord: [45.40790294814724, 11.877163623689869], tag: "Caffè",   dist: "7 min"  },
+  { id: "orto",      name: "Orto Botanico", coord: [45.3991, 11.8803],                      tag: "Verde",   dist: "10 min" },
+  { id: "basilica",  name: "Sant'Antonio",  coord: [45.40147693510103, 11.880805283212155], tag: "Storia",  dist: "15 min" },
+  { id: "ragione",   name: "Ragione",       coord: [45.407371688032384, 11.875191923689854],tag: "Storia",  dist: "9 min"  },
 ]
 
 // Snap points del bottom sheet (px dall'alto in basso)
