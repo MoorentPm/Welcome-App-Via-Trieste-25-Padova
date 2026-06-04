@@ -1,6 +1,10 @@
 node_modules/
 dist/
 
+# Project management — keep local, not on GitHub
+CLAUDE.md
+PROJECT.md
+
 # Patch files
 *.patch
 
