@@ -4,7 +4,7 @@ import {
   IconCopy, IconHeart, IconKey, IconMap, IconPhone,
   IconSparkle, IconStar, IconX,
 } from './Icons'
-import { MapBg } from './Padova'
+import { ItineraryLeafletMap } from './Padova'
 import {
   APARTMENT as AP, CHECKIN_STEPS, CHECKOUT_STEPS,
   HOUSE_RULES, APPLIANCES, FAQ, MOODS, PLACES, EMERGENCY,
@@ -294,10 +294,40 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
 
   };
 
-  // Day 3+: even deeper
+  // Day 3+: zone fuori-centro, gioielli nascosti
   const day3 = {
-    slow: day2.slow, art: day2.art, food: day2.food,
-    green: day2.green, night: day2.night, rain: day2.rain
+    slow: [
+    { t: "09:30", title: "Mercato di Via Altinate", sub: "Produttori locali, frutta e formaggi del Veneto", tag: "Mercato", tint: "#A8B97A" },
+    { t: "11:30", title: "Palazzo Bo e Teatro Anatomico", sub: "L'università più antica del mondo. Iscriviti al tour.", tag: "Storia", tint: "#5C5099" },
+    { t: "14:00", title: "Pranzo all'Osteria al Pero", sub: "Cucina padovana senza filtri, un tavolo di legno", tag: "Pranzo", tint: "#7A5A3F" },
+    { t: "16:30", title: "Loggia Amulea e Prato della Valle", sub: "La piazza vuota al pomeriggio ha un altro ritmo", tag: "Pausa", tint: "#E08762" }],
+
+    art: [
+    { t: "10:00", title: "Teatro Anatomico — Palazzo Bo", sub: "Sala operatoria del 1594, unica al mondo", tag: "Raro", tint: "#5C5099" },
+    { t: "12:00", title: "Battistero del Duomo", sub: "Cupola di Giusto de' Menabuoi: vertigine medievale", tag: "Arte", tint: "#7E6CE8" },
+    { t: "14:00", title: "Pranzo all'Osteria al Pero", sub: "Classica, niente turisti", tag: "Pranzo", tint: "#7A5A3F" },
+    { t: "16:30", title: "Oratorio di San Giorgio", sub: "Altichiero, 1380. Cinque minuti che valgono tutto il giorno.", tag: "Tesoro", tint: "#A88560" }],
+
+    food: [
+    { t: "10:30", title: "Mercato di Via Altinate", sub: "Formaggi Veneto, salumi locali, pane fresco", tag: "Mercato", tint: "#C99E6E" },
+    { t: "12:30", title: "Pranzo alla Birreria Padovanelle", sub: "Menù del giorno con birra artigianale", tag: "Pranzo", tint: "#5C7A5A" },
+    { t: "17:00", title: "Aperitivo in Piazza dei Signori", sub: "L'altra piazza — meno turisti dello Spritz classico", tag: "Aperitivo", tint: "#E08762" },
+    { t: "20:30", title: "Cena — Osteria al Pero", sub: "Padovano autentico. Prenota.", tag: "Cena", tint: "#5A4434" }],
+
+    green: [
+    { t: "09:00", title: "Pista ciclabile verso i Colli Euganei", sub: "20 km su pista dedicata, aria buona", tag: "Attività", tint: "#4A7C5A" },
+    { t: "12:30", title: "Sosta ad Abano Terme", sub: "Terme Preistoriche: piscina outdoor tra le colline", tag: "Terme", tint: "#7A9D6E" },
+    { t: "16:00", title: "Rientro lungo il Bacchiglione", sub: "Il fiume che attraversa Padova, percorso tranquillo", tag: "Bici", tint: "#A8B97A" }],
+
+    night: [
+    { t: "19:00", title: "Aperitivo in Piazza dei Signori", sub: "Meno frequentata di Piazza delle Erbe, uguale atmosfera", tag: "Aperitivo", tint: "#E08762" },
+    { t: "21:00", title: "Cena alla Birreria Padovanelle", sub: "Birra locale, cucina veneta rustica, porzioni serie", tag: "Cena", tint: "#5A4434" },
+    { t: "23:00", title: "Il Banale — musica live", sub: "Jazz, blues, qualche sera anche cantautorato", tag: "Musica", tint: "#2C2740" }],
+
+    rain: [
+    { t: "10:00", title: "Palazzo Bo — tour guidato", sub: "Teatro Anatomico + aula magna, tutto al coperto", tag: "Tour", tint: "#5C5099" },
+    { t: "12:30", title: "Pranzo in Galleria Borromeo", sub: "Portici del '400, shopping lento, caffè caldo", tag: "Coperto", tint: "#C99E6E" },
+    { t: "15:00", title: "Battistero del Duomo", sub: "Pochi turisti con la pioggia — goditi gli affreschi", tag: "Arte", tint: "#7E6CE8" }]
   };
 
   const allDays = [day1, day2, day3, day3]; // up to 4 days
@@ -471,27 +501,56 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
 
 }
 
+const PLACE_COORDS = {
+  "pedrocchi":             [45.40790, 11.87716],
+  "piazza delle erbe":     [45.40750, 11.87560],
+  "dalla zita":            [45.40850, 11.87780],
+  "orto botanico":         [45.39910, 11.88030],
+  "scrovegni":             [45.41216, 11.87951],
+  "eremitani":             [45.41200, 11.87940],
+  "dei fabbri":            [45.40670, 11.87600],
+  "palazzo della ragione": [45.40737, 11.87519],
+  "folperia":              [45.40650, 11.87520],
+  "piovego":               [45.40700, 11.88500],
+  "prato della valle":     [45.39872, 11.87618],
+  "sant'antonio":          [45.40148, 11.88081],
+  "basilica":              [45.40148, 11.88081],
+  "belle parti":           [45.40300, 11.87450],
+  "zuckermann":            [45.41180, 11.87930],
+  "oratorio di san giorgio": [45.40100, 11.88100],
+  "battistero":            [45.40920, 11.87630],
+  "dell'arena":            [45.41170, 11.87970],
+  "graziati":              [45.40820, 11.87750],
+  "al sasso":              [45.40500, 11.87450],
+  "birrificio padova":     [45.40400, 11.87300],
+  "padovanelle":           [45.40680, 11.87720],
+  "banale":                [45.40640, 11.87780],
+  "galleria borromeo":     [45.40700, 11.87750],
+  "argine":                [45.41050, 11.88200],
+  "palazzo bo":            [45.40620, 11.87697],
+  "del santo":             [45.40100, 11.88100],
+  "loggia amulea":         [45.40180, 11.87640],
+  "teatro anatomico":      [45.40620, 11.87697],
+  "via altinate":          [45.40900, 11.87900],
+  "al pero":               [45.40720, 11.87680],
+  "piazza dei signori":    [45.40800, 11.87560],
+  "piazzetta pedrocchi":   [45.40790, 11.87716],
+  "dei frati":             [45.40148, 11.88081],
+};
+
+function lookupCoord(title) {
+  const lower = title.toLowerCase();
+  for (const [key, coord] of Object.entries(PLACE_COORDS)) {
+    if (lower.includes(key)) return coord;
+  }
+  return null;
+}
+
 export function ItineraryMap({ plan }) {
-  const positions = [
-    { top: "32%", left: "32%" },
-    { top: "58%", left: "52%" },
-    { top: "42%", left: "70%" },
-    { top: "72%", left: "42%" },
-  ];
-  const pins = plan.slice(0, 4).map((p, i) => ({
-    id: "p" + i, ...positions[i % positions.length], name: p.title,
-  }));
-  // Overlay SVG uses viewBox 0-100 matching CSS % — avoids coord-system mismatch
-  const points = pins.map(p => `${parseFloat(p.left)},${parseFloat(p.top)}`).join(" ");
+  const steps = plan.map(s => ({ ...s, coord: lookupCoord(s.title) }));
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <MapBg pins={pins} numbered={true} userPin={{ top: "50%", left: "15%" }} />
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
-        <polyline points={points}
-          stroke="var(--accent)" strokeWidth="0.9" fill="none"
-          strokeDasharray="2 3" strokeLinecap="round" opacity="0.8" />
-      </svg>
+      <ItineraryLeafletMap steps={steps} />
     </div>
   );
 }

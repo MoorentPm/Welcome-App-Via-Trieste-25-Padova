@@ -127,6 +127,56 @@ function makeAptIcon() {
   })
 }
 
+function makeNumberedPin(num, tint) {
+  const bg = tint || 'var(--accent,#C27248)'
+  return L.divIcon({
+    html: `<div style="transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+      <div style="width:28px;height:28px;border-radius:999px;background:${bg};color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3);border:3px solid #fff;">${num}</div>
+      <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid ${bg};margin-top:-1px;"></div>
+    </div>`,
+    className: '',
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  })
+}
+
+export const ItineraryLeafletMap = React.memo(function ItineraryLeafletMap({ steps }) {
+  const containerRef = React.useRef(null)
+  const mapRef = React.useRef(null)
+
+  React.useEffect(() => {
+    if (!containerRef.current) return
+    if (mapRef.current) { mapRef.current.remove(); mapRef.current = null }
+
+    const valid = steps.filter(s => s.coord)
+    if (valid.length === 0) return
+
+    const map = L.map(containerRef.current, {
+      zoomControl: false, attributionControl: false,
+      dragging: false, scrollWheelZoom: false,
+      doubleClickZoom: false, touchZoom: false, keyboard: false,
+    })
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
+    map.fitBounds(L.latLngBounds(valid.map(s => s.coord)), { padding: [32, 32] })
+
+    valid.forEach((s, i) => {
+      L.marker(s.coord, { icon: makeNumberedPin(i + 1, s.tint), interactive: false }).addTo(map)
+    })
+
+    if (valid.length > 1) {
+      L.polyline(valid.map(s => s.coord), {
+        color: '#C27248', weight: 2, dashArray: '5 6', opacity: 0.75
+      }).addTo(map)
+    }
+
+    mapRef.current = map
+    return () => { map.remove(); mapRef.current = null }
+  }, [steps])
+
+  return <div ref={containerRef} style={{ position: 'absolute', inset: 0, isolation: 'isolate', overflow: 'hidden' }} />
+})
+
 // ─── Componente mappa Leaflet (non si re-inizializza al drag dello sheet) ───
 const PadovaLeafletMap = React.memo(function PadovaLeafletMap({ selected, onPin }) {
   const containerRef = React.useRef(null)
