@@ -57,17 +57,17 @@ export const TODAY_PICKS = [
 
 export const PLACES = [
   { id: "scrovegni", name: "Cappella degli Scrovegni",  sub: "Giotto · prenotazione obbligatoria", dist: "12 min a piedi", tag: "Arte",    maps_url: "https://maps.google.com/?q=Cappella+degli+Scrovegni,+Padova",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Padova%2C_cappella_degli_scrovegni%2C_esterno.JPG/800px-Padova%2C_cappella_degli_scrovegni%2C_esterno.JPG" },
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Padova_Cappella_degli_Scrovegni_Innen_Langhaus_West_5.jpg/800px-Padova_Cappella_degli_Scrovegni_Innen_Langhaus_West_5.jpg" },
   { id: "prato",     name: "Prato della Valle",          sub: "La piazza più grande d'Europa",      dist: "8 min a piedi",  tag: "Iconico", maps_url: "https://maps.google.com/?q=Prato+della+Valle,+Padova",
     photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Prato_della_Valle_in_Padua.JPG/800px-Prato_della_Valle_in_Padua.JPG" },
   { id: "orto",      name: "Orto Botanico",              sub: "Patrimonio UNESCO dal 1545",         dist: "10 min a piedi", tag: "Verde",   maps_url: "https://maps.google.com/?q=Orto+Botanico+di+Padova",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Botanical_Garden_%28Orto_Botanico%29%2C_Padua-112029.jpg/800px-Botanical_Garden_%28Orto_Botanico%29%2C_Padua-112029.jpg" },
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Orto_botanico_padova.JPG/800px-Orto_botanico_padova.JPG" },
   { id: "basilica",  name: "Basilica di Sant'Antonio",   sub: "Il Santo — pellegrinaggio storico",  dist: "15 min a piedi", tag: "Storia",  maps_url: "https://maps.google.com/?q=Basilica+di+Sant+Antonio,+Padova",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Basilica_Santo_Antonio_in_Padova.JPG/800px-Basilica_Santo_Antonio_in_Padova.JPG" },
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Veneto_Padova1_tango7174.jpg/800px-Veneto_Padova1_tango7174.jpg" },
   { id: "pedrocchi", name: "Caffè Pedrocchi",            sub: "Dal 1831, simbolo della città",      dist: "7 min a piedi",  tag: "Cibo",    maps_url: "https://maps.google.com/?q=Caff%C3%A8+Pedrocchi,+Padova",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Caff%C3%A8_Pedrocchi.JPG/800px-Caff%C3%A8_Pedrocchi.JPG" },
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Padova_juil_09_191_%288188953626%29.jpg/800px-Padova_juil_09_191_%288188953626%29.jpg" },
   { id: "ragione",   name: "Palazzo della Ragione",      sub: "Mercati storici attorno",            dist: "9 min a piedi",  tag: "Storia",  maps_url: "https://maps.google.com/?q=Palazzo+della+Ragione,+Padova",
-    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Palazzo_della_Ragione_%28Padova%29_jm56414.jpg/800px-Palazzo_della_Ragione_%28Padova%29_jm56414.jpg" },
+    photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Exterior_of_Palazzo_della_Ragione_%28Padua%29.jpg/800px-Exterior_of_Palazzo_della_Ragione_%28Padua%29.jpg" },
 ];
 
 export const CHECKIN_STEPS = [
