@@ -1,0 +1,320 @@
+import React from 'react'
+import {
+  IconCheck, IconChevronL, IconChevronR,
+  IconCopy, IconKey, IconMap,
+} from '../Icons'
+import { APARTMENT as AP, CHECKIN_STEPS } from '../../data'
+import { NavBar } from './NavBar'
+
+export function ArrivalCheckin({ back, go }) {
+  const steps = CHECKIN_STEPS
+  const [i, setI] = React.useState(0)
+  const [copiedCode, setCopiedCode] = React.useState(false)
+  const s = steps[i]
+  const checkinRef = React.useRef(null)
+  const copyCode = (val) => {
+    try { navigator.clipboard?.writeText(val) } catch {}
+    setCopiedCode(true)
+    setTimeout(() => setCopiedCode(false), 2000)
+  }
+
+  return (
+    <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
+      <NavBar back={back} title="Arrivo & casa" />
+
+      <div style={{ padding: "0 20px" }}>
+        <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
+          Ti aspettiamo <em style={{ fontStyle: "italic", color: "var(--accent)" }}>qui</em>.
+        </div>
+        <div className="t-14 muted" style={{ marginTop: 10 }}>{AP.address}</div>
+      </div>
+
+      <div style={{ padding: "20px 16px 0" }}>
+        <div className="img-placeholder" style={{ height: 180, borderRadius: 20 }}>
+          🗺️ Mappa — Via Trieste 25, Padova
+        </div>
+        <a href="https://maps.google.com/?q=Via+Trieste+25+Padova" target="_blank" rel="noreferrer"
+          className="btn btn-ghost btn-full" style={{ marginTop: 10 }}>
+          <IconMap size={18} stroke={2} /> Apri navigazione
+        </a>
+      </div>
+
+      <div style={{ padding: "26px 16px 0" }}>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>
+          Come arrivare
+        </div>
+        <div className="card-tight">
+          {[
+            { id: "train", icon: "🚆", t: "In treno", sub: "5 min a piedi dalla stazione" },
+            { id: "car", icon: "🚗", t: "In auto", sub: "Parcheggi gratuiti vicini" },
+            { id: "bus", icon: "🚌", t: "Bus & tram", sub: "Fermata Trieste a 100 metri" },
+          ].map((r) =>
+            <button key={r.id} onClick={() => go("transport", r.id)}
+              className="row" style={{ width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+              <div style={{ fontSize: 24, flexShrink: 0, width: 36, textAlign: "center" }}>{r.icon}</div>
+              <div className="grow">
+                <div className="t-15 w-600">{r.t}</div>
+                <div className="t-12 muted" style={{ marginTop: 2 }}>{r.sub}</div>
+              </div>
+              <IconChevronR size={16} stroke={2.2} style={{ color: "var(--ink-4)" }} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div style={{ padding: "20px 16px 0" }}>
+        <button onClick={() => checkinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          className="btn btn-accent btn-lg btn-full">
+          Sono in via Trieste → procedura check-in
+        </button>
+      </div>
+
+      <div ref={checkinRef} style={{ padding: "36px 20px 0" }}>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>Una volta qui</div>
+        <div className="serif" style={{ fontSize: 26, lineHeight: 1.1, fontWeight: 500, marginTop: 6 }}>
+          Procedura check-in
+        </div>
+        <div className="t-13 muted" style={{ marginTop: 6 }}>Passo {i + 1} di {steps.length}</div>
+      </div>
+
+      <div style={{ padding: "20px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
+        <button style={{
+          position: "relative", overflow: "hidden", borderRadius: 22, border: "none", cursor: "pointer",
+          background: "linear-gradient(135deg, #1A1916 0%, #2F2A24 100%)",
+          color: "#fff", padding: "18px 18px", textAlign: "left", display: "flex", alignItems: "center", gap: 14,
+          boxShadow: "0 8px 24px rgba(26,25,22,0.18)"
+        }}>
+          <div style={{
+            position: "absolute", right: -20, top: -20, width: 140, height: 140,
+            borderRadius: 999, background: "radial-gradient(circle, var(--accent) 0%, transparent 70%)", opacity: 0.45
+          }} />
+          <div style={{
+            width: 52, height: 52, borderRadius: 999, flexShrink: 0,
+            background: "rgba(255,255,255,0.95)", color: "#1A1916",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.3)", position: "relative"
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4l14 8-14 8z" />
+            </svg>
+          </div>
+          <div className="grow" style={{ position: "relative" }}>
+            <div className="t-11 w-600" style={{ opacity: 0.7, letterSpacing: 0.5, textTransform: "uppercase" }}>
+              Video tutorial · 1:20
+            </div>
+            <div className="t-15 w-600" style={{ marginTop: 4, lineHeight: 1.3 }}>
+              Guarda come entrare nel loft
+            </div>
+          </div>
+          <IconChevronR size={18} stroke={2.5} style={{ position: "relative", opacity: 0.6, flexShrink: 0 }} />
+        </button>
+
+        <div style={{
+          background: "var(--surface)", borderRadius: 22, padding: "18px",
+          boxShadow: "0 4px 14px rgba(26,25,22,0.05)",
+          display: "flex", alignItems: "center", gap: 14
+        }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+            background: "var(--accent-soft)", color: "var(--accent-deep)",
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}>
+            <IconKey size={24} stroke={2} />
+          </div>
+          <div className="grow">
+            <div className="t-11 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.4 }}>
+              Cassetta n° 5
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+              <div style={{
+                fontFamily: "ui-monospace, monospace", fontSize: 26, fontWeight: 800,
+                letterSpacing: 4, color: "var(--ink)"
+              }}>0425</div>
+              <div className="t-11 muted">codice apertura</div>
+            </div>
+          </div>
+          <button onClick={() => copyCode("0425")} style={{
+            height: 38, borderRadius: 10, border: "none",
+            background: copiedCode ? "var(--ok)" : "rgba(26,25,22,0.06)",
+            color: copiedCode ? "#fff" : "var(--ink)", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0, padding: copiedCode ? "0 12px" : "0",
+            width: copiedCode ? "auto" : 38, gap: 4,
+            transition: "all .2s", fontSize: 12, fontWeight: 700,
+          }}>
+            {copiedCode ? <><IconCheck size={14} stroke={3}/> Copiato</> : <IconCopy size={16} stroke={2.2} />}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ padding: "20px 20px 0" }}>
+        <div className="t-12 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>I passaggi nel dettaglio</div>
+      </div>
+
+      <div style={{ padding: "12px 20px 0" }}>
+        <div style={{ display: "flex", gap: 4, marginBottom: 20 }}>
+          {steps.map((_, k) =>
+            <div key={k} style={{
+              flex: 1, height: 4, borderRadius: 2,
+              background: k <= i ? "var(--accent)" : "rgba(26,25,22,0.1)"
+            }} />
+          )}
+        </div>
+
+        <div className="img-placeholder" style={{ height: 200, borderRadius: 20, marginBottom: 18 }}>
+          {s.img}
+        </div>
+
+        <div className="serif" style={{ fontSize: 24, lineHeight: 1.15, fontWeight: 500 }}>
+          {s.t}
+        </div>
+        <div className="t-15 muted-2" style={{ marginTop: 10, lineHeight: 1.55 }}>
+          {s.d}
+        </div>
+      </div>
+
+      <div style={{ padding: "20px 16px 0", display: "flex", gap: 10 }}>
+        {i > 0 &&
+          <button onClick={() => setI(i - 1)} className="btn btn-ghost btn-lg" style={{ flexShrink: 0, width: 50 }}>
+            <IconChevronL size={18} stroke={2.5} />
+          </button>
+        }
+        {i < steps.length - 1 ?
+          <button onClick={() => setI(i + 1)} className="btn btn-accent btn-lg grow">
+            Fatto, avanti <IconChevronR size={16} stroke={2.5} />
+          </button> :
+          <button onClick={back} className="btn btn-accent btn-lg grow">
+            <IconCheck size={18} stroke={2.5} /> Sono dentro!
+          </button>
+        }
+      </div>
+    </div>
+  )
+}
+
+export function TransportDetail({ back, mode }) {
+  const data = {
+    train: {
+      icon: "🚆", title: "Arrivo in treno",
+      sub: "Dalla stazione di Padova al loft sono 5 minuti a piedi",
+      intro: "La stazione ferroviaria di Padova è una delle meglio collegate del nord Italia: Frecciarossa, Italo, e regionali per Venezia (25 min), Verona (50 min), Bologna (1h).",
+      sections: [
+        { t: "A piedi (5 min)", d: "Uscita principale → gira a destra in Via Trieste. Civico 25 è sul lato destro. Non puoi sbagliare." },
+        { t: "Taxi (3 min)", d: "Stazione taxi davanti all'uscita principale. Costo circa €8. Niente fila di solito." },
+        { t: "Bagagli pesanti?", d: "Davanti alla stazione ci sono carrelli portabagagli gratuiti." },
+      ],
+      cta: { label: "Orari treni Trenitalia", url: "https://www.trenitalia.com" },
+      cta2: { label: "Percorso a piedi su Maps", url: "https://www.google.com/maps/dir/?api=1&origin=Stazione+Padova&destination=Via+Trieste+25+Padova&travelmode=walking" },
+    },
+    car: {
+      icon: "🚗", title: "Arrivo in auto",
+      sub: "Uscita autostradale Padova Est, poi 12 minuti al loft",
+      intro: "Da nord/sud (A13): uscita Padova Est. Da est/ovest (A4): uscita Padova Ovest. Il quartiere è ZTL ma Via Trieste è libera per residenti.",
+      sections: [
+        { t: "Parcheggio in strada (gratuito)", d: "In Via Trieste e laterali (Via Belzoni, Via Beato Pellegrino) trovi posti gratuiti — di solito sul lato destro andando verso il loft." },
+        { t: "Parcheggio coperto (consigliato)", d: "Park Antenore, €15/giorno, 4 min a piedi. Convenzionato per i nostri ospiti." },
+        { t: "Attenzione alla ZTL", d: "Il centro storico è ZTL. Se vai oltre il loft, telecamere attive 7:30-20:00." },
+      ],
+      cta: { label: "Apri navigazione su Maps", url: "https://www.google.com/maps/dir/?api=1&destination=Via+Trieste+25+Padova&travelmode=driving" },
+      cta2: { label: "Convenzione Park Antenore", url: "https://www.parkantenore.it" },
+    },
+    bus: {
+      icon: "🚌", title: "Bus & tram",
+      sub: "Rete BusItalia Veneto · biglietto €1.50",
+      intro: "La fermata Trieste è a 100 metri dal loft. Il tram T1 e diverse linee bus collegano il centro storico, la stazione e i quartieri.",
+      sections: [
+        { t: "Dal centro storico", d: "Tram T1 fermata Eremitani → Trieste (4 min, ogni 7 min)" },
+        { t: "Dalla stazione", d: "Tram T1 verso sud, fermata Trieste (2 min)" },
+        { t: "App mobile", d: "Compra il biglietto con l'app DropTicket. Valido 75 min." },
+        { t: "Biglietto giornaliero", d: "€4 per tutta la giornata — conviene se prevedi di muoverti molto." },
+      ],
+      cta: { label: "Orari BusItalia", url: "https://www.fsbusitalia.it/content/fsbusitalia/it/veneto" },
+      cta2: { label: "Scarica DropTicket", url: "https://www.dropticket.it" },
+    },
+  }
+  const d = data[mode] || data.train
+  return (
+    <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
+      <NavBar back={back} title="Come arrivare" />
+      <div style={{ padding: "0 20px" }}>
+        <div style={{ fontSize: 52, lineHeight: 1, marginBottom: 12 }}>{d.icon}</div>
+        <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500, letterSpacing: -0.02 }}>
+          {d.title}
+        </div>
+        <div className="t-14 muted-2" style={{ marginTop: 10, lineHeight: 1.55 }}>{d.sub}</div>
+      </div>
+
+      <div style={{ padding: "20px 20px 0" }}>
+        <div className="t-15" style={{ lineHeight: 1.6, color: "var(--ink-2)" }}>{d.intro}</div>
+      </div>
+
+      <div style={{ padding: "24px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
+        {d.sections.map((s, i) =>
+          <div key={i} className="card" style={{ padding: 16 }}>
+            <div className="t-15 w-600">{s.t}</div>
+            <div className="t-13 muted-2" style={{ marginTop: 6, lineHeight: 1.55 }}>{s.d}</div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: "24px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
+        <a href={d.cta.url} target="_blank" rel="noreferrer" className="btn btn-accent btn-lg btn-full">
+          {d.cta.label} →
+        </a>
+        <a href={d.cta2.url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-lg btn-full">
+          {d.cta2.label}
+        </a>
+      </div>
+    </div>
+  )
+}
+
+export function Checkin({ back }) {
+  const steps = CHECKIN_STEPS
+  const [i, setI] = React.useState(0)
+  const s = steps[i]
+
+  return (
+    <div className="screen-scroll page-enter" style={{ paddingBottom: 30 }}>
+      <NavBar back={back} title={`Passo ${i + 1} di ${steps.length}`} />
+
+      <div style={{ padding: "0 20px" }}>
+        <div style={{ display: "flex", gap: 4, marginBottom: 24 }}>
+          {steps.map((_, k) =>
+            <div key={k} style={{
+              flex: 1, height: 4, borderRadius: 2,
+              background: k <= i ? "var(--accent)" : "rgba(26,25,22,0.1)"
+            }} />
+          )}
+        </div>
+
+        <div className="img-placeholder" style={{ height: 220, borderRadius: 20, marginBottom: 20 }}>
+          {s.img}
+        </div>
+
+        <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500, letterSpacing: -0.02 }}>
+          {s.t}
+        </div>
+        <div className="t-15 muted-2" style={{ marginTop: 14, lineHeight: 1.55 }}>
+          {s.d}
+        </div>
+      </div>
+
+      <div style={{ padding: "32px 16px 0", display: "flex", gap: 10 }}>
+        {i > 0 &&
+          <button onClick={() => setI(i - 1)} className="btn btn-ghost btn-lg" style={{ flexShrink: 0, width: 50 }}>
+            <IconChevronL size={18} stroke={2.5} />
+          </button>
+        }
+        {i < steps.length - 1 ?
+          <button onClick={() => setI(i + 1)} className="btn btn-accent btn-lg grow">
+            Fatto, avanti <IconChevronR size={16} stroke={2.5} />
+          </button> :
+          <button onClick={back} className="btn btn-accent btn-lg grow">
+            <IconCheck size={18} stroke={2.5} /> Sono dentro!
+          </button>
+        }
+      </div>
+    </div>
+  )
+}

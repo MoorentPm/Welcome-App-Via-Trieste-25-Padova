@@ -1,0 +1,8 @@
+export { NavBar } from './NavBar'
+export { Checkin, ArrivalCheckin, TransportDetail } from './Checkin'
+export { Checkout } from './Checkout'
+export { House, Wifi, Appliance } from './House'
+export { Places, PlaceDetail } from './Places'
+export { Coupons, CouponDetail } from './Coupons'
+export { Host, DailyTip } from './Concierge'
+export { Review, About } from './Misc'
