@@ -1,2 +1,18 @@
 node_modules/
 dist/
+
+# Claude Code / project management — not part of the app
+CLAUDE.md
+PROJECT.md
+*.patch
+
+# Legacy pre-Vite files (active code is in src/)
+app.jsx
+home.jsx
+icons.jsx
+ios-frame.jsx
+login.jsx
+padova.jsx
+screens.jsx
+data.js
+styles.css
