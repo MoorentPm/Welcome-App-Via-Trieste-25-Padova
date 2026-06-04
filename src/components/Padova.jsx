@@ -142,36 +142,46 @@ function makeNumberedPin(num, tint) {
 
 export const ItineraryLeafletMap = React.memo(function ItineraryLeafletMap({ steps }) {
   const containerRef = React.useRef(null)
-  const mapRef = React.useRef(null)
+  const mapRef    = React.useRef(null)
+  const layersRef = React.useRef([])
 
+  // Init map once — never destroyed on step changes
   React.useEffect(() => {
-    if (!containerRef.current) return
-    if (mapRef.current) { mapRef.current.remove(); mapRef.current = null }
-
-    const valid = steps.filter(s => s.coord)
-    if (valid.length === 0) return
-
+    if (mapRef.current || !containerRef.current) return
     const map = L.map(containerRef.current, {
       zoomControl: false, attributionControl: false,
       dragging: false, scrollWheelZoom: false,
       doubleClickZoom: false, touchZoom: false, keyboard: false,
     })
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
-    map.fitBounds(L.latLngBounds(valid.map(s => s.coord)), { padding: [32, 32] })
+    mapRef.current = map
+    return () => { map.remove(); mapRef.current = null }
+  }, [])
+
+  // Update markers/polyline when steps change — no map destroy
+  React.useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    layersRef.current.forEach(l => l.remove())
+    layersRef.current = []
+
+    const valid = steps.filter(s => s.coord)
+    if (valid.length === 0) return
 
     valid.forEach((s, i) => {
-      L.marker(s.coord, { icon: makeNumberedPin(i + 1, s.tint), interactive: false }).addTo(map)
+      const m = L.marker(s.coord, { icon: makeNumberedPin(i + 1, s.tint), interactive: false }).addTo(map)
+      layersRef.current.push(m)
     })
 
     if (valid.length > 1) {
-      L.polyline(valid.map(s => s.coord), {
+      const line = L.polyline(valid.map(s => s.coord), {
         color: '#C27248', weight: 2, dashArray: '5 6', opacity: 0.75
       }).addTo(map)
+      layersRef.current.push(line)
+      map.fitBounds(line.getBounds(), { padding: [32, 32], animate: false })
+    } else if (valid.length === 1) {
+      map.setView(valid[0].coord, 15, { animate: false })
     }
-
-    mapRef.current = map
-    return () => { map.remove(); mapRef.current = null }
   }, [steps])
 
   return <div ref={containerRef} style={{ position: 'absolute', inset: 0, isolation: 'isolate', overflow: 'hidden' }} />

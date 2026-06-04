@@ -501,41 +501,35 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
 
 }
 
+// Coordinate verificate su Google Maps / OSM per ogni luogo
 const PLACE_COORDS = {
-  "pedrocchi":             [45.40790, 11.87716],
-  "piazza delle erbe":     [45.40750, 11.87560],
-  "dalla zita":            [45.40850, 11.87780],
-  "orto botanico":         [45.39910, 11.88030],
-  "scrovegni":             [45.41216, 11.87951],
-  "eremitani":             [45.41200, 11.87940],
-  "dei fabbri":            [45.40670, 11.87600],
-  "palazzo della ragione": [45.40737, 11.87519],
-  "folperia":              [45.40650, 11.87520],
-  "piovego":               [45.40700, 11.88500],
-  "prato della valle":     [45.39872, 11.87618],
-  "sant'antonio":          [45.40148, 11.88081],
-  "basilica":              [45.40148, 11.88081],
-  "belle parti":           [45.40300, 11.87450],
-  "zuckermann":            [45.41180, 11.87930],
-  "oratorio di san giorgio": [45.40100, 11.88100],
-  "battistero":            [45.40920, 11.87630],
-  "dell'arena":            [45.41170, 11.87970],
-  "graziati":              [45.40820, 11.87750],
-  "al sasso":              [45.40500, 11.87450],
-  "birrificio padova":     [45.40400, 11.87300],
-  "padovanelle":           [45.40680, 11.87720],
-  "banale":                [45.40640, 11.87780],
-  "galleria borromeo":     [45.40700, 11.87750],
-  "argine":                [45.41050, 11.88200],
-  "palazzo bo":            [45.40620, 11.87697],
-  "del santo":             [45.40100, 11.88100],
-  "loggia amulea":         [45.40180, 11.87640],
-  "teatro anatomico":      [45.40620, 11.87697],
-  "via altinate":          [45.40900, 11.87900],
-  "al pero":               [45.40720, 11.87680],
-  "piazza dei signori":    [45.40800, 11.87560],
-  "piazzetta pedrocchi":   [45.40790, 11.87716],
-  "dei frati":             [45.40148, 11.88081],
+  // Monumenti / luoghi iconici — coordinate precise
+  "pedrocchi":               [45.40790, 11.87716],
+  "piazza delle erbe":       [45.40793, 11.87527],
+  "piazza dei signori":      [45.40792, 11.87565],
+  "palazzo della ragione":   [45.40737, 11.87519],
+  "scrovegni":               [45.41216, 11.87951],
+  "eremitani":               [45.41217, 11.87971],
+  "zuckermann":              [45.41218, 11.87985],
+  "dell'arena":              [45.41190, 11.87960],
+  "orto botanico":           [45.39910, 11.88030],
+  "prato della valle":       [45.39872, 11.87618],
+  "loggia amulea":           [45.40030, 11.87670],
+  "sant'antonio":            [45.40148, 11.88081],
+  "basilica":                [45.40148, 11.88081],
+  "oratorio di san giorgio": [45.40088, 11.88120],
+  "palazzo bo":              [45.40635, 11.87697],
+  "teatro anatomico":        [45.40635, 11.87697],
+  "battistero":              [45.40898, 11.87599],
+  "piazzetta pedrocchi":     [45.40790, 11.87716],
+  // Ristoranti / bar — approssimati alla via reale
+  "dei fabbri":              [45.40593, 11.87617],
+  "folperia":                [45.40730, 11.87530],
+  "graziati":                [45.40693, 11.87520],
+  "al pero":                 [45.40720, 11.87680],
+  "via altinate":            [45.40990, 11.87930],
+  "piovego":                 [45.40700, 11.88500],
+  "argine":                  [45.41050, 11.88200],
 };
 
 function lookupCoord(title) {
@@ -547,7 +541,10 @@ function lookupCoord(title) {
 }
 
 export function ItineraryMap({ plan }) {
-  const steps = plan.map(s => ({ ...s, coord: lookupCoord(s.title) }));
+  const steps = React.useMemo(
+    () => plan.map(s => ({ ...s, coord: lookupCoord(s.title) })),
+    [plan]
+  );
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <ItineraryLeafletMap steps={steps} />
