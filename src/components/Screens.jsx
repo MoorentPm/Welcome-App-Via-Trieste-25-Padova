@@ -1628,6 +1628,11 @@ export function DailyTip({ back, go }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState(false);
 
+  // Starts at a time-based offset, then advances +1 on each "Dammene un altro"
+  const staticIdxRef = React.useRef(
+    (() => { const n = new Date(); return (n.getHours() + n.getDay()) % 6; })()
+  );
+
   const STATIC_TIPS = [
     { title: "Caffè al Pedrocchi", subtitle: "Il caffè 'senza porte' dal 1831 · 7 min a piedi", body: "Ordina un caffè alla menta — è la loro specialità storica. Non è sul menu standard, chiedi al banco. L'atmosfera è quella di sempre, immutabile.", tag: "Iconico", emoji: "☕" },
     { title: "Prato della Valle", subtitle: "La piazza più grande d'Europa · 8 min a piedi", body: "82 statue, un'isola verde al centro, e tantissimi padovani in giro. Perfetto in qualsiasi ora. Portati qualcosa da mangiare e siediti sull'erba.", tag: "Piazza", emoji: "🌿" },
@@ -1641,8 +1646,8 @@ export function DailyTip({ back, go }) {
     setLoading(true); setErr(false);
     try {
       if (!window.claude?.complete) {
-        const now = new Date();
-        const idx = (now.getHours() + now.getDay()) % STATIC_TIPS.length;
+        const idx = staticIdxRef.current;
+        staticIdxRef.current = (idx + 1) % STATIC_TIPS.length;
         await new Promise(r => setTimeout(r, 600));
         setTip(STATIC_TIPS[idx]);
         return;
@@ -1681,8 +1686,8 @@ Solo JSON, nessun altro testo.`
         setTip({ title: "Un giro per il centro", subtitle: "Adesso è un buon momento", body: reply, tag: "Padova", emoji: "✨" });
       }
     } catch (e) {
-      const now = new Date();
-      const idx = (now.getHours() + now.getDay()) % STATIC_TIPS.length;
+      const idx = staticIdxRef.current;
+      staticIdxRef.current = (idx + 1) % STATIC_TIPS.length;
       setTip(STATIC_TIPS[idx]);
     } finally {
       setLoading(false);
