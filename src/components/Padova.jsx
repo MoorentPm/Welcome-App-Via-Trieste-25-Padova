@@ -84,7 +84,7 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
 }
 
 // ─── Coordinate reali Padova ───
-const APT = [45.4064, 11.8768] // Via Trieste 25
+const APT = [45.414239079177634, 11.878254110197757] // Via Trieste 25, Padova
 
 const POI = [
   { id: "scrovegni", name: "Scrovegni",    coord: [45.4126, 11.8798], tag: "Arte",    dist: "12 min" },
