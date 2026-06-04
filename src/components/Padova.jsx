@@ -256,7 +256,7 @@ export default function Padova({ go }) {
 
   // ── Selezione pin: auto-raise se lo sheet è nascosto ──
   const handlePinSelect = React.useCallback((id) => {
-    setSelected(id)
+    setSelected(prev => prev === id ? null : id)
     setSheetH(h => h < SNAP_MID ? SNAP_MID : h)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -343,8 +343,29 @@ export default function Padova({ go }) {
 
         {/* ── ZONA SCROLL — bottoni e card, non interferisce col drag ── */}
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-          {sheetH >= SNAP_FULL - 20 ? (
-            /* Sheet completamente aperto: mostra "Da non perdere" */
+          {sel ? (
+            /* POI selezionato: mostra sempre i dettagli, qualunque sia l'altezza dello sheet */
+            <div style={{ padding: '0 20px 16px' }}>
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <button
+                  onClick={() => go('place', PLACES.find(p => p.id === sel.id) || sel)}
+                  className="btn btn-accent grow"
+                >Scopri di più</button>
+                <button
+                  className="btn btn-ghost"
+                  style={{ width: 50 }}
+                  onClick={() => {
+                    const place = PLACES.find(p => p.id === sel.id)
+                    const url = place?.maps_url || `https://maps.google.com/?q=${encodeURIComponent(sel.name + ', Padova')}`
+                    window.open(url, '_blank', 'noopener,noreferrer')
+                  }}
+                >
+                  <IconMap size={18} stroke={2}/>
+                </button>
+              </div>
+            </div>
+          ) : sheetH >= SNAP_FULL - 20 ? (
+            /* Sheet completamente aperto (nessuna selezione): mostra "Da non perdere" */
             <div style={{ padding: '4px 20px 16px' }}>
               <button onClick={() => { setSheetH(SNAP_MID); setSelected(null); }}
                 style={{
@@ -398,26 +419,6 @@ export default function Padova({ go }) {
                       </button>
                     )
                   })}
-              </div>
-            </div>
-          ) : sel ? (
-            <div style={{ padding: '0 20px 16px' }}>
-              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                <button
-                  onClick={() => go('place', PLACES.find(p => p.id === sel.id) || sel)}
-                  className="btn btn-accent grow"
-                >Scopri di più</button>
-                <button
-                  className="btn btn-ghost"
-                  style={{ width: 50 }}
-                  onClick={() => {
-                    const place = PLACES.find(p => p.id === sel.id)
-                    const url = place?.maps_url || `https://maps.google.com/?q=${encodeURIComponent(sel.name + ', Padova')}`
-                    window.open(url, '_blank', 'noopener,noreferrer')
-                  }}
-                >
-                  <IconMap size={18} stroke={2}/>
-                </button>
               </div>
             </div>
           ) : (
