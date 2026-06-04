@@ -1,7 +1,7 @@
 import React from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { PLACES } from '../data'
+import { APARTMENT, PLACES } from '../data'
 import { IconMap, IconHeart } from './Icons'
 
 const FAV_STORAGE = "elegant-loft-favorites"
@@ -83,8 +83,8 @@ export function MapBg({ pins = [], path = null, selected, onPin, userPin, number
   )
 }
 
-// ─── Coordinate reali Padova ───
-const APT = [45.414239079177634, 11.878254110197757] // Via Trieste 25, Padova
+// ─── Coordinate appartamento — definite in data.js ───
+const APT = APARTMENT.coords
 
 const POI = [
   { id: "scrovegni", name: "Scrovegni",    coord: [45.41187, 11.87952], tag: "Arte",    dist: "12 min" },
@@ -312,7 +312,7 @@ export default function Padova({ go }) {
   const SNAP_FULL_VAL = React.useMemo(() => getSnapFull(), [])
   React.useEffect(() => {
     if (sheetH >= SNAP_FULL_VAL - 20) setFavs(readFavs())
-  }, [sheetH >= SNAP_FULL_VAL - 20]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sheetH, SNAP_FULL_VAL])
 
   // ── Selezione pin: auto-raise se lo sheet è nascosto ──
   const handlePinSelect = React.useCallback((id) => {

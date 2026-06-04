@@ -7,7 +7,7 @@ import {
 import { ItineraryLeafletMap } from './Padova'
 import {
   APARTMENT as AP, CHECKIN_STEPS, CHECKOUT_STEPS,
-  HOUSE_RULES, APPLIANCES, FAQ, MOODS, PLACES, EMERGENCY,
+  HOUSE_RULES, APPLIANCES, FAQ, MOODS, PLACES, EMERGENCY, COUPONS_RICH,
 } from '../data'
 
 
@@ -1255,7 +1255,7 @@ function CollapsibleSection({ title, sub, icon, open, onToggle, children }) {
 // ─────────────────────────────────────────────────────
 // APPLIANCE detail — video + description + steps
 // ─────────────────────────────────────────────────────
-export function Appliance({ back, item }) {
+export function Appliance({ back, item, go }) {
   const a = item || APPLIANCES[0];
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
@@ -1330,7 +1330,7 @@ export function Appliance({ back, item }) {
 
       <div style={{ padding: "20px 20px 0" }}>
         <div className="t-13 muted" style={{ lineHeight: 1.5 }}>
-          Non funziona? <button onClick={() => null} style={{ background: "none", border: "none", color: "var(--accent)", fontWeight: 600, cursor: "pointer", padding: 0 }}>Scrivi al Concierge</button>
+          Non funziona? <button onClick={() => go?.("host")} style={{ background: "none", border: "none", color: "var(--accent)", fontWeight: 600, cursor: "pointer", padding: 0 }}>Scrivi al Concierge</button>
         </div>
       </div>
     </div>);
@@ -1723,7 +1723,10 @@ export function DailyTip({ back, go }) {
       const dayName = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][now.getDay()];
       const month = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"][now.getMonth()];
 
-      const reply = await window.claude.complete({
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 10000)
+      );
+      const reply = await Promise.race([window.claude.complete({
         messages: [{
           role: "user",
           content: `Sei un amico padovano che dà UN solo consiglio breve e ispirante su cosa fare a Padova ORA.
@@ -1741,12 +1744,16 @@ Rispondi in formato JSON valido:
 }
 Solo JSON, nessun altro testo.`
         }]
-      });
+      }), timeout]);
 
       const match = reply.match(/\{[\s\S]*\}/);
       if (match) {
-        const data = JSON.parse(match[0]);
-        setTip(data);
+        try {
+          const data = JSON.parse(match[0]);
+          setTip(data);
+        } catch {
+          setTip({ title: "Un giro per il centro", subtitle: "Adesso è un buon momento", body: reply, tag: "Padova", emoji: "✨" });
+        }
       } else {
         setTip({ title: "Un giro per il centro", subtitle: "Adesso è un buon momento", body: reply, tag: "Padova", emoji: "✨" });
       }
@@ -1821,7 +1828,7 @@ Solo JSON, nessun altro testo.`
 
           {/* Another tip */}
           <div style={{ padding: "16px 16px 0" }}>
-            <button onClick={fetchTip} className="btn btn-ghost btn-lg btn-full">
+            <button onClick={fetchTip} disabled={loading} className="btn btn-ghost btn-lg btn-full">
               <IconSparkle size={18} stroke={2}/> Dammene un altro
             </button>
           </div>
@@ -2013,53 +2020,6 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
 
 }
 
-// COUPONS data — multi-language, rich
-const COUPONS_RICH = [
-{
-  id: "graziati",
-  shop: "Pasticceria Graziati",
-  deal: { it: "-10% su tutto", en: "-10% on everything", de: "-10% auf alles", fr: "-10% sur tout" },
-  meta: { it: "Mostra l'app in cassa", en: "Show the app at the till", de: "App an der Kasse zeigen", fr: "Présente l'app en caisse" },
-  address: "Piazza della Frutta, 39 — Padova",
-  desc: {
-    it: "Storica pasticceria padovana dal 1919. Cinque generazioni di dolciumi, caffè e cioccolato fatto a mano. La sfogliatina è leggendaria.",
-    en: "Historic Padovan pâtisserie since 1919. Five generations of pastries, coffee and hand-made chocolate. The 'sfogliatina' is legendary.",
-    de: "Historische Konditorei in Padua seit 1919. Fünf Generationen handgemachtes Gebäck. Die 'sfogliatina' ist legendär.",
-    fr: "Pâtisserie historique de Padoue depuis 1919. Cinq générations de pâtisseries faites main. La 'sfogliatina' est légendaire."
-  },
-  code: "ELEGANT10",
-  tint: "#C99E6E"
-},
-{
-  id: "fabbri",
-  shop: "Osteria dei Fabbri",
-  deal: { it: "Calice di vino omaggio", en: "Free glass of wine", de: "Glas Wein gratis", fr: "Verre de vin offert" },
-  meta: { it: "Con menu degustazione", en: "With tasting menu", de: "Mit Degustationsmenü", fr: "Avec menu dégustation" },
-  address: "Via dei Fabbri, 13 — Padova",
-  desc: {
-    it: "Trattoria veneta autentica. Bigoli all'anatra, baccalà, vini della zona. Atmosfera familiare.",
-    en: "Authentic Venetian trattoria. Duck bigoli, cod, local wines. Family atmosphere.",
-    de: "Authentische venezianische Trattoria. Familiäre Atmosphäre.",
-    fr: "Trattoria vénitienne authentique. Atmosphère familiale."
-  },
-  code: "FABBRI-LOFT",
-  tint: "#7A5A3F"
-},
-{
-  id: "bike",
-  shop: "Bike Rental Padova",
-  deal: { it: "-20% sul noleggio", en: "-20% on rental", de: "-20% beim Mieten", fr: "-20% sur la location" },
-  meta: { it: "Solo giorni feriali", en: "Weekdays only", de: "Nur Werktage", fr: "Uniquement en semaine" },
-  address: "Via Niccolò Tommaseo — Padova",
-  desc: {
-    it: "Bici di città, e-bike, mountain bike. Padova è piattissima e ha 150 km di piste ciclabili.",
-    en: "City bikes, e-bikes, mountain bikes. Padua is flat with 150 km of bike paths.",
-    de: "Citybikes, E-Bikes, Mountainbikes. Padua ist flach mit 150 km Radwegen.",
-    fr: "Vélos de ville, électriques, VTT. Padoue est plate avec 150 km de pistes cyclables."
-  },
-  code: "LOFT-BIKE-20",
-  tint: "#4A7C5A"
-}];
 
 
 // ─────────────────────────────────────────────────────
@@ -2484,7 +2444,7 @@ export function About({ back }) {
           }}>
             Visita {AP.website} <IconChevronR size={16} stroke={2.5} />
           </a>
-          <a href="mailto:info@moorent.it" style={{
+          <a href="mailto:hello@moorentpm.it" style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             background: "#f3dfd9", color: "#232323", padding: "16px 22px",
             borderRadius: 14, fontSize: 15, fontWeight: 700, textDecoration: "none"

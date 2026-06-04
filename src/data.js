@@ -5,6 +5,7 @@ export const APARTMENT = {
   name: "Elegant Loft",
   city: "Padova",
   address: "Via Trieste, 25 — Padova",
+  coords: [45.414239079177634, 11.878254110197757],
   host: { name: "Mattia", phone: "+39 351 988 6489", avatar: "M" },
   wifi: { ssid: "ElegantLoft_WIFI", password: "Civico25" },
   checkin: { from: "15:00", to: "22:00" },
@@ -200,10 +201,3 @@ export const COUPONS_RICH = [
   }
 ];
 
-// Used by the "Oggi" feed — time-aware copy
-export const getGreeting = () => {
-  const h = new Date().getHours();
-  if (h < 12) return "Buongiorno";
-  if (h < 18) return "Buon pomeriggio";
-  return "Buonasera";
-};

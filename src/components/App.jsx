@@ -133,7 +133,7 @@ export default function App() {
     case 'checkout':       screen = <Checkout back={back} go={go} />; break
     case 'wifi':           screen = <Wifi back={back} />; break
     case 'house':          screen = <House back={back} go={go} />; break
-    case 'appliance':      screen = <Appliance back={back} item={route.params} />; break
+    case 'appliance':      screen = <Appliance back={back} item={route.params} go={go} />; break
     case 'arrival':
     case 'arrival_checkin': screen = <ArrivalCheckin back={back} go={go} />; break
     case 'transport':      screen = <TransportDetail back={back} mode={route.params} />; break
