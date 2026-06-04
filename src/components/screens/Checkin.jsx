@@ -161,9 +161,10 @@ export function ArrivalCheckin({ back, go }) {
           )}
         </div>
 
-        <div className="img-placeholder" style={{ height: 200, borderRadius: 20, marginBottom: 18 }}>
-          {s.img}
-        </div>
+        {s.photo
+          ? <img src={s.photo} alt={s.t} style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 20, marginBottom: 18, display: "block" }} />
+          : <div className="img-placeholder" style={{ height: 200, borderRadius: 20, marginBottom: 18 }}>{s.img}</div>
+        }
 
         <div className="serif" style={{ fontSize: 24, lineHeight: 1.15, fontWeight: 500 }}>
           {s.t}
@@ -288,9 +289,10 @@ export function Checkin({ back }) {
           )}
         </div>
 
-        <div className="img-placeholder" style={{ height: 220, borderRadius: 20, marginBottom: 20 }}>
-          {s.img}
-        </div>
+        {s.photo
+          ? <img src={s.photo} alt={s.t} style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 20, marginBottom: 20, display: "block" }} />
+          : <div className="img-placeholder" style={{ height: 220, borderRadius: 20, marginBottom: 20 }}>{s.img}</div>
+        }
 
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500, letterSpacing: -0.02 }}>
           {s.t}

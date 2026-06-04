@@ -12,6 +12,9 @@ import imgPalazzoBo  from './assets/places/palazzo_bo.jpg'
 import imgEremitani  from './assets/places/eremitani.jpg'
 import imgBattistero from './assets/places/battistero.jpg'
 
+import imgCheckinFacciata from './assets/checkin/facciata.jpg'
+import imgCheckinInterno  from './assets/checkin/interno.jpg'
+
 export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
          imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione }
 
@@ -82,11 +85,11 @@ export const PLACES = [
 ];
 
 export const CHECKIN_STEPS = [
-  { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", img: "Foto: facciata" },
+  { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", img: "Foto: facciata", photo: imgCheckinFacciata },
   { t: "Portone esterno",          d: "Codice 25#. Premi a fondo fino al click.",            img: "Foto: portone" },
   { t: "Cassetta",                 d: "Prendi le chiavi dalla cassetta 5. Codice 0425.",     img: "Foto: cassetta" },
   { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. Porta con targhetta 'Elegant Loft'.", img: "Foto: porta" },
-  { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          img: "Foto: interno" },
+  { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          img: "Foto: interno", photo: imgCheckinInterno },
 ];
 
 export const HOUSE_RULES = [
