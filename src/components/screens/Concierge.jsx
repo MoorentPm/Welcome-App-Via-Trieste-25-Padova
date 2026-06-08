@@ -344,7 +344,7 @@ User: "Qual è la password wifi?"
 {"answer":"Rete: ElegantLoft_WIFI, password: Civico25 📶","screens":["wifi"],"contactHost":false}
 
 User: "Come faccio il check-in?"
-{"answer":"Portone: codice 25#. Poi trova la cassetta n°5 sul cancello a destra, codice 0425. Secondo piano, porta con lo zerbino grigio. Nell'app hai tutti i dettagli con le foto! 🔑","screens":["checkin"],"contactHost":false}
+{"answer":"Portone: codice 25#. Poi trova la cassetta n°5, codice 0425 — ti apre le chiavi di casa. Nell'app hai tutti i dettagli! 🔑","screens":["checkin"],"contactHost":false}
 
 User: "A che ora devo fare il checkout?"
 {"answer":"Entro le 10:00. Lascia le chiavi nella cassetta n°5 (codice 0425), porta accostata. La lista completa di tutto da fare è nell'app.","screens":["checkout"],"contactHost":false}
@@ -380,14 +380,27 @@ User: "C'è uno sconto da qualche parte?"
 {"answer":"Sì! Hai 3 coupon esclusivi nell'app: -10% alla Pasticceria Graziati (codice ELEGANT10), calice omaggio all'Osteria dei Fabbri (FABBRI-LOFT), e -20% da Bike Rental Padova (LOFT-BIKE-20). 🎫","screens":["coupons"],"contactHost":false}
 
 User: "What time is check-in?"
-{"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}`
+{"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}
+
+User: "Qual è la tassa di soggiorno?"
+{"answer":"€3 a persona a notte, max 5 notti. Si paga in contanti al momento del check-in.","screens":["checkin"],"contactHost":false}
+
+User: "Quando devo fare il checkout?" (se chiede la DATA specifica del suo soggiorno, non l'orario)
+{"answer":"Il checkout è entro le 10:00. Per la tua data esatta di uscita, controlla le informazioni del soggiorno che ti ha inviato Mattia, oppure chiedile direttamente a lui.","screens":["checkout"],"contactHost":false}
+
+User: "Ho perso le chiavi"
+{"answer":"Contatta subito Mattia al +39 351 988 6489! Nel frattempo, ricontrolla bene giacche e borse — capita spesso. Se le hai perse davvero, Mattia ti aiuterà. 🔑","screens":["checkin"],"contactHost":true}`
+  }
+
+  const detectContactHost = (userText) => {
+    return /perso.*chiav|chiav.*perse|guasto|rotto|non funziona|allagat|emergenz|mi sento male|medico|ospedale|incendio|urgenz|aiuto urgente/i.test(userText)
   }
 
   const detectScreens = (userText) => {
     const t = userText.toLowerCase()
     const found = []
-    if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir|treno|stazion|bus|tram|auto|macchina|taxi|parcheggio|a\s*piedi|transport|train|car|come.*arrivare|how.*get/.test(t)) found.push('checkin')
-    if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart/.test(t)) found.push('checkout')
+    if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir|treno|stazion|bus|tram|auto|macchina|taxi|parcheggio|a\s*piedi|transport|train|car|come.*arrivare|how.*get|tassa.*soggior|soggior.*tassa|perso.*chiav|chiav.*perse/.test(t)) found.push('checkin')
+    if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart|che.*ora.*lasc|lasc.*appartam/.test(t)) found.push('checkout')
     if (/wi.?fi|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
     if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router/.test(t)) found.push('house')
     if (/regol|vietat|rumore|fumo|animali|norme/.test(t)) found.push('house')
@@ -431,25 +444,34 @@ User: "What time is check-in?"
     setDraft("")
     setTyping(true)
 
-    try {
+    const attempt = () => {
       const conversation = newMsgs.slice(-6).map(m => ({
         role: m.from === "me" ? "user" : "assistant",
         content: m.text,
       }))
-      const raw = await callConcierge({
-        messages: conversation,
-        system: buildSystemPrompt(),
-      })
-      const { text: answer, screens: modelScreens, contactHost } = parseReply(raw)
-      // If model didn't suggest screens, detect them from the user's question
+      return callConcierge({ messages: conversation, system: buildSystemPrompt() })
+    }
+
+    try {
+      let raw
+      try {
+        raw = await attempt()
+      } catch {
+        await new Promise(r => setTimeout(r, 1800))
+        raw = await attempt()
+      }
+      const { text: answer, screens: modelScreens, contactHost: modelContactHost } = parseReply(raw)
       const screens = modelScreens.length > 0 ? modelScreens : detectScreens(text)
+      const contactHost = modelContactHost || detectContactHost(text)
       setMsgs(m => [...m, { from: "ai", text: answer.trim() || "Scusa, riprova 🙏", screens, contactHost }])
     } catch {
+      const screens = detectScreens(text)
       setMsgs(m => [...m, {
         from: "ai",
         text: "Ops, problema di connessione. Riprova, o scrivi a Mattia al +39 351 988 6489.",
-        screens: [],
+        screens,
         contactHost: true,
+        retryText: text,
       }])
     } finally {
       setTyping(false)
@@ -513,6 +535,17 @@ User: "What time is check-in?"
               whiteSpace: "pre-wrap"
             }}>{m.text}</div>
 
+            {/* Retry button on error */}
+            {m.from === "ai" && m.retryText && (
+              <button onClick={() => send(m.retryText)} disabled={typing} style={{
+                alignSelf: "flex-start", padding: "6px 14px", borderRadius: 999,
+                background: "rgba(26,25,22,0.06)", border: "none", cursor: "pointer",
+                fontSize: 13, fontWeight: 600, color: "var(--ink-2)",
+              }}>
+                ↩ Riprova
+              </button>
+            )}
+
             {/* Contact host buttons */}
             {m.from === "ai" && m.contactHost && (
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -525,7 +558,7 @@ User: "What time is check-in?"
                 }}>
                   📞 Chiama Mattia
                 </a>
-                <a href={`https://wa.me/${AP.host.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Ciao Mattia, sono ${name} ospite di Elegant Loft. Ho bisogno di aiuto.`)}`}
+                <a href={`https://wa.me/${AP.host.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Ciao Mattia, sono ${name === 'Ospite' ? 'un ospite' : name + ', ospite'} di Elegant Loft. Ho bisogno di aiuto.`)}`}
                   target="_blank" rel="noopener noreferrer"
                   style={{
                     display: "inline-flex", alignItems: "center", gap: 6,
