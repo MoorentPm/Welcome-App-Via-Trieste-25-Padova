@@ -311,7 +311,7 @@ export function About({ back }) {
               background: "rgba(255,255,255,0.1)", borderRadius: 20, overflow: "hidden"
             }}>
               {[
-                { n: "40+", l: "Appartamenti" },
+                { n: "10+", l: "Appartamenti" },
                 { n: "4.9", l: "Su 5 stelle" },
                 { n: "98%", l: "Occupazione" },
               ].map((s) =>
