@@ -1,25 +1,25 @@
 // data.js — Elegant Loft, Padova
 // Copy in warm "local friend" tone, multilingua-ready structure.
 
-import imgScrovegni  from './assets/places/scrovegni.jpg'
-import imgPrato      from './assets/places/prato.jpg'
-import imgOrto       from './assets/places/orto.jpg'
-import imgBasilica   from './assets/places/basilica.jpg'
-import imgPedrocchi  from './assets/places/pedrocchi.jpg'
-import imgRagione    from './assets/places/ragione.jpg'
-import imgPiazzaErbe from './assets/places/piazza_erbe.jpg'
-import imgPalazzoBo  from './assets/places/palazzo_bo.jpg'
-import imgEremitani  from './assets/places/eremitani.jpg'
-import imgBattistero from './assets/places/battistero.jpg'
+import imgScrovegni  from './assets/places/scrovegni.webp'
+import imgPrato      from './assets/places/prato.webp'
+import imgOrto       from './assets/places/orto.webp'
+import imgBasilica   from './assets/places/basilica.webp'
+import imgPedrocchi  from './assets/places/pedrocchi.webp'
+import imgRagione    from './assets/places/ragione.webp'
+import imgPiazzaErbe from './assets/places/piazza_erbe.webp'
+import imgPalazzoBo  from './assets/places/palazzo_bo.webp'
+import imgEremitani  from './assets/places/eremitani.webp'
+import imgBattistero from './assets/places/battistero.webp'
 
-import imgViaDelSanto  from './assets/places/via_del_santo.jpg'
-import imgCalandre     from './assets/places/calandre.jpg'
-import imgColliEuganei from './assets/places/colli_euganei.jpg'
-import imgAbanoTerme   from './assets/places/abano_terme.jpg'
-import imgBacchiglione from './assets/places/bacchiglione.jpg'
+import imgViaDelSanto  from './assets/places/via_del_santo.webp'
+import imgCalandre     from './assets/places/calandre.webp'
+import imgColliEuganei from './assets/places/colli_euganei.webp'
+import imgAbanoTerme   from './assets/places/abano_terme.webp'
+import imgBacchiglione from './assets/places/bacchiglione.webp'
 
-import imgCheckinFacciata from './assets/checkin/facciata.jpg'
-import imgCheckinInterno  from './assets/checkin/interno.jpg'
+import imgCheckinFacciata from './assets/checkin/facciata.webp'
+import imgCheckinInterno  from './assets/checkin/interno.webp'
 
 export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
          imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
