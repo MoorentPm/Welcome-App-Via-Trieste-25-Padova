@@ -18,13 +18,15 @@ import imgColliEuganei from './assets/places/colli_euganei.webp'
 import imgAbanoTerme   from './assets/places/abano_terme.webp'
 import imgBacchiglione from './assets/places/bacchiglione.webp'
 
-import imgPiovego     from './assets/places/piovego.webp'
-import imgSpritz      from './assets/places/spritz.webp'
-import imgTramezzino  from './assets/places/tramezzino.webp'
-import imgPolpo       from './assets/places/polpo.webp'
-import imgCraftBeer   from './assets/places/craft_beer.webp'
-import imgTrattoria   from './assets/places/trattoria.webp'
-import imgRisotto     from './assets/places/risotto.webp'
+import imgPiovego      from './assets/places/piovego.webp'
+import imgSpritz       from './assets/places/spritz.webp'
+import imgTramezzino   from './assets/places/tramezzino.webp'
+import imgPolpo        from './assets/places/polpo.webp'
+import imgCraftBeer    from './assets/places/craft_beer.webp'
+import imgTrattoria    from './assets/places/trattoria.webp'
+import imgRisotto      from './assets/places/risotto.webp'
+import imgGraziati     from './assets/places/graziati.webp'
+import imgPiazzaSignori from './assets/places/piazza_signori.webp'
 
 import imgCheckinFacciata from './assets/checkin/facciata.webp'
 import imgCheckinInterno  from './assets/checkin/interno.webp'
@@ -32,7 +34,8 @@ import imgCheckinInterno  from './assets/checkin/interno.webp'
 export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
          imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
          imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione,
-         imgPiovego, imgSpritz, imgTramezzino, imgPolpo, imgCraftBeer, imgTrattoria, imgRisotto }
+         imgPiovego, imgSpritz, imgTramezzino, imgPolpo, imgCraftBeer, imgTrattoria, imgRisotto,
+         imgGraziati, imgPiazzaSignori }
 
 export const APARTMENT = {
   name: "Elegant Loft",
