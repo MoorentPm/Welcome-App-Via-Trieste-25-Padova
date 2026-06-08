@@ -302,6 +302,22 @@ User: "What time is check-in?"
 {"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}`
   }
 
+  const detectScreens = (userText) => {
+    const t = userText.toLowerCase()
+    const found = []
+    if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir/.test(t)) found.push('checkin')
+    if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart/.test(t)) found.push('checkout')
+    if (/wi.?fi|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
+    if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router/.test(t)) found.push('house')
+    if (/regol|vietat|rumore|fumo|animali|norme/.test(t)) found.push('house')
+    if (/coupon|sconto|offert|convenzione|gratis|omaggio/.test(t)) found.push('coupons')
+    if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant/.test(t)) found.push('places')
+    if (/luoghi|visita|padova|cosa.*fare|vedere|monument|museo|prato|scrovegni|basilica/.test(t)) found.push('places')
+    if (/itinerar|giro|giornata|programma/.test(t)) found.push('itinerary')
+    if (/consiglio|sugger|adesso|momento|oggi|now/.test(t)) found.push('tip')
+    return [...new Set(found)].slice(0, 2)
+  }
+
   const stripMarkdown = (s) => s
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/\*(.*?)\*/g, '$1')
@@ -343,7 +359,9 @@ User: "What time is check-in?"
         messages: conversation,
         system: buildSystemPrompt(),
       })
-      const { text: answer, screens, contactHost } = parseReply(raw)
+      const { text: answer, screens: modelScreens, contactHost } = parseReply(raw)
+      // If model didn't suggest screens, detect them from the user's question
+      const screens = modelScreens.length > 0 ? modelScreens : detectScreens(text)
       setMsgs(m => [...m, { from: "ai", text: answer.trim() || "Scusa, riprova 🙏", screens, contactHost }])
     } catch {
       setMsgs(m => [...m, {
