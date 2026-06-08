@@ -135,7 +135,7 @@ export default function App() {
 
   if (!guest) {
     return (
-      <div className="app-root" style={{ height: '100%', position: 'relative' }}>
+      <div className="app-root" role="main" style={{ height: '100%', position: 'relative' }}>
         <Login onLogin={g => setGuest({ ...g, stage: g.stage || tweaks.stage })} />
         {editOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} close={() => setEditOpen(false)} />}
       </div>
@@ -176,7 +176,7 @@ export default function App() {
 
   return (
     <LangProvider lang={lang}>
-      <div className="app-root" data-screen-label={route.name} style={{ height: '100%', position: 'relative' }}>
+      <div className="app-root" role="main" data-screen-label={route.name} style={{ height: '100%', position: 'relative' }}>
         {screen}
         <TabBar active={activeTab || 'home'} onTab={tab} />
       </div>
