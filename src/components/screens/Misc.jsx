@@ -10,6 +10,16 @@ export function Review({ back, guest, go }) {
   const [stage, setStage] = React.useState("rate")
   const [stars, setStars] = React.useState(0)
   const [feedback, setFeedback] = React.useState("")
+  const [copiedCoupon, setCopiedCoupon] = React.useState(false)
+
+  const isHigh = stars >= 3
+  const code = isHigh ? "GRAZIE" + (10 + stars * 2) : "GRAZIE5"
+  const discount = isHigh ? `-${10 + stars * 2}%` : "-5%"
+  const copyCoupon = () => {
+    try { navigator.clipboard?.writeText(code) } catch {}
+    setCopiedCoupon(true)
+    setTimeout(() => setCopiedCoupon(false), 2000)
+  }
 
   if (stage === "hello") {
     return (
@@ -40,7 +50,6 @@ export function Review({ back, guest, go }) {
   }
 
   if (stage === "rate") {
-    const isHigh = stars >= 3
     const starLabel = stars === 5 ? t('review.rate.5') : stars === 4 ? t('review.rate.4') : stars === 3 ? t('review.rate.3') : t('review.rate.low')
     return (
       <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
@@ -111,15 +120,6 @@ export function Review({ back, guest, go }) {
     )
   }
 
-  const isHigh = stars >= 3
-  const code = isHigh ? "GRAZIE" + (10 + stars * 2) : "GRAZIE5"
-  const discount = isHigh ? `-${10 + stars * 2}%` : "-5%"
-  const [copiedCoupon, setCopiedCoupon] = React.useState(false)
-  const copyCoupon = () => {
-    try { navigator.clipboard?.writeText(code) } catch {}
-    setCopiedCoupon(true)
-    setTimeout(() => setCopiedCoupon(false), 2000)
-  }
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <NavBar back={back} title={t('review.coupon.title')} />
