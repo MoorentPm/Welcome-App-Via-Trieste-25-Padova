@@ -417,7 +417,7 @@ User: "Posso portare il mio cane?"
     if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant|supermercato|farmacia|spesa/.test(t)) found.push('places')
     if (/luoghi|visita|padova|cosa.*fare|vedere|monument|museo|prato|scrovegni|basilica|venezia|bologna|verona|gita|escursion/.test(t)) found.push('places')
     if (/itinerar|giro|giornata|programma/.test(t)) found.push('itinerary')
-    if (/consiglio|sugger|adesso|momento|oggi|now/.test(t)) found.push('tip')
+    if (/consiglio|sugger|adesso|momento|oggi|now|meteo|piove|previsioni|weather/.test(t)) found.push('tip')
     return [...new Set(found)].slice(0, 2)
   }
 
@@ -466,8 +466,13 @@ User: "Posso portare il mio cane?"
       try {
         raw = await attempt()
       } catch {
-        await new Promise(r => setTimeout(r, 1800))
-        raw = await attempt()
+        await new Promise(r => setTimeout(r, 3000))
+        try {
+          raw = await attempt()
+        } catch {
+          await new Promise(r => setTimeout(r, 5000))
+          raw = await attempt()
+        }
       }
       const { text: answer, screens: modelScreens, contactHost: modelContactHost } = parseReply(raw)
       const screens = modelScreens.length > 0 ? modelScreens : detectScreens(text)
