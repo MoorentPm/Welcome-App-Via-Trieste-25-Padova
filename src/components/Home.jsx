@@ -5,10 +5,9 @@ import { useLang } from '../i18n'
 import { stayContext } from '../utils'
 
 const CTX_LABELS = {
-  first:   { it: 'Benvenuto! Primo giorno', en: 'Welcome! First day', de: 'Willkommen! Erster Tag', fr: 'Bienvenue! Premier jour' },
-  warn:    { it: 'Domani: checkout alle 10:00', en: 'Tomorrow: check-out by 10 AM', de: 'Morgen: Check-out bis 10 Uhr', fr: 'Demain: départ avant 10h' },
-  left_one:{ it: 'Ancora 1 notte', en: '1 night left', de: 'Noch 1 Nacht', fr: 'Encore 1 nuit' },
-  left_n:  { it: n => `Ancora ${n} notti`, en: n => `${n} nights left`, de: n => `Noch ${n} Nächte`, fr: n => `Encore ${n} nuits` },
+  first:  { it: 'Benvenuto! Primo giorno', en: 'Welcome! First day', de: 'Willkommen! Erster Tag', fr: 'Bienvenue! Premier jour' },
+  warn:   { it: 'Domani: checkout alle 10:00', en: 'Tomorrow: check-out by 10 AM', de: 'Morgen: Check-out bis 10 Uhr', fr: 'Demain: départ avant 10h' },
+  left_n: { it: n => `Ancora ${n} notti`, en: n => `${n} nights left`, de: n => `Noch ${n} Nächte`, fr: n => `Encore ${n} nuits` },
 }
 
 export function QuickTile({ icon, label, sub, onClick }) {
