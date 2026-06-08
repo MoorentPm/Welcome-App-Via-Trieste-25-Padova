@@ -269,7 +269,7 @@ Quando la risposta è correlata a questi argomenti, includi i relativi screen ke
 Rispondi SEMPRE e SOLO con un oggetto JSON valido. Nessun testo fuori dal JSON.
 {"answer":"testo risposta","screens":[],"contactHost":false}
 
-- "answer": risposta testuale (stringa, max 120 parole)
+- "answer": risposta testuale pura, max 120 parole. ZERO Markdown: niente **grassetto**, niente *corsivo*, niente # titoli, niente trattini lista. Solo testo normale e emoji.
 - "screens": array di 0-2 screen key rilevanti, vuoto [] se nessuno
 - "contactHost": true solo se serve l'intervento diretto di Mattia (guasto, emergenza, richiesta speciale)
 
@@ -296,18 +296,27 @@ User: "What time is check-in?"
 {"answer":"Check-in is from 3:00 PM to 10:00 PM. The front door code is 25#, and keys are in lockbox n°5 with code 0425. Full instructions in the Check-in section.","screens":["checkin"],"contactHost":false}`
   }
 
+  const stripMarkdown = (s) => s
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/_(.*?)_/g, '$1')
+    .replace(/`(.*?)`/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^[-*]\s+/gm, '• ')
+    .trim()
+
   const parseReply = (raw) => {
     try {
       const match = raw.match(/\{[\s\S]*\}/)
       if (!match) throw new Error('no-json')
       const parsed = JSON.parse(match[0])
       return {
-        text: parsed.answer || raw,
+        text: stripMarkdown(parsed.answer || raw),
         screens: Array.isArray(parsed.screens) ? parsed.screens.filter(s => SCREEN_NAV[s]) : [],
         contactHost: !!parsed.contactHost,
       }
     } catch {
-      return { text: raw, screens: [], contactHost: false }
+      return { text: stripMarkdown(raw), screens: [], contactHost: false }
     }
   }
 
