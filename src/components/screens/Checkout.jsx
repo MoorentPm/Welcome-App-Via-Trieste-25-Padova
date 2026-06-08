@@ -23,7 +23,7 @@ export function Checkout({ back, go }) {
   const subText = t('checkout.sub').replace('{time}', AP.checkout.until)
 
   return (
-    <div className="screen-scroll page-enter" style={{ paddingBottom: 30 }}>
+    <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <NavBar back={back} title={t('checkout.title')} />
       <div style={{ padding: "0 20px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
