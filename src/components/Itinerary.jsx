@@ -313,7 +313,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
 
   const day3 = {
     slow: [
-      { t: "09:30", title: "Mercato di Via Altinate", sub: "Produttori locali, frutta e formaggi del Veneto", tag: "Mercato", tint: "#A8B97A" },
+      { t: "09:30", title: "Passeggiata in Via Altinate", sub: "Negozietti, bar e portici — la mattina ha un ritmo tutto suo", tag: "Zona", tint: "#A8B97A" },
       { t: "11:30", title: "Palazzo Bo e Teatro Anatomico", sub: "L'università più antica del mondo. Iscriviti al tour.", tag: "Storia", tint: "#5C5099" },
       { t: "14:00", title: "Pranzo all'Osteria al Pero", sub: "Cucina padovana senza filtri, un tavolo di legno", tag: "Pranzo", tint: "#7A5A3F" },
       { t: "16:30", title: "Loggia Amulea e Prato della Valle", sub: "La piazza vuota al pomeriggio ha un altro ritmo", tag: "Pausa", tint: "#E08762" },
@@ -325,7 +325,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
       { t: "16:30", title: "Oratorio di San Giorgio", sub: "Altichiero, 1380. Cinque minuti che valgono tutto il giorno.", tag: "Tesoro", tint: "#A88560" },
     ],
     food: [
-      { t: "10:30", title: "Mercato di Via Altinate", sub: "Formaggi Veneto, salumi locali, pane fresco", tag: "Mercato", tint: "#C99E6E" },
+      { t: "10:30", title: "Caffè in Via Altinate", sub: "Una zona con bar, negozi e portici — il centro senza turisti", tag: "Zona", tint: "#C99E6E" },
       { t: "12:30", title: "Pranzo alla Birreria Padovanelle", sub: "Menù del giorno con birra artigianale", tag: "Pranzo", tint: "#5C7A5A" },
       { t: "17:00", title: "Aperitivo in Piazza dei Signori", sub: "L'altra piazza — meno turisti dello Spritz classico", tag: "Aperitivo", tint: "#E08762" },
       { t: "20:30", title: "Cena — Osteria al Pero", sub: "Padovano autentico. Prenota.", tag: "Cena", tint: "#5A4434" },
