@@ -405,7 +405,7 @@ export function About({ back }) {
 
         <div style={{ padding: "36px 24px 24px", borderTop: "1px solid #f8f8f8", marginTop: 36 }}>
           <div style={{ fontSize: 11, color: "#aca5a5", lineHeight: 1.6 }}>
-            {AP.pmName} · Padova, Italia<br />
+            {AP.pmName} · Italia<br />
             Per privacy e dati: privacy@moorent.it
           </div>
         </div>
