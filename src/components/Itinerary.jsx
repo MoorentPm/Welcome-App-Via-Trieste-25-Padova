@@ -156,7 +156,9 @@ function SavedItineraries({ onOpen }) {
 }
 
 export function Itinerary({ back, go }) {
-  const { t } = useLang()
+  const { t, tData } = useLang()
+  const tMoodsArr = tData('moods') || []
+  const tMood = (m) => tMoodsArr.find(x => x.id === m.id) || {}
   const [step, setStep] = React.useState("pick") // pick → duration → result
   const [mood, setMood] = React.useState(null)
   const [days, setDays] = React.useState(1)
@@ -193,8 +195,8 @@ export function Itinerary({ back, go }) {
                 display: "flex", flexDirection: "column", gap: 4, minHeight: 130
               }}>
                 <div style={{ fontSize: 32, lineHeight: 1 }}>{m.emoji}</div>
-                <div className="t-17 w-600" style={{ marginTop: 10 }}>{m.label}</div>
-                <div className="t-12 muted" style={{ lineHeight: 1.4 }}>{m.sub}</div>
+                <div className="t-17 w-600" style={{ marginTop: 10 }}>{tMood(m).label || m.label}</div>
+                <div className="t-12 muted" style={{ lineHeight: 1.4 }}>{tMood(m).sub || m.sub}</div>
               </button>
             )}
           </div>
@@ -206,7 +208,7 @@ export function Itinerary({ back, go }) {
       {step === "duration" && mood &&
         <div style={{ padding: "8px 20px 0" }}>
           <div className="chip" style={{ background: "rgba(26,25,22,0.05)", color: "var(--ink-2)" }}>
-            {mood.emoji} {mood.label}
+            {mood.emoji} {tMood(mood).label || mood.label}
           </div>
           <div className="serif" style={{ fontSize: 30, lineHeight: 1.1, marginTop: 16, fontWeight: 500 }}>
             {t('itinerary.duration.heading_pre')} <em style={{ color: "var(--accent)", fontStyle: "italic" }}>{t('itinerary.duration.heading_em')}</em> {t('itinerary.duration.heading_post')}
@@ -244,7 +246,9 @@ export function Itinerary({ back, go }) {
 }
 
 export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
-  const { t } = useLang()
+  const { t, lang, tData } = useLang()
+  const itDays = lang !== 'it' ? tData('itineraryDays') : null
+
   const day1 = {
     slow: [
       { t: "09:30", title: "Colazione al Pedrocchi", sub: "Caffè alla menta, 15 minuti di pace", tag: "Caffè", tint: "#CFB487" },
@@ -353,7 +357,18 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     ],
   }
 
-  const allDays = [day1, day2, day3, day3]
+  const overlayDay = (dayObj, dayKey) => {
+    if (!itDays || !itDays[dayKey]) return dayObj
+    const td = itDays[dayKey]
+    const out = {}
+    for (const k of Object.keys(dayObj)) {
+      out[k] = td[k]
+        ? dayObj[k].map((s, i) => td[k][i] ? { ...s, title: td[k][i].title, sub: td[k][i].sub, tag: td[k][i].tag } : s)
+        : dayObj[k]
+    }
+    return out
+  }
+  const allDays = [day1, day2, day3, day3].map((d, i) => overlayDay(d, ['day1', 'day2', 'day3', 'day3'][i]))
   const plans = allDays.slice(0, days).map((d) => mood ? d[mood.id] || d.slow : d.slow)
 
   if (loading) {
@@ -375,7 +390,9 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
 }
 
 export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
-  const { t } = useLang()
+  const { t, tData } = useLang()
+  const tMoodsArr = tData('moods') || []
+  const moodLabel = mood ? (tMoodsArr.find(x => x.id === mood.id)?.label || mood.label) : ''
   const [dayIdx, setDayIdx] = React.useState(0)
   const [touchStart, setTouchStart] = React.useState(null)
   const [saved, setSaved] = React.useState(!!reopen)
@@ -401,7 +418,7 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
   return (
     <div>
       <div style={{ padding: "8px 20px 8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div className="chip">{mood?.emoji} {mood?.label}</div>
+        <div className="chip">{mood?.emoji} {moodLabel}</div>
         <button onClick={back} className="t-13 w-600" style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer" }}>
           {t('itinerary.result.change')}
         </button>

@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { APARTMENT, PLACES } from '../data'
 import { IconMap, IconHeart } from './Icons'
+import { useLang } from '../i18n'
 
 const FAV_STORAGE = "elegant-loft-favorites"
 function readFavs() {
@@ -256,6 +257,9 @@ const PadovaLeafletMap = React.memo(function PadovaLeafletMap({ selected, onPin 
 
 // ─── Schermata principale Padova ───
 export default function Padova({ go }) {
+  const { t, tData } = useLang()
+  const tPlaces = tData('places') || []
+  const tPoi = (p) => tPlaces.find(x => x.id === p.id) || {}
   const [selected, setSelected] = React.useState(null)
   const [sheetH, setSheetH]     = React.useState(SNAP_MID)
   const [dragging, setDragging] = React.useState(false)
@@ -344,8 +348,8 @@ export default function Padova({ go }) {
           <IconMap size={18} stroke={2}/>
         </div>
         <div className="grow">
-          <div className="t-11 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.4 }}>Esplora</div>
-          <div className="t-15 w-600">Padova centro storico</div>
+          <div className="t-11 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.4 }}>{t('padova.explore')}</div>
+          <div className="t-15 w-600">{t('padova.cityCenter')}</div>
         </div>
       </div>
 
@@ -383,19 +387,19 @@ export default function Padova({ go }) {
           <div style={{ padding: '0 20px 10px' }}>
             {sel ? (
               <>
-                <div className="chip" style={{ marginBottom: 6 }}>{sel.tag}</div>
+                <div className="chip" style={{ marginBottom: 6 }}>{tPoi(sel).tag || sel.tag}</div>
                 <div className="serif" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.15 }}>{sel.name}</div>
-                <div className="t-13 muted" style={{ marginTop: 3 }}>{sel.dist} a piedi dal loft</div>
+                <div className="t-13 muted" style={{ marginTop: 3 }}>{tPoi(sel).dist || sel.dist} {t('padova.walkFromLoft')}</div>
               </>
             ) : sheetH >= SNAP_FULL - 20 ? (
               <>
-                <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Da non perdere</div>
-                <div className="t-13 muted" style={{ marginTop: 2 }}>I posti che consigliamo davvero</div>
+                <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>{t('padova.mustSee')}</div>
+                <div className="t-13 muted" style={{ marginTop: 2 }}>{t('padova.mustSeeSub')}</div>
               </>
             ) : (
               <>
-                <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Vicino a te</div>
-                <div className="t-13 muted" style={{ marginTop: 2 }}>Tocca un pin sulla mappa, o scorri qui sotto</div>
+                <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>{t('padova.nearby')}</div>
+                <div className="t-13 muted" style={{ marginTop: 2 }}>{t('padova.nearbyTap')}</div>
               </>
             )}
           </div>
@@ -410,7 +414,7 @@ export default function Padova({ go }) {
                 <button
                   onClick={() => go('place', PLACES.find(p => p.id === sel.id) || sel)}
                   className="btn btn-accent grow"
-                >Scopri di più</button>
+                >{t('padova.discoverMore')}</button>
                 <button
                   className="btn btn-ghost"
                   style={{ width: 50 }}
@@ -434,10 +438,10 @@ export default function Padova({ go }) {
                   border: 'none', borderRadius: 999, padding: '6px 14px',
                   fontSize: 12, fontWeight: 700, cursor: 'pointer', marginBottom: 14,
                 }}>
-                <IconMap size={14} stroke={2.5} /> Torna alla mappa
+                <IconMap size={14} stroke={2.5} /> {t('padova.backToMap')}
               </button>
               <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 }}>
-                Padova da non perdere
+                {t('padova.mustSeeTitle')}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[...PLACES]
@@ -472,9 +476,9 @@ export default function Padova({ go }) {
                           )}
                         </div>
                         <div className="grow" style={{ minWidth: 0 }}>
-                          <div className="t-11 w-600" style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 0.4 }}>{p.tag}</div>
+                          <div className="t-11 w-600" style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 0.4 }}>{tPoi(p).tag || p.tag}</div>
                           <div className="t-14 w-600" style={{ marginTop: 2, lineHeight: 1.25 }}>{p.name}</div>
-                          <div className="t-11 muted" style={{ marginTop: 2 }}>{p.dist}</div>
+                          <div className="t-11 muted" style={{ marginTop: 2 }}>{tPoi(p).dist || p.dist}</div>
                         </div>
                         <IconMap size={16} stroke={2} style={{ color: 'var(--ink-4)', flexShrink: 0 }} />
                       </button>
@@ -494,7 +498,7 @@ export default function Padova({ go }) {
                         : { backgroundImage: 'repeating-linear-gradient(135deg, #e5e0d7 0 8px, #efebe3 8px 16px)' }),
                     }} />
                     <div className="t-13 w-600" style={{ marginTop: 6, lineHeight: 1.25 }}>{p.name}</div>
-                    <div className="t-11 muted">{p.dist}</div>
+                    <div className="t-11 muted">{tPoi(p).dist || p.dist}</div>
                   </div>
                 ))}
               </div>

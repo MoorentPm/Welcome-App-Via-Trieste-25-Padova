@@ -24,7 +24,9 @@ export function QuickTile({ icon, label, sub, onClick }) {
 
 export default function HomeChiavi({ go, stage, guest }) {
   const A = APARTMENT;
-  const { t } = useLang();
+  const { t, tData } = useLang();
+  const tPicks = tData('todayPicks') || [];
+  const tPick = (p) => tPicks.find(x => x.id === p.id) || {};
   const name = guest?.firstName || A.guest.firstName;
   const nights = guest?.nights || A.guest.nights;
   const nightsLabel = nights === 1 ? t('home.nights_one') : t('home.nights_many');
@@ -120,31 +122,34 @@ export default function HomeChiavi({ go, stage, guest }) {
         </button>
       </div>
       <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingLeft: 20, paddingRight: 20, paddingBottom: 4, scrollSnapType: "x mandatory", scrollPaddingLeft: 20 }}>
-        {TODAY_PICKS.map(p => (
-          <div key={p.id} onClick={() => go("place", p)}
-            style={{
-              minWidth: 220, scrollSnapAlign: "start",
-              borderRadius: 22, overflow: "hidden", background: "var(--surface)",
-              boxShadow: "0 8px 24px rgba(26,25,22,0.06)", cursor: "pointer",
-            }}>
-            <div style={{
-              height: 120, position: "relative", overflow: "hidden",
-              background: p.tint,
-              ...(p.photo && { backgroundImage: `url(${p.photo})`, backgroundSize: "cover", backgroundPosition: "center" }),
-            }}>
+        {TODAY_PICKS.map(p => {
+          const tp = tPick(p)
+          return (
+            <div key={p.id} onClick={() => go("place", p)}
+              style={{
+                minWidth: 220, scrollSnapAlign: "start",
+                borderRadius: 22, overflow: "hidden", background: "var(--surface)",
+                boxShadow: "0 8px 24px rgba(26,25,22,0.06)", cursor: "pointer",
+              }}>
               <div style={{
-                position: "absolute", inset: 0,
-                background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55))",
-              }}/>
+                height: 120, position: "relative", overflow: "hidden",
+                background: p.tint,
+                ...(p.photo && { backgroundImage: `url(${p.photo})`, backgroundSize: "cover", backgroundPosition: "center" }),
+              }}>
+                <div style={{
+                  position: "absolute", inset: 0,
+                  background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55))",
+                }}/>
+              </div>
+              <div style={{ padding: 14 }}>
+                <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>{tp.tag || p.tag}</div>
+                <div className="t-15 w-600" style={{ lineHeight: 1.3 }}>{tp.title || p.title}</div>
+                <div className="t-12 muted" style={{ marginTop: 4, lineHeight: 1.4 }}>{tp.sub || p.sub}</div>
+                <div className="t-11 muted" style={{ marginTop: 8 }}>{tp.meta || p.meta}</div>
+              </div>
             </div>
-            <div style={{ padding: 14 }}>
-              <div className="t-11 w-600" style={{ color: "var(--accent)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>{p.tag}</div>
-              <div className="t-15 w-600" style={{ lineHeight: 1.3 }}>{p.title}</div>
-              <div className="t-12 muted" style={{ marginTop: 4, lineHeight: 1.4 }}>{p.sub}</div>
-              <div className="t-11 muted" style={{ marginTop: 8 }}>{p.meta}</div>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Moorent sponsor banner */}

@@ -216,10 +216,11 @@ export function Review({ back, guest, go }) {
 }
 
 export function About({ back }) {
+  const { t } = useLang()
   const [visible, setVisible] = React.useState(false)
   React.useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 50)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => setVisible(true), 50)
+    return () => clearTimeout(timer)
   }, [])
 
   return (
@@ -286,9 +287,8 @@ export function About({ back }) {
               fontSize: 44, lineHeight: 1.02, fontWeight: 800, margin: 0,
               letterSpacing: -1.2, color: "#FFFFFF"
             }}>
-              Affitti<br />
-              brevi,<br />
-              <span style={{ color: "#f3dfd9", fontStyle: "italic", fontWeight: 700 }}>fatti bene.</span>
+              {t('moorent.headline1')}<br />
+              <span style={{ color: "#f3dfd9", fontStyle: "italic", fontWeight: 700 }}>{t('moorent.headline_em')}</span>
             </h1>
           </div>
 
@@ -297,7 +297,7 @@ export function About({ back }) {
               fontSize: 15, lineHeight: 1.6, margin: 0,
               color: "rgba(255,255,255,0.75)", maxWidth: 320
             }}>
-              Padova e provincia. Gestione completa per chi ha una casa e vuole metterla a reddito senza pensieri.
+              {t('moorent.intro')}
             </p>
           </div>
 
@@ -307,9 +307,9 @@ export function About({ back }) {
               background: "rgba(255,255,255,0.1)", borderRadius: 20, overflow: "hidden"
             }}>
               {[
-                { n: "10+", l: "Appartamenti" },
-                { n: "4.9", l: "Su 5 stelle" },
-                { n: "98%", l: "Occupazione" },
+                { n: "10+", l: t('moorent.stat1') },
+                { n: "4.9", l: t('moorent.stat2') },
+                { n: "98%", l: t('moorent.stat3') },
               ].map((s) =>
                 <div key={s.l} style={{ padding: "16px 8px", textAlign: "center", background: "#232323" }}>
                   <div style={{ fontSize: 24, fontWeight: 800, color: "#f3dfd9", letterSpacing: -0.5 }}>{s.n}</div>
@@ -322,19 +322,19 @@ export function About({ back }) {
 
         <div className="moo-anim" style={{ padding: "44px 24px 0", animationDelay: "0.55s" }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#aca5a5", textTransform: "uppercase", letterSpacing: 1.5 }}>
-            Cosa facciamo
+            {t('moorent.whatLabel')}
           </div>
           <h2 style={{ fontSize: 28, lineHeight: 1.15, fontWeight: 700, margin: "10px 0 0", letterSpacing: -0.5, color: "#232323" }}>
-            Dalla pulizia alla revenue: ce ne occupiamo noi.
+            {t('moorent.whatTitle')}
           </h2>
         </div>
 
         <div className="moo-anim" style={{ padding: "24px 16px 0", animationDelay: "0.7s" }}>
           {[
-            { n: "01", t: "Gestione completa", d: "Annunci, prenotazioni, comunicazione con gli ospiti, check-in e check-out. Tu non muovi un dito." },
-            { n: "02", t: "Pulizie e biancheria", d: "Team interno, standard hotel. Lenzuola e asciugamani inclusi, ricambio a ogni ospite." },
-            { n: "03", t: "Revenue management", d: "Prezzi dinamici giorno per giorno, ottimizzati per Booking, Airbnb, VRBO. +30% medio sul rendimento." },
-            { n: "04", t: "Concierge & assistenza", d: "I tuoi ospiti hanno questa app + chat AI + un host umano reperibile. Soddisfazione garantita." },
+            { n: "01", title: t('moorent.s1t'), desc: t('moorent.s1d') },
+            { n: "02", title: t('moorent.s2t'), desc: t('moorent.s2d') },
+            { n: "03", title: t('moorent.s3t'), desc: t('moorent.s3d') },
+            { n: "04", title: t('moorent.s4t'), desc: t('moorent.s4d') },
           ].map((s, i) =>
             <div key={s.n} style={{
               display: "flex", gap: 16, padding: "20px 16px",
@@ -345,8 +345,8 @@ export function About({ back }) {
                 fontFamily: "'Segoe UI', sans-serif", lineHeight: 1, flexShrink: 0, width: 36
               }}>{s.n}</div>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#232323", lineHeight: 1.3 }}>{s.t}</div>
-                <div style={{ fontSize: 13, color: "#aca5a5", lineHeight: 1.55, marginTop: 6 }}>{s.d}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#232323", lineHeight: 1.3 }}>{s.title}</div>
+                <div style={{ fontSize: 13, color: "#aca5a5", lineHeight: 1.55, marginTop: 6 }}>{s.desc}</div>
               </div>
             </div>
           )}
@@ -358,7 +358,7 @@ export function About({ back }) {
             padding: "22px 22px", borderRadius: "0 20px 20px 0"
           }}>
             <div style={{ fontSize: 18, lineHeight: 1.45, fontWeight: 500, color: "#232323", fontStyle: "italic", letterSpacing: -0.3 }}>
-              "Da quando gestiscono il mio appartamento, ho il doppio del rendimento e zero stress."
+              {t('moorent.quote')}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
               <div style={{
@@ -368,7 +368,7 @@ export function About({ back }) {
               }}>L</div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#232323" }}>Laura M.</div>
-                <div style={{ fontSize: 11, color: "#aca5a5" }}>Proprietaria a Padova centro</div>
+                <div style={{ fontSize: 11, color: "#aca5a5" }}>{t('moorent.quoteRole')}</div>
               </div>
             </div>
           </div>
@@ -376,13 +376,13 @@ export function About({ back }) {
 
         <div className="moo-anim" style={{ padding: "36px 24px 0", animationDelay: "1.0s" }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#aca5a5", textTransform: "uppercase", letterSpacing: 1.5 }}>
-            Hai un appartamento?
+            {t('moorent.ctaLabel')}
           </div>
           <h2 style={{ fontSize: 26, lineHeight: 1.15, fontWeight: 700, margin: "10px 0 14px", letterSpacing: -0.5, color: "#232323" }}>
-            Parliamone. Senza impegno.
+            {t('moorent.ctaSub')}
           </h2>
           <p style={{ fontSize: 14, color: "#aca5a5", lineHeight: 1.6, margin: 0 }}>
-            Ti facciamo una stima personalizzata del rendimento. 15 minuti al telefono, e ti diciamo onestamente se possiamo aiutarti.
+            {t('moorent.ctaDesc')}
           </p>
         </div>
 
@@ -393,13 +393,13 @@ export function About({ back }) {
             borderRadius: 14, fontSize: 15, fontWeight: 700, textDecoration: "none",
             boxShadow: "0 8px 20px rgba(35,35,35,0.25)"
           }}>
-            Visita {AP.website} <IconChevronR size={16} stroke={2.5} />
+            {t('moorent.visitBtn').replace('{site}', AP.website)} <IconChevronR size={16} stroke={2.5} />
           </a>
           <a href="mailto:hello@moorentpm.it" style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             background: "#f3dfd9", color: "#232323", padding: "16px 22px",
             borderRadius: 14, fontSize: 15, fontWeight: 700, textDecoration: "none"
-          }}>Scrivici a hello@moorentpm.it
+          }}>{t('moorent.emailBtn')}
           </a>
         </div>
 
