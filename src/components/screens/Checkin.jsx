@@ -1,10 +1,31 @@
 import React from 'react'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import {
   IconCheck, IconChevronL, IconChevronR,
   IconCopy, IconKey, IconMap,
 } from '../Icons'
 import { APARTMENT as AP, CHECKIN_STEPS } from '../../data'
 import { NavBar } from './NavBar'
+
+const ArrivalMap = React.memo(function ArrivalMap() {
+  const containerRef = React.useRef(null)
+  const mapRef = React.useRef(null)
+  React.useEffect(() => {
+    if (mapRef.current || !containerRef.current) return
+    const map = L.map(containerRef.current, {
+      center: AP.coords, zoom: 17,
+      zoomControl: false, attributionControl: false,
+      dragging: false, scrollWheelZoom: false,
+      doubleClickZoom: false, touchZoom: false, keyboard: false,
+    })
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
+    L.marker(AP.coords).addTo(map)
+    mapRef.current = map
+    return () => { map.remove(); mapRef.current = null }
+  }, [])
+  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+})
 
 export function ArrivalCheckin({ back, go }) {
   const steps = CHECKIN_STEPS
@@ -30,8 +51,8 @@ export function ArrivalCheckin({ back, go }) {
       </div>
 
       <div style={{ padding: "20px 16px 0" }}>
-        <div className="img-placeholder" style={{ height: 180, borderRadius: 20 }}>
-          🗺️ Mappa — Via Trieste 25, Padova
+        <div style={{ height: 180, borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
+          <ArrivalMap />
         </div>
         <a href="https://maps.google.com/?q=Via+Trieste+25+Padova" target="_blank" rel="noreferrer"
           className="btn btn-ghost btn-full" style={{ marginTop: 10 }}>
@@ -78,11 +99,11 @@ export function ArrivalCheckin({ back, go }) {
       </div>
 
       <div style={{ padding: "20px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
-        <button style={{
+        <a href="https://youtu.be/SPO1ag6bz5Q" target="_blank" rel="noreferrer" style={{
           position: "relative", overflow: "hidden", borderRadius: 22, border: "none", cursor: "pointer",
           background: "linear-gradient(135deg, #1A1916 0%, #2F2A24 100%)",
           color: "#fff", padding: "18px 18px", textAlign: "left", display: "flex", alignItems: "center", gap: 14,
-          boxShadow: "0 8px 24px rgba(26,25,22,0.18)"
+          boxShadow: "0 8px 24px rgba(26,25,22,0.18)", textDecoration: "none"
         }}>
           <div style={{
             position: "absolute", right: -20, top: -20, width: 140, height: 140,
@@ -107,7 +128,7 @@ export function ArrivalCheckin({ back, go }) {
             </div>
           </div>
           <IconChevronR size={18} stroke={2.5} style={{ position: "relative", opacity: 0.6, flexShrink: 0 }} />
-        </button>
+        </a>
 
         <div style={{
           background: "var(--surface)", borderRadius: 22, padding: "18px",
