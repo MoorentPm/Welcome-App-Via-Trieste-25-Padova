@@ -26,6 +26,7 @@ import imgCraftBeer    from './assets/places/craft_beer.webp'
 import imgTrattoria    from './assets/places/trattoria.webp'
 import imgRisotto      from './assets/places/risotto.webp'
 import imgGraziati     from './assets/places/graziati.webp'
+import imgFabbri       from './assets/places/fabbri.webp'
 import imgPiazzaSignori from './assets/places/piazza_signori.webp'
 import imgViaAltinate  from './assets/places/via_altinate.webp'
 
@@ -226,7 +227,7 @@ export const COUPONS_RICH = [
     },
     code: "FABBRI-LOFT",
     tint: "#7A5A3F",
-    photo: imgTrattoria
+    photo: imgFabbri
   },
   {
     id: "bike",
@@ -242,7 +243,7 @@ export const COUPONS_RICH = [
     },
     code: "LOFT-BIKE-20",
     tint: "#4A7C5A",
-    photo: imgViaAltinate
+    photo: imgPiovego
   }
 ];
 
