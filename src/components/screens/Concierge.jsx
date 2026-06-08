@@ -249,6 +249,15 @@ ${appliances}
 === FAQ ===
 ${faqs}
 
+=== COME ARRIVARE AL LOFT ===
+INDIRIZZO-ESATTO: Via Trieste 25, Padova — civico blu sul lato destro
+
+TRENO: La stazione di Padova è a 5 minuti a piedi. Uscita principale → gira a destra in Via Trieste → civico 25 sul lato destro. Taxi dalla stazione: ~€8, 3 minuti. Frecciarossa, Italo e regionali: Venezia 25 min, Verona 50 min, Bologna 1h.
+
+AUTO: Uscita autostradale Padova Est, poi 12 minuti al loft. Parcheggio gratuito in Via Trieste e vie laterali. Parcheggio coperto Park Antenore: €15/giorno, 4 min a piedi.
+
+BUS/TRAM: Fermata "Trieste" a 100 metri dal loft. Tram T1 dalla stazione: scendi alla fermata Trieste (2 minuti). Biglietto €1.50. Rete BusItalia Veneto.
+
 === LUOGHI CONSIGLIATI (a piedi da Via Trieste 25) ===
 Caffè Pedrocchi (7 min) · Piazza delle Erbe (9 min) · Prato della Valle (8 min)
 Cappella degli Scrovegni (12 min, prenotare) · Orto Botanico (10 min)
@@ -298,6 +307,12 @@ User: "Ho bisogno di parlare con qualcuno"
 User: "Ciao!"
 {"answer":"Ciao! Sono qui per aiutarti con tutto — WiFi, check-in, dove mangiare, come funziona la casa. Cosa ti serve? 😊","screens":[],"contactHost":false}
 
+User: "Come arrivo in treno?"
+{"answer":"La stazione di Padova è a 5 minuti a piedi. Esci dall'uscita principale, gira a destra in Via Trieste e il civico 25 è sul lato destro. In taxi ci vogliono 3 minuti, circa €8. Nell'app trovi tutte le istruzioni di arrivo. 🚆","screens":["checkin"],"contactHost":false}
+
+User: "C'è parcheggio?"
+{"answer":"Sì, parcheggio gratuito in Via Trieste e nelle vie laterali. Oppure il Park Antenore coperto: €15/giorno, a 4 minuti a piedi. 🚗","screens":["checkin"],"contactHost":false}
+
 User: "What time is check-in?"
 {"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}`
   }
@@ -305,7 +320,7 @@ User: "What time is check-in?"
   const detectScreens = (userText) => {
     const t = userText.toLowerCase()
     const found = []
-    if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir/.test(t)) found.push('checkin')
+    if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir|treno|stazion|bus|tram|auto|macchina|taxi|parcheggio|a\s*piedi|transport|train|car|come.*arrivare|how.*get/.test(t)) found.push('checkin')
     if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart/.test(t)) found.push('checkout')
     if (/wi.?fi|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
     if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router/.test(t)) found.push('house')
