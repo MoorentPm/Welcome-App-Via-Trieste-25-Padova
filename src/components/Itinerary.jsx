@@ -8,6 +8,7 @@ import { MOODS,
   imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
   imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
   imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione,
+  imgPiovego, imgSpritz, imgTramezzino, imgPolpo, imgCraftBeer, imgTrattoria, imgRisotto,
 } from '../data'
 import { loadItineraries, saveItinerary, deleteItinerary } from '../utils'
 import { NavBar } from './screens/NavBar'
@@ -74,10 +75,15 @@ const PHOTO_MAP = [
   { keys: ['colli euganei', 'pista ciclabile'],                                         img: imgColliEuganei },
   { keys: ['abano terme', 'terme preistoriche'],                                        img: imgAbanoTerme   },
   { keys: ['bacchiglione'],                                                              img: imgBacchiglione },
-  { keys: ['piazza delle erbe', 'piazza dei signori', 'piazzetta', 'spritz', 'mercato',
-            'dalla zita', 'folperia', 'graziati', 'bar nazionale', 'padovanelle',
-            'al sasso', 'belle parti', 'al pero', 'osteria', 'trattoria',
-            'birrificio', 'fabbri', 'via altinate', 'bici', 'piovego'],                  img: imgPiazzaErbe },
+  { keys: ['dalla zita', 'tramezzino'],                                                  img: imgTramezzino   },
+  { keys: ['folperia', 'folpo', 'polpo'],                                                img: imgPolpo        },
+  { keys: ['spritz', 'bar nazionale'],                                                   img: imgSpritz       },
+  { keys: ['piovego'],                                                                   img: imgPiovego      },
+  { keys: ['padovanelle', 'birrificio', 'birreria'],                                     img: imgCraftBeer    },
+  { keys: ['belle parti'],                                                               img: imgRisotto      },
+  { keys: ['al sasso', 'al pero', 'fabbri', 'osteria', 'trattoria'],                    img: imgTrattoria    },
+  { keys: ['piazza delle erbe', 'piazza dei signori', 'piazzetta', 'mercato',
+            'graziati', 'via altinate', 'bici'],                                         img: imgPiazzaErbe   },
 ]
 
 function lookupPhoto(title) {
