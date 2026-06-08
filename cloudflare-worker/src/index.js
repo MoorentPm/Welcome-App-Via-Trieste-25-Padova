@@ -4,6 +4,53 @@ const ALLOWED_ORIGINS = [
   'http://localhost:4173',
 ]
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms))
+
+async function callGroq(messages, env) {
+  const delays = [0, 3000, 6000]
+  let lastError
+
+  for (let i = 0; i < delays.length; i++) {
+    if (delays[i] > 0) await sleep(delays[i])
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages,
+        max_tokens: 400,
+        temperature: 0.4,
+      }),
+    })
+
+    if (res.status === 429) {
+      // Rate limited — wait for retry-after header or use fixed delay
+      const retryAfter = parseInt(res.headers.get('retry-after') || '0', 10) * 1000
+      if (i < delays.length - 1) {
+        await sleep(retryAfter > 0 ? retryAfter : 2000)
+        continue
+      }
+      lastError = 'rate-limit'
+      break
+    }
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      lastError = data.error?.message || 'groq-error'
+      break
+    }
+
+    return data.choices?.[0]?.message?.content || ''
+  }
+
+  throw new Error(lastError || 'groq-failed')
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || ''
@@ -29,30 +76,8 @@ export default {
       if (system) groqMessages.push({ role: 'system', content: system })
       for (const m of messages) groqMessages.push({ role: m.role, content: m.content })
 
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${env.GROQ_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
-          messages: groqMessages,
-          max_tokens: 600,
-          temperature: 0.9,
-        }),
-      })
+      const text = await callGroq(groqMessages, env)
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        return new Response(JSON.stringify({ error: data.error?.message || 'Groq error' }), {
-          status: res.status,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
-      }
-
-      const text = data.choices?.[0]?.message?.content || ''
       return new Response(JSON.stringify({ text }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
