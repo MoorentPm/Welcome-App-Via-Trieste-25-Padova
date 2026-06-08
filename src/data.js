@@ -52,7 +52,7 @@ export const APARTMENT = {
   tax: "€3/persona/notte, max 5 notti",
   guest: { firstName: "Giulia", nights: 3, checkoutDate: "Ven 24 apr" },
   website: "moorentpm.it",
-  pmName: "MooRent",
+  pmName: "Moorent Pm",
   pmTagline: "Gestione affitti brevi a Padova e provincia",
 };
 
