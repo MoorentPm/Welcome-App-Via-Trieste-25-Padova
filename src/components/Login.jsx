@@ -1,5 +1,6 @@
 import React from 'react'
 import { IconChevronR } from './Icons'
+import { computeStage } from '../utils'
 
 // login.jsx — Date + optional name, demo skip. localStorage persist.
 
@@ -91,10 +92,7 @@ export default function Login({ onLogin }) {
       const d1 = new Date(inDate);
       const d2 = new Date(outDate);
       const nights = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
-      const today = new Date(); today.setHours(0,0,0,0);
-      let stage = "stay";
-      if (today < d1) stage = "pre";
-      else if (today >= d2) stage = "out";
+      const stage = computeStage(inDate, outDate);
       const guest = {
         firstName: firstName.trim() || "Ospite",
         nights, stage,

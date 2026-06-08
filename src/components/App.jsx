@@ -9,6 +9,7 @@ import {
   PlaceDetail, Places, DailyTip, About, NavBar,
 } from './Screens'
 import { LangProvider, useLang } from '../i18n'
+import { computeStage } from '../utils'
 
 const TWEAK_DEFAULTS = {
   stage: 'stay',
@@ -90,6 +91,24 @@ export default function App() {
       saveGuest(g)
     }
   }, [tweaks.skipLogin])
+
+  // Recompute stage whenever app returns to foreground (handles day changes)
+  React.useEffect(() => {
+    const recompute = () => {
+      setGuest(current => {
+        if (!current || !current.checkin || !current.checkout) return current
+        const stage = computeStage(current.checkin, current.checkout)
+        if (stage === current.stage) return current
+        const updated = { ...current, stage }
+        saveGuest(updated)
+        return updated
+      })
+    }
+    recompute()
+    const onVisible = () => { if (document.visibilityState === 'visible') recompute() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [])
 
   const setTweak = (k, v) => {
     const next = { ...tweaks, [k]: v }
@@ -240,10 +259,7 @@ export function Settings({ back, guest, onLogout, onSave }) {
     if (checkin && checkout) {
       const d1 = new Date(checkin), d2 = new Date(checkout)
       nights = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)))
-      const today = new Date(); today.setHours(0, 0, 0, 0)
-      if (today < d1) stage = 'pre'
-      else if (today >= d2) stage = 'out'
-      else stage = 'stay'
+      stage = computeStage(checkin, checkout)
     }
     onSave({ ...guest, firstName: name.trim() || 'Ospite', checkin, checkout, nights, stage, lang })
     setSavedNote(true)

@@ -1,3 +1,28 @@
+// Stage computation (centralised — also used in Login and Settings)
+export function computeStage(checkin, checkout) {
+  if (!checkin || !checkout) return 'stay'
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const d1 = new Date(checkin); d1.setHours(0, 0, 0, 0)
+  const d2 = new Date(checkout); d2.setHours(0, 0, 0, 0)
+  if (today < d1) return 'pre'
+  if (today >= d2) return 'out'
+  return 'stay'
+}
+
+// Context within a stay — tells components where we are in the trip
+export function stayContext(checkin, checkout) {
+  if (!checkin || !checkout) return null
+  const today = new Date(); today.setHours(0, 0, 0, 0)
+  const d1 = new Date(checkin); d1.setHours(0, 0, 0, 0)
+  const d2 = new Date(checkout); d2.setHours(0, 0, 0, 0)
+  return {
+    isFirstDay:      today.getTime() === d1.getTime(),
+    isCheckoutDay:   today.getTime() === d2.getTime(),
+    daysToCheckout:  Math.round((d2 - today) / 86400000),
+    totalNights:     Math.max(1, Math.round((d2 - d1) / 86400000)),
+  }
+}
+
 // Favorites helpers
 const FAV_STORAGE = "elegant-loft-favorites"
 export function loadFavorites() {

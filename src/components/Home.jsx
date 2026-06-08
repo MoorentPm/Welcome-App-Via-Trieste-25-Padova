@@ -2,6 +2,14 @@ import React from 'react'
 import { APARTMENT, TODAY_PICKS } from '../data'
 import { IconChevronR, IconWifi, IconKey, IconBook, IconStar, IconHeart } from './Icons'
 import { useLang } from '../i18n'
+import { stayContext } from '../utils'
+
+const CTX_LABELS = {
+  first:   { it: 'Benvenuto! Primo giorno', en: 'Welcome! First day', de: 'Willkommen! Erster Tag', fr: 'Bienvenue! Premier jour' },
+  warn:    { it: 'Domani: checkout alle 10:00', en: 'Tomorrow: check-out by 10 AM', de: 'Morgen: Check-out bis 10 Uhr', fr: 'Demain: départ avant 10h' },
+  left_one:{ it: 'Ancora 1 notte', en: '1 night left', de: 'Noch 1 Nacht', fr: 'Encore 1 nuit' },
+  left_n:  { it: n => `Ancora ${n} notti`, en: n => `${n} nights left`, de: n => `Noch ${n} Nächte`, fr: n => `Encore ${n} nuits` },
+}
 
 export function QuickTile({ icon, label, sub, onClick }) {
   return (
@@ -30,6 +38,21 @@ export default function HomeChiavi({ go, stage, guest }) {
   const name = guest?.firstName || A.guest.firstName;
   const nights = guest?.nights || A.guest.nights;
   const nightsLabel = nights === 1 ? t('home.nights_one') : t('home.nights_many');
+  const lang = guest?.lang || 'it'
+  const ctx = stayContext(guest?.checkin, guest?.checkout)
+
+  // Build the contextual subtitle label based on where we are in the stay
+  let ctxLabel = null
+  if (!guest?.demo && ctx) {
+    if (ctx.isFirstDay) {
+      ctxLabel = { text: CTX_LABELS.first[lang] || CTX_LABELS.first.it, accent: true }
+    } else if (ctx.daysToCheckout === 1) {
+      ctxLabel = { text: CTX_LABELS.warn[lang] || CTX_LABELS.warn.it, accent: false }
+    } else if (ctx.daysToCheckout > 1) {
+      const fn = CTX_LABELS.left_n[lang] || CTX_LABELS.left_n.it
+      ctxLabel = { text: fn(ctx.daysToCheckout), accent: false }
+    }
+  }
 
   const heroByStage = {
     pre:  { tag: t('home.pre.tag'),  title: t('home.pre.title'), sub: t('home.pre.sub'), cta: t('home.pre.cta'), action: () => go("arrival_checkin") },
@@ -59,8 +82,11 @@ export default function HomeChiavi({ go, stage, guest }) {
       {/* Greeting */}
       <div style={{ padding: "12px 20px 0" }}>
         {!guest?.demo && (
-          <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.4 }}>
-            {t('home.city')} · {nights} {nightsLabel}
+          <div className="t-13 w-600" style={{
+            textTransform: "uppercase", letterSpacing: 0.4,
+            color: ctxLabel?.accent ? 'var(--accent)' : 'var(--muted)',
+          }}>
+            {ctxLabel ? ctxLabel.text : `${t('home.city')} · ${nights} ${nightsLabel}`}
           </div>
         )}
         <div className="serif" style={{ fontSize: 38, lineHeight: 1, marginTop: guest?.demo ? 0 : 10, letterSpacing: -0.03 }}>
