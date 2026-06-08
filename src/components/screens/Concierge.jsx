@@ -416,7 +416,7 @@ User: "Posso lasciare le valigie prima del check-in?"
   }
 
   const detectContactHost = (userText) => {
-    return /perso.*chiav|chiav.*perse|guasto|rotto|non funziona|allagat|emergenz|mi sento male|medico|ospedale|incendio|urgenz|aiuto urgente/i.test(userText)
+    return /perso.*chiav|chiav.*perse|guasto|rotto|non funziona|allagat|emergenz|mi sento male|medico|ospedale|incendio|urgenz|aiuto urgente|check.?in.*anticip|anticip.*check.?in|arriv.*alle \d{1,2}|check.?out.*tard|late.*check.?out|animali|cane|gatto|pet\b|dog\b|cat\b/i.test(userText)
   }
 
   const detectScreens = (userText) => {
