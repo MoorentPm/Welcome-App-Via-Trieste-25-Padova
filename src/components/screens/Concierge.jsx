@@ -240,6 +240,48 @@ INDIRIZZO: Via Trieste 25, 35121 Padova
 OSPITE-NOME: ${name}
 OSPITE-NOTTI: ${nights}
 
+=== APPARTAMENTO — DOTAZIONI ===
+CAMERE: 1 camera da letto (letto matrimoniale) + soggiorno con divano letto matrimoniale = 4 posti letto totali
+TERRAZZO: piccolo terrazzo con tavolino e sedia
+ARIA-CONDIZIONATA: sì, presente
+MACCHINA-CAFFE: sì, in cucina — capsule/cialde sul tavolo della cucina vicino alla macchina
+FERRO-DA-STIRO: sì, nel ripostiglio in corridoio con asse pieghevole
+ASCIUGAMANI-LENZUOLA: forniti — per extra contattare Mattia
+ACQUA-RUBINETTO: potabile, ottima qualità
+STREAMING: Netflix, Prime Video, Disney+ già attivi sulla TV (non modificare gli account)
+
+=== CHECK-IN / CHECK-OUT SPECIALE ===
+CHECK-IN-TARDIVO: il self check-in funziona a qualsiasi ora — l'ospite può entrare quando vuole purché non prima delle 15:00
+EARLY-CHECK-IN: contattare l'host — se l'appartamento è libero si può anticipare
+LATE-CHECK-OUT: su richiesta fino alle 12:00 — chiedere il giorno prima a Mattia
+BAGAGLI-ANTICIPATI: se si arriva prima delle 15 e l'appartamento non è pronto, c'è un armadietto bagagli a 2 minuti
+
+=== EMERGENZE E SERVIZI VICINI ===
+EMERGENZA-GENERALE: 112
+EMERGENZA-MEDICA: 118 (ambulanza)
+HOST-URGENZE: Mattia +39 351 988 6489
+PRONTO-SOCCORSO: Ospedale di Padova — Via Giustiniani 2 (5 min in taxi, 20 min a piedi)
+FARMACIA: Farmacia alla Stazione — Corso del Popolo 53, Padova (2 min a piedi)
+SUPERMERCATO: Super A&O — Corso del Popolo 25, Padova (2 min a piedi)
+CHIAVI-PERSE: contattare subito Mattia al +39 351 988 6489
+
+=== COUPON ESCLUSIVI OSPITI ===
+1. Pasticceria Graziati — Piazza della Frutta 39 · sconto -10% su tutto · codice: ELEGANT10 · mostrare l'app in cassa
+2. Osteria dei Fabbri — Via dei Fabbri 13 · calice di vino omaggio con menu degustazione · codice: FABBRI-LOFT
+3. Bike Rental Padova — Via Niccolò Tommaseo · -20% noleggio bici (solo giorni feriali) · codice: LOFT-BIKE-20
+
+=== COSA FARE AL CHECKOUT ===
+1. Chiudi tutte le finestre (anche bagno)
+2. Spegni clima e termostato (vicino alla porta d'ingresso)
+3. Spegni tutte le luci
+4. Piatti sporchi in lavastoviglie (non serve farla partire)
+5. Asciugamani usati lasciati in bagno
+6. Spazzatura nei bidoni del cortile (a sinistra entrando)
+7. Telecomando sul tavolino del salotto
+8. Controlla di non dimenticare nulla (cassetti, bagno, frigo, caricabatterie)
+9. Chiavi nella cassetta n°5 (codice 0425) — richiudi finché senti clic
+10. Porta accostata, non sbattuta (parte l'allarme)
+
 === REGOLE DELLA CASA ===
 ${rules}
 
@@ -312,6 +354,15 @@ User: "Come arrivo in treno?"
 
 User: "C'è parcheggio?"
 {"answer":"Sì, parcheggio gratuito in Via Trieste e nelle vie laterali. Oppure il Park Antenore coperto: €15/giorno, a 4 minuti a piedi. 🚗","screens":["checkin"],"contactHost":false}
+
+User: "C'è la macchina del caffè?"
+{"answer":"Sì! È in cucina. Le capsule le trovi sul tavolo della cucina, vicino alla macchina stessa. ☕","screens":["house"],"contactHost":false}
+
+User: "Ho bisogno di un medico / mi sento male"
+{"answer":"Per emergenze chiama il 118 (ambulanza) o il 112. Il Pronto Soccorso più vicino è l'Ospedale di Padova in Via Giustiniani 2, a 5 minuti in taxi. Puoi anche avvisare Mattia.","screens":[],"contactHost":true}
+
+User: "C'è uno sconto da qualche parte?"
+{"answer":"Sì! Hai 3 coupon esclusivi nell'app: -10% alla Pasticceria Graziati (codice ELEGANT10), calice omaggio all'Osteria dei Fabbri (FABBRI-LOFT), e -20% da Bike Rental Padova (LOFT-BIKE-20). 🎫","screens":["coupons"],"contactHost":false}
 
 User: "What time is check-in?"
 {"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}`
