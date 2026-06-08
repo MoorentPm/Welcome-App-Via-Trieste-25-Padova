@@ -1,8 +1,7 @@
 import React from 'react'
 import { APARTMENT, TODAY_PICKS } from '../data'
 import { IconChevronR, IconWifi, IconKey, IconBook, IconStar, IconHeart } from './Icons'
-
-// home.jsx — HomeChiavi (main dashboard) + QuickTile
+import { useLang } from '../i18n'
 
 export function QuickTile({ icon, label, sub, onClick }) {
   return (
@@ -25,16 +24,19 @@ export function QuickTile({ icon, label, sub, onClick }) {
 
 export default function HomeChiavi({ go, stage, guest }) {
   const A = APARTMENT;
+  const { t } = useLang();
   const name = guest?.firstName || A.guest.firstName;
+  const nights = guest?.nights || A.guest.nights;
+  const nightsLabel = nights === 1 ? t('home.nights_one') : t('home.nights_many');
 
   const heroByStage = {
-    pre:  { tag: "Pre-arrivo",  title: "Check-in dalle 15:00",     sub: "Tieni il telefono pronto: ti guido passo-passo appena sei in via Trieste.", cta: "Come arrivare", action: () => go("arrival_checkin") },
-    stay: { tag: guest?.demo ? "Modalità demo" : "Sei nel loft",
-            title: guest?.demo ? "Esplora l'app del Loft" : "Tutto pronto, Padova ti aspetta.",
-            sub: guest?.demo ? "Naviga liberamente: tutte le sezioni sono attive in modalità anteprima." : "Wi-Fi attivo. Caffè in cucina. Lascia che ti suggerisca cosa fare oggi.",
-            cta: guest?.demo ? "Scopri le sezioni" : "Cosa fare oggi a Padova",
+    pre:  { tag: t('home.pre.tag'),  title: t('home.pre.title'), sub: t('home.pre.sub'), cta: t('home.pre.cta'), action: () => go("arrival_checkin") },
+    stay: { tag: guest?.demo ? t('home.demo.tag') : t('home.stay.tag'),
+            title: guest?.demo ? t('home.demo.title') : t('home.stay.title'),
+            sub: guest?.demo ? t('home.demo.sub') : t('home.stay.sub'),
+            cta: guest?.demo ? t('home.demo.cta') : t('home.stay.cta'),
             action: () => go(guest?.demo ? "house" : "tip") },
-    out:  { tag: "Ultimo giorno", title: "Check-out alle 10:00",    sub: "Bastano 3 passaggi. Ti accompagno io.",                                                cta: "Procedura check-out", action: () => go("checkout") },
+    out:  { tag: t('home.out.tag'), title: t('home.out.title'), sub: t('home.out.sub'), cta: t('home.out.cta'), action: () => go("checkout") },
   };
   const hero = heroByStage[stage] || heroByStage.stay;
 
@@ -56,11 +58,11 @@ export default function HomeChiavi({ go, stage, guest }) {
       <div style={{ padding: "12px 20px 0" }}>
         {!guest?.demo && (
           <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.4 }}>
-            Padova · {guest?.nights || A.guest.nights} notti
+            {t('home.city')} · {nights} {nightsLabel}
           </div>
         )}
         <div className="serif" style={{ fontSize: 38, lineHeight: 1, marginTop: guest?.demo ? 0 : 10, letterSpacing: -0.03 }}>
-          Ciao, <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{name}</em>.
+          {t('home.greeting')} <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{name}</em>.
         </div>
       </div>
 
@@ -99,22 +101,22 @@ export default function HomeChiavi({ go, stage, guest }) {
       {/* Quick commands — 2x2 grid */}
       <div style={{ padding: "20px 20px 0" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-          <QuickTile icon={<IconWifi size={22}/>}  label="Wi-Fi"           sub="1 tap per copiarla"   onClick={() => go("wifi")} />
-          <QuickTile icon={<IconKey size={22}/>}    label="Arrivo & casa"   sub="Come arrivare + check-in" onClick={() => go("arrival_checkin")} />
-          <QuickTile icon={<IconBook size={22}/>}   label="Casa & regole"   sub="Wi-Fi, FAQ, aiuto"     onClick={() => go("house")} />
+          <QuickTile icon={<IconWifi size={22}/>}  label={t('home.tile.wifi.label')}    sub={t('home.tile.wifi.sub')}    onClick={() => go("wifi")} />
+          <QuickTile icon={<IconKey size={22}/>}    label={t('home.tile.arrival.label')} sub={t('home.tile.arrival.sub')} onClick={() => go("arrival_checkin")} />
+          <QuickTile icon={<IconBook size={22}/>}   label={t('home.tile.house.label')}   sub={t('home.tile.house.sub')}   onClick={() => go("house")} />
           <QuickTile
             icon={stage === "out" ? <IconHeart size={22}/> : <IconStar size={22}/>}
-            label={stage === "out" ? "Lascia un saluto" : "Coupon & sconti"}
-            sub={stage === "out" ? "Recensione + sconto" : "Vantaggi per te"}
+            label={stage === "out" ? t('home.tile.goodbye.label') : t('home.tile.coupons.label')}
+            sub={stage === "out" ? t('home.tile.goodbye.sub') : t('home.tile.coupons.sub')}
             onClick={() => go(stage === "out" ? "goodbye" : "coupons")} />
         </div>
       </div>
 
-      {/* Oggi in città */}
+      {/* Today in the city */}
       <div style={{ padding: "26px 20px 8px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>Oggi in città</div>
+        <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>{t('home.today')}</div>
         <button onClick={() => go("places")} className="t-13 w-600" style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer" }}>
-          Tutto
+          {t('home.all')}
         </button>
       </div>
       <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingLeft: 20, paddingRight: 20, paddingBottom: 4, scrollSnapType: "x mandatory", scrollPaddingLeft: 20 }}>
@@ -168,10 +170,10 @@ export default function HomeChiavi({ go, stage, guest }) {
           }}>M</div>
           <div className="grow" style={{ position: "relative" }}>
             <div className="t-11 w-600" style={{ opacity: 0.7, letterSpacing: 0.5, textTransform: "uppercase" }}>
-              Gestione affitti brevi
+              {t('home.moorent.sub')}
             </div>
             <div className="t-15 w-600" style={{ marginTop: 3, lineHeight: 1.3 }}>
-              Scopri <span style={{ color: "#f3dfd9" }}>{A.pmName}</span>
+              {t('home.moorent.discover')} <span style={{ color: "#f3dfd9" }}>{A.pmName}</span>
             </div>
           </div>
           <IconChevronR size={18} stroke={2.5} style={{ position: "relative", opacity: 0.7, flexShrink: 0 }}/>

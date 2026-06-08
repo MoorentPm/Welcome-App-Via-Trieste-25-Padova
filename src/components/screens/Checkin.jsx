@@ -7,6 +7,7 @@ import {
 } from '../Icons'
 import { APARTMENT as AP, CHECKIN_STEPS } from '../../data'
 import { NavBar } from './NavBar'
+import { useLang, DATA_TRANSLATIONS } from '../../i18n'
 
 const ArrivalMap = React.memo(function ArrivalMap() {
   const containerRef = React.useRef(null)
@@ -35,10 +36,14 @@ const ArrivalMap = React.memo(function ArrivalMap() {
 })
 
 export function ArrivalCheckin({ back, go }) {
-  const steps = CHECKIN_STEPS
+  const { t, tData, lang } = useLang()
+  const localSteps = tData('checkinSteps')
+  const steps = localSteps || CHECKIN_STEPS
   const [i, setI] = React.useState(0)
   const [copiedCode, setCopiedCode] = React.useState(false)
   const s = steps[i]
+  // photo comes from the Italian source when translated steps don't have it
+  const photo = s.photo || (CHECKIN_STEPS[i] && CHECKIN_STEPS[i].photo)
   const checkinRef = React.useRef(null)
   const copyCode = (val) => {
     try { navigator.clipboard?.writeText(val) } catch {}
@@ -46,13 +51,19 @@ export function ArrivalCheckin({ back, go }) {
     setTimeout(() => setCopiedCode(false), 2000)
   }
 
+  const transportItems = [
+    { id: "train", icon: "🚆", t: t('arrival.trainLabel'), sub: t('arrival.trainSub') },
+    { id: "car",   icon: "🚗", t: t('arrival.carLabel'),   sub: t('arrival.carSub') },
+    { id: "bus",   icon: "🚌", t: t('arrival.busLabel'),   sub: t('arrival.busSub') },
+  ]
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Arrivo & casa" />
+      <NavBar back={back} title={t('arrival.title')} />
 
       <div style={{ padding: "0 20px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          Ti aspettiamo <em style={{ fontStyle: "italic", color: "var(--accent)" }}>qui</em>.
+          {t('arrival.hero').split(' ').slice(0, -1).join(' ')} <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{t('arrival.hero').split(' ').slice(-1)[0]}</em>.
         </div>
         <div className="t-14 muted" style={{ marginTop: 10 }}>{AP.address}</div>
       </div>
@@ -63,20 +74,16 @@ export function ArrivalCheckin({ back, go }) {
         </div>
         <a href="https://maps.google.com/?q=Via+Trieste+25+Padova" target="_blank" rel="noreferrer"
           className="btn btn-ghost btn-full" style={{ marginTop: 10 }}>
-          <IconMap size={18} stroke={2} /> Apri navigazione
+          <IconMap size={18} stroke={2} /> {t('arrival.openNav')}
         </a>
       </div>
 
       <div style={{ padding: "26px 16px 0" }}>
         <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>
-          Come arrivare
+          {t('arrival.howToGet')}
         </div>
         <div className="card-tight">
-          {[
-            { id: "train", icon: "🚆", t: "In treno", sub: "5 min a piedi dalla stazione" },
-            { id: "car", icon: "🚗", t: "In auto", sub: "Parcheggi gratuiti vicini" },
-            { id: "bus", icon: "🚌", t: "Bus & tram", sub: "Fermata Trieste a 100 metri" },
-          ].map((r) =>
+          {transportItems.map((r) =>
             <button key={r.id} onClick={() => go("transport", r.id)}
               className="row" style={{ width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
               <div style={{ fontSize: 24, flexShrink: 0, width: 36, textAlign: "center" }}>{r.icon}</div>
@@ -93,16 +100,16 @@ export function ArrivalCheckin({ back, go }) {
       <div style={{ padding: "20px 16px 0" }}>
         <button onClick={() => checkinRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
           className="btn btn-accent btn-lg btn-full">
-          Sono in via Trieste → procedura check-in
+          {t('arrival.checkinBtn')}
         </button>
       </div>
 
       <div ref={checkinRef} style={{ padding: "36px 20px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>Una volta qui</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{t('arrival.onceHere')}</div>
         <div className="serif" style={{ fontSize: 26, lineHeight: 1.1, fontWeight: 500, marginTop: 6 }}>
-          Procedura check-in
+          {t('arrival.procedure')}
         </div>
-        <div className="t-13 muted" style={{ marginTop: 6 }}>Passo {i + 1} di {steps.length}</div>
+        <div className="t-13 muted" style={{ marginTop: 6 }}>{t('arrival.step')} {i + 1} {t('arrival.of')} {steps.length}</div>
       </div>
 
       <div style={{ padding: "20px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -128,10 +135,10 @@ export function ArrivalCheckin({ back, go }) {
           </div>
           <div className="grow" style={{ position: "relative" }}>
             <div className="t-11 w-600" style={{ opacity: 0.7, letterSpacing: 0.5, textTransform: "uppercase" }}>
-              Video tutorial · 1:20
+              {t('arrival.videoLabel')}
             </div>
             <div className="t-15 w-600" style={{ marginTop: 4, lineHeight: 1.3 }}>
-              Guarda come entrare nel loft
+              {t('arrival.videoTitle')}
             </div>
           </div>
           <IconChevronR size={18} stroke={2.5} style={{ position: "relative", opacity: 0.6, flexShrink: 0 }} />
@@ -151,14 +158,14 @@ export function ArrivalCheckin({ back, go }) {
           </div>
           <div className="grow">
             <div className="t-11 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.4 }}>
-              Cassetta n° 5
+              {t('arrival.keySafe')}
             </div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
               <div style={{
                 fontFamily: "ui-monospace, monospace", fontSize: 26, fontWeight: 800,
                 letterSpacing: 4, color: "var(--ink)"
               }}>0425</div>
-              <div className="t-11 muted">codice apertura</div>
+              <div className="t-11 muted">{t('arrival.keyCode')}</div>
             </div>
           </div>
           <button onClick={() => copyCode("0425")} style={{
@@ -170,13 +177,13 @@ export function ArrivalCheckin({ back, go }) {
             width: copiedCode ? "auto" : 38, gap: 4,
             transition: "all .2s", fontSize: 12, fontWeight: 700,
           }}>
-            {copiedCode ? <><IconCheck size={14} stroke={3}/> Copiato</> : <IconCopy size={16} stroke={2.2} />}
+            {copiedCode ? <><IconCheck size={14} stroke={3}/> {t('arrival.copied')}</> : <IconCopy size={16} stroke={2.2} />}
           </button>
         </div>
       </div>
 
       <div style={{ padding: "20px 20px 0" }}>
-        <div className="t-12 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>I passaggi nel dettaglio</div>
+        <div className="t-12 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{t('arrival.stepsDetail')}</div>
       </div>
 
       <div style={{ padding: "12px 20px 0" }}>
@@ -189,8 +196,8 @@ export function ArrivalCheckin({ back, go }) {
           )}
         </div>
 
-        {s.photo
-          ? <img src={s.photo} alt={s.t} style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 20, marginBottom: 18, display: "block" }} />
+        {photo
+          ? <img src={photo} alt={s.t} style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 20, marginBottom: 18, display: "block" }} />
           : <div className="img-placeholder" style={{ height: 200, borderRadius: 20, marginBottom: 18 }}>{s.img}</div>
         }
 
@@ -210,10 +217,10 @@ export function ArrivalCheckin({ back, go }) {
         }
         {i < steps.length - 1 ?
           <button onClick={() => setI(i + 1)} className="btn btn-accent btn-lg grow">
-            Fatto, avanti <IconChevronR size={16} stroke={2.5} />
+            {t('arrival.next')} <IconChevronR size={16} stroke={2.5} />
           </button> :
           <button onClick={back} className="btn btn-accent btn-lg grow">
-            <IconCheck size={18} stroke={2.5} /> Sono dentro!
+            <IconCheck size={18} stroke={2.5} /> {t('arrival.done')}
           </button>
         }
       </div>
@@ -222,7 +229,10 @@ export function ArrivalCheckin({ back, go }) {
 }
 
 export function TransportDetail({ back, mode }) {
-  const data = {
+  const { t, lang } = useLang()
+  const localData = DATA_TRANSLATIONS.transportData[lang] || DATA_TRANSLATIONS.transportData.it
+
+  const itData = {
     train: {
       icon: "🚆", title: "Arrivo in treno",
       sub: "Dalla stazione di Padova al loft sono 5 minuti a piedi",
@@ -261,10 +271,13 @@ export function TransportDetail({ back, mode }) {
       cta2: { label: "Scarica DropTicket", url: "https://www.dropticket.it" },
     },
   }
-  const d = data[mode] || data.train
+
+  const data = localData || itData
+  const d = (data[mode] || data.train)
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Come arrivare" />
+      <NavBar back={back} title={t('transport.title')} />
       <div style={{ padding: "0 20px" }}>
         <div style={{ fontSize: 52, lineHeight: 1, marginBottom: 12 }}>{d.icon}</div>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500, letterSpacing: -0.02 }}>
@@ -278,8 +291,8 @@ export function TransportDetail({ back, mode }) {
       </div>
 
       <div style={{ padding: "24px 16px 0", display: "flex", flexDirection: "column", gap: 10 }}>
-        {d.sections.map((s, i) =>
-          <div key={i} className="card" style={{ padding: 16 }}>
+        {d.sections.map((s, idx) =>
+          <div key={idx} className="card" style={{ padding: 16 }}>
             <div className="t-15 w-600">{s.t}</div>
             <div className="t-13 muted-2" style={{ marginTop: 6, lineHeight: 1.55 }}>{s.d}</div>
           </div>
@@ -299,13 +312,16 @@ export function TransportDetail({ back, mode }) {
 }
 
 export function Checkin({ back }) {
-  const steps = CHECKIN_STEPS
+  const { t, tData } = useLang()
+  const localSteps = tData('checkinSteps')
+  const steps = localSteps || CHECKIN_STEPS
   const [i, setI] = React.useState(0)
   const s = steps[i]
+  const photo = s.photo || (CHECKIN_STEPS[i] && CHECKIN_STEPS[i].photo)
 
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 30 }}>
-      <NavBar back={back} title={`Passo ${i + 1} di ${steps.length}`} />
+      <NavBar back={back} title={`${t('arrival.step')} ${i + 1} ${t('arrival.of')} ${steps.length}`} />
 
       <div style={{ padding: "0 20px" }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 24 }}>
@@ -317,8 +333,8 @@ export function Checkin({ back }) {
           )}
         </div>
 
-        {s.photo
-          ? <img src={s.photo} alt={s.t} style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 20, marginBottom: 20, display: "block" }} />
+        {photo
+          ? <img src={photo} alt={s.t} style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 20, marginBottom: 20, display: "block" }} />
           : <div className="img-placeholder" style={{ height: 220, borderRadius: 20, marginBottom: 20 }}>{s.img}</div>
         }
 
@@ -338,10 +354,10 @@ export function Checkin({ back }) {
         }
         {i < steps.length - 1 ?
           <button onClick={() => setI(i + 1)} className="btn btn-accent btn-lg grow">
-            Fatto, avanti <IconChevronR size={16} stroke={2.5} />
+            {t('arrival.next')} <IconChevronR size={16} stroke={2.5} />
           </button> :
           <button onClick={back} className="btn btn-accent btn-lg grow">
-            <IconCheck size={18} stroke={2.5} /> Sono dentro!
+            <IconCheck size={18} stroke={2.5} /> {t('arrival.done')}
           </button>
         }
       </div>

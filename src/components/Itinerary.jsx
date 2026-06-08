@@ -13,6 +13,7 @@ import { MOODS,
 } from '../data'
 import { loadItineraries, saveItinerary, deleteItinerary } from '../utils'
 import { NavBar } from './screens/NavBar'
+import { useLang } from '../i18n'
 
 // Coordinate Nominatim/OSM — aggiornate con geocoding verificato
 const PLACE_COORDS = {
@@ -98,6 +99,7 @@ function lookupPhoto(title) {
 }
 
 function SavedItineraries({ onOpen }) {
+  const { t, lang } = useLang()
   const [items, setItems] = React.useState(() => loadItineraries())
   const [confirmDel, setConfirmDel] = React.useState(null)
   const del = (id, e) => { e?.stopPropagation(); setItems(deleteItinerary(id)); setConfirmDel(null) }
@@ -106,13 +108,14 @@ function SavedItineraries({ onOpen }) {
     <div style={{ padding: "32px 20px 0" }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }}>
         <div className="serif" style={{ fontSize: 22, fontWeight: 500 }}>
-          I tuoi <em style={{ fontStyle: "italic", color: "var(--accent)" }}>itinerari</em>
+          {t('itinerary.saved.heading_pre')} <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{t('itinerary.saved.heading_em')}</em>
         </div>
-        <div className="t-12 muted">{items.length} salvati</div>
+        <div className="t-12 muted">{t('itinerary.saved.count').replace('{n}', items.length)}</div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {items.map((it) => {
-          const dateStr = new Date(it.savedAt).toLocaleDateString("it-IT", { day: "numeric", month: "short" })
+          const dateLocale = lang === 'de' ? 'de-DE' : lang === 'fr' ? 'fr-FR' : lang === 'en' ? 'en-GB' : 'it-IT'
+          const dateStr = new Date(it.savedAt).toLocaleDateString(dateLocale, { day: "numeric", month: "short" })
           return (
             <div key={it.id} style={{
               background: "var(--surface)", borderRadius: 18, padding: "12px 14px",
@@ -130,9 +133,9 @@ function SavedItineraries({ onOpen }) {
                 }}>{it.mood?.emoji || "✨"}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="t-15 w-600" style={{ lineHeight: 1.25 }}>
-                    {it.mood?.label || "Itinerario"} · {it.days} {it.days === 1 ? "giorno" : "giorni"}
+                    {it.mood?.label || t('itinerary.title')} · {it.days} {it.days === 1 ? t('days.one') : t('days.many')}
                   </div>
-                  <div className="t-12 muted" style={{ marginTop: 3 }}>Salvato il {dateStr}</div>
+                  <div className="t-12 muted" style={{ marginTop: 3 }}>{t('itinerary.saved.savedOn').replace('{date}', dateStr)}</div>
                 </div>
               </button>
               <button onClick={(e) => confirmDel === it.id ? del(it.id, e) : (e.stopPropagation(), setConfirmDel(it.id))} style={{
@@ -153,6 +156,7 @@ function SavedItineraries({ onOpen }) {
 }
 
 export function Itinerary({ back, go }) {
+  const { t } = useLang()
   const [step, setStep] = React.useState("pick") // pick → duration → result
   const [mood, setMood] = React.useState(null)
   const [days, setDays] = React.useState(1)
@@ -167,16 +171,16 @@ export function Itinerary({ back, go }) {
 
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 90 }}>
-      <NavBar back={back} title="Itinerario" />
+      <NavBar back={back} title={t('itinerary.title')} />
 
       {step === "pick" &&
         <div>
           <div style={{ padding: "4px 20px 8px" }}>
             <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-              Che giornata <em style={{ fontStyle: "italic", color: "var(--accent)" }}>vorresti</em>?
+              {t('itinerary.pick.heading')}
             </div>
             <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-              Scegli un'atmosfera. Non serve altro — il resto lo penso io.
+              {t('itinerary.pick.sub')}
             </div>
           </div>
 
@@ -205,15 +209,15 @@ export function Itinerary({ back, go }) {
             {mood.emoji} {mood.label}
           </div>
           <div className="serif" style={{ fontSize: 30, lineHeight: 1.1, marginTop: 16, fontWeight: 500 }}>
-            Quanti <em style={{ color: "var(--accent)", fontStyle: "italic" }}>giorni</em> hai?
+            {t('itinerary.duration.heading_pre')} <em style={{ color: "var(--accent)", fontStyle: "italic" }}>{t('itinerary.duration.heading_em')}</em> {t('itinerary.duration.heading_post')}
           </div>
 
           <div style={{ marginTop: 28, display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              { d: 1, label: "1 giorno", sub: "Le cose essenziali" },
-              { d: 2, label: "2 giorni", sub: "Padova con calma" },
-              { d: 3, label: "3 giorni", sub: "Anche i dintorni" },
-              { d: 4, label: "4+ giorni", sub: "Vivi come un padovano" },
+              { d: 1, label: t('itinerary.d1.label'), sub: t('itinerary.d1.sub') },
+              { d: 2, label: t('itinerary.d2.label'), sub: t('itinerary.d2.sub') },
+              { d: 3, label: t('itinerary.d3.label'), sub: t('itinerary.d3.sub') },
+              { d: 4, label: t('itinerary.d4.label'), sub: t('itinerary.d4.sub') },
             ].map((o) =>
               <button key={o.d} onClick={() => gen(o.d)} style={{
                 display: "flex", alignItems: "center", gap: 12,
@@ -240,6 +244,7 @@ export function Itinerary({ back, go }) {
 }
 
 export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
+  const { t } = useLang()
   const day1 = {
     slow: [
       { t: "09:30", title: "Colazione al Pedrocchi", sub: "Caffè alla menta, 15 minuti di pace", tag: "Caffè", tint: "#CFB487" },
@@ -360,7 +365,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
         }} />
         <style>{`@keyframes sp { to { transform: rotate(360deg); } }`}</style>
         <div className="t-14 muted" style={{ marginTop: 16 }}>
-          Sto preparando qualcosa su misura…
+          {t('itinerary.loading')}
         </div>
       </div>
     )
@@ -370,6 +375,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
 }
 
 export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
+  const { t } = useLang()
   const [dayIdx, setDayIdx] = React.useState(0)
   const [touchStart, setTouchStart] = React.useState(null)
   const [saved, setSaved] = React.useState(!!reopen)
@@ -397,16 +403,19 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
       <div style={{ padding: "8px 20px 8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div className="chip">{mood?.emoji} {mood?.label}</div>
         <button onClick={back} className="t-13 w-600" style={{ background: "none", border: "none", color: "var(--accent)", cursor: "pointer" }}>
-          Cambia
+          {t('itinerary.result.change')}
         </button>
       </div>
       <div style={{ padding: "0 20px" }}>
         <div className="serif" style={{ fontSize: 28, lineHeight: 1.1, fontWeight: 500 }}>
-          {plans.length === 1 ? "La tua " : `Giorno ${dayIdx + 1} di ${plans.length} — la tua `}
-          <em style={{ fontStyle: "italic", color: "var(--accent)" }}>giornata</em>.
+          {plans.length === 1
+            ? t('itinerary.result.heading_pre')
+            : t('itinerary.result.heading_multi').replace('{n}', dayIdx + 1).replace('{total}', plans.length)
+          }
+          <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{t('itinerary.result.heading_em')}</em>.
         </div>
         <div className="t-13 muted" style={{ marginTop: 8, lineHeight: 1.5 }}>
-          {plan.length} tappe.{plans.length > 1 ? " Scorri ← → per gli altri giorni." : ""}
+          {t('itinerary.result.steps').replace('{n}', plan.length)}{plans.length > 1 ? ' ' + t('itinerary.result.swipe') : ''}
         </div>
       </div>
 
@@ -418,7 +427,7 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
               background: dayIdx === i ? "var(--accent)" : "rgba(26,25,22,0.06)",
               color: dayIdx === i ? "#fff" : "var(--ink-2)",
               fontSize: 12, fontWeight: 700
-            }}>Giorno {i + 1}</button>
+            }}>{t('itinerary.result.day_btn').replace('{n}', i + 1)}</button>
           )}
         </div>
       }
@@ -483,7 +492,7 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
                       target="_blank" rel="noreferrer"
                       className="chip-ghost chip" style={{ cursor: "pointer", textDecoration: "none" }}
                     >
-                      <IconMap size={12} stroke={2.5} /> Indicazioni
+                      <IconMap size={12} stroke={2.5} /> {t('itinerary.result.directions')}
                     </a>
                   </div>
                 </div>
@@ -500,14 +509,14 @@ export function ItineraryDays({ mood, plans, days, back, go, reopen }) {
           background: saved ? "var(--accent-soft)" : undefined,
           color: saved ? "var(--accent-deep)" : undefined,
         }}>
-          {saved ? <><IconCheck size={16} stroke={3}/> Salvato</> : "Salva"}
+          {saved ? <><IconCheck size={16} stroke={3}/> {t('itinerary.result.saved')}</> : t('itinerary.result.save')}
         </button>
         <a
           href={`https://maps.google.com/maps/dir/?api=1&destination=${encodeURIComponent(plan[plan.length - 1]?.title + ', Padova')}&waypoints=${plan.slice(0, -1).map(s => encodeURIComponent(s.title + ', Padova')).join('|')}`}
           target="_blank" rel="noreferrer"
           className="btn btn-accent grow" style={{ textDecoration: "none" }}
         >
-          <IconMap size={18} stroke={2} /> Apri navigazione
+          <IconMap size={18} stroke={2} /> {t('itinerary.result.navigate')}
         </a>
       </div>
     </div>

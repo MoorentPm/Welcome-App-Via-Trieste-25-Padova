@@ -8,6 +8,7 @@ import {
   ArrivalCheckin, TransportDetail, Coupons, CouponDetail, Review,
   PlaceDetail, Places, DailyTip, About, NavBar,
 } from './Screens'
+import { LangProvider, useLang } from '../i18n'
 
 const TWEAK_DEFAULTS = {
   stage: 'stay',
@@ -31,21 +32,22 @@ function applyAccent(key) {
 }
 
 export function TabBar({ active, onTab }) {
+  const { t } = useLang()
   const tabs = [
     { id: 'home',      icon: IconHome,    label: 'Home' },
     { id: 'padova',    icon: IconMap,     label: 'Padova' },
-    { id: 'itinerary', icon: IconSparkle, label: 'Itinerario' },
-    { id: 'host',      icon: IconMsg,     label: 'Concierge' },
+    { id: 'itinerary', icon: IconSparkle, label: t('tab.itinerary') },
+    { id: 'host',      icon: IconMsg,     label: t('tab.host') },
   ]
   return (
     <div className="tabbar">
-      {tabs.map(t => {
-        const I = t.icon
-        const isActive = active === t.id
+      {tabs.map(tab => {
+        const I = tab.icon
+        const isActive = active === tab.id
         return (
-          <button key={t.id} data-active={isActive} onClick={() => onTab(t.id)} className="tabitem">
+          <button key={tab.id} data-active={isActive} onClick={() => onTab(tab.id)} className="tabitem">
             <I size={24} stroke={isActive ? 2.2 : 1.8}/>
-            <span style={{ marginTop: 2 }}>{t.label}</span>
+            <span style={{ marginTop: 2 }}>{tab.label}</span>
           </button>
         )
       })}
@@ -121,6 +123,8 @@ export default function App() {
     )
   }
 
+  const lang = guest?.lang || 'it'
+
   let screen = null
   const activeTab = ['home', 'padova', 'itinerary', 'host'].includes(route.name) ? route.name : null
 
@@ -152,13 +156,13 @@ export default function App() {
   }
 
   return (
-    <>
+    <LangProvider lang={lang}>
       <div className="app-root" data-screen-label={route.name} style={{ height: '100%', position: 'relative' }}>
         {screen}
         <TabBar active={activeTab || 'home'} onTab={tab} />
       </div>
       {editOpen && <TweaksPanel tweaks={tweaks} setTweak={setTweak} close={() => setEditOpen(false)} />}
-    </>
+    </LangProvider>
   )
 }
 
@@ -218,6 +222,7 @@ function TweakPill({ active, onClick, children }) {
 }
 
 export function Settings({ back, guest, onLogout, onSave }) {
+  const { t } = useLang()
   const [name, setName] = React.useState(guest.firstName || '')
   const [checkin, setCheckin] = React.useState(guest.checkin || '')
   const [checkout, setCheckout] = React.useState(guest.checkout || '')
@@ -245,50 +250,54 @@ export function Settings({ back, guest, onLogout, onSave }) {
     setTimeout(() => setSavedNote(false), 1800)
   }
 
+  const nightsLabel = guest.nights === 1 ? t('home.nights_one') : t('home.nights_many')
+
   return (
-    <div className="screen-scroll" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Profilo" />
-      <div style={{ padding: '0 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '6px 6px 18px' }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 999, flexShrink: 0,
-            background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%)',
-            color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 22,
-          }}>{(name || 'O')[0].toUpperCase()}</div>
-          <div className="grow">
-            <div className="t-17 w-600">{name || 'Ospite'}</div>
-            <div className="t-12 muted" style={{ marginTop: 2 }}>{guest.nights} {guest.nights === 1 ? 'notte' : 'notti'} · Padova</div>
+    <LangProvider lang={lang}>
+      <div className="screen-scroll" style={{ paddingBottom: 110 }}>
+        <NavBar back={back} title={t('settings.title')} />
+        <div style={{ padding: '0 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '6px 6px 18px' }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: 999, flexShrink: 0,
+              background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%)',
+              color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 22,
+            }}>{(name || 'O')[0].toUpperCase()}</div>
+            <div className="grow">
+              <div className="t-17 w-600">{name || 'Ospite'}</div>
+              <div className="t-12 muted" style={{ marginTop: 2 }}>{guest.nights} {nightsLabel} · {t('home.city')}</div>
+            </div>
           </div>
-        </div>
-        <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, padding: '0 6px 10px' }}>La tua prenotazione</div>
-        <div className="card-tight" style={{ padding: 6 }}>
-          <SettingsField label="Come ti chiamiamo" value={name} onChange={setName} placeholder="Il tuo nome" />
-          <div style={{ display: 'flex', gap: 0, borderTop: '0.5px solid var(--hairline)' }}>
-            <SettingsField label="Check-in"  value={checkin}  onChange={setCheckin}  type="date" border={false} />
-            <div style={{ width: '0.5px', background: 'var(--hairline)' }}/>
-            <SettingsField label="Check-out" value={checkout} onChange={setCheckout} type="date" border={false} />
+          <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, padding: '0 6px 10px' }}>{t('settings.booking')}</div>
+          <div className="card-tight" style={{ padding: 6 }}>
+            <SettingsField label={t('settings.nameLabel')} value={name} onChange={setName} placeholder={t('settings.namePlaceholder')} />
+            <div style={{ display: 'flex', gap: 0, borderTop: '0.5px solid var(--hairline)' }}>
+              <SettingsField label={t('settings.checkin')}  value={checkin}  onChange={setCheckin}  type="date" border={false} />
+              <div style={{ width: '0.5px', background: 'var(--hairline)' }}/>
+              <SettingsField label={t('settings.checkout')} value={checkout} onChange={setCheckout} type="date" border={false} />
+            </div>
           </div>
-        </div>
-        <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, padding: '24px 6px 10px' }}>Lingua</div>
-        <div className="card-tight">
-          {[{ k: 'it', label: 'Italiano' }, { k: 'en', label: 'English' }, { k: 'de', label: 'Deutsch' }, { k: 'fr', label: 'Français' }].map(l => (
-            <button key={l.k} onClick={() => setLang(l.k)} className="row" style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-              <div className="grow t-15">{l.label}</div>
-              {lang === l.k && <IconCheck size={18} stroke={2.5} style={{ color: 'var(--accent)' }}/>}
+          <div className="t-13 w-600 muted" style={{ textTransform: 'uppercase', letterSpacing: 0.5, padding: '24px 6px 10px' }}>{t('settings.language')}</div>
+          <div className="card-tight">
+            {[{ k: 'it', label: 'Italiano' }, { k: 'en', label: 'English' }, { k: 'de', label: 'Deutsch' }, { k: 'fr', label: 'Français' }].map(l => (
+              <button key={l.k} onClick={() => setLang(l.k)} className="row" style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+                <div className="grow t-15">{l.label}</div>
+                {lang === l.k && <IconCheck size={18} stroke={2.5} style={{ color: 'var(--accent)' }}/>}
+              </button>
+            ))}
+          </div>
+          <div style={{ padding: '24px 0 0' }}>
+            <button onClick={save} disabled={!dirty && !savedNote} className="btn btn-accent btn-lg btn-full"
+              style={{ opacity: dirty || savedNote ? 1 : 0.4, transition: 'opacity .2s' }}>
+              {savedNote ? <><IconCheck size={18} stroke={2.5}/> {t('settings.saved')}</> : t('settings.save')}
             </button>
-          ))}
-        </div>
-        <div style={{ padding: '24px 0 0' }}>
-          <button onClick={save} disabled={!dirty && !savedNote} className="btn btn-accent btn-lg btn-full"
-            style={{ opacity: dirty || savedNote ? 1 : 0.4, transition: 'opacity .2s' }}>
-            {savedNote ? <><IconCheck size={18} stroke={2.5}/> Salvato</> : 'Salva modifiche'}
-          </button>
-        </div>
-        <div style={{ padding: '12px 0 0' }}>
-          <button onClick={onLogout} className="btn btn-ghost btn-lg btn-full">Esci</button>
+          </div>
+          <div style={{ padding: '12px 0 0' }}>
+            <button onClick={onLogout} className="btn btn-ghost btn-lg btn-full">{t('settings.logout')}</button>
+          </div>
         </div>
       </div>
-    </div>
+    </LangProvider>
   )
 }
 

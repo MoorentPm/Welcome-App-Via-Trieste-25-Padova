@@ -2,9 +2,12 @@ import React from 'react'
 import { IconCheck, IconHeart } from '../Icons'
 import { APARTMENT as AP, CHECKOUT_STEPS } from '../../data'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
 export function Checkout({ back, go }) {
-  const steps = CHECKOUT_STEPS
+  const { t, tData } = useLang()
+  const localSteps = tData('checkoutSteps')
+  const steps = localSteps || CHECKOUT_STEPS
   const [done, setDone] = React.useState(() => steps.map(() => false))
   const toggle = (i) => setDone((d) => d.map((v, k) => k === i ? !v : v))
   const allDone = done.every(Boolean)
@@ -12,20 +15,22 @@ export function Checkout({ back, go }) {
 
   React.useEffect(() => {
     if (allDone) {
-      const t = setTimeout(() => go("goodbye"), 800)
-      return () => clearTimeout(t)
+      const timer = setTimeout(() => go("goodbye"), 800)
+      return () => clearTimeout(timer)
     }
   }, [allDone])
 
+  const subText = t('checkout.sub').replace('{time}', AP.checkout.until)
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 30 }}>
-      <NavBar back={back} title="Check-out" />
+      <NavBar back={back} title={t('checkout.title')} />
       <div style={{ padding: "0 20px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          <em style={{ fontStyle: "italic", color: "var(--accent)" }}>Prima di andare</em>.
+          <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{t('checkout.heading')}</em>.
         </div>
         <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-          Entro le <strong style={{ color: "var(--ink)" }}>{AP.checkout.until}</strong>. Spunta man mano — niente di che, sono 5 minuti. Non devi pulire né rifare il letto.
+          {subText}
         </div>
       </div>
 
@@ -67,7 +72,9 @@ export function Checkout({ back, go }) {
       <div style={{ padding: "28px 16px 0" }}>
         <button onClick={() => go("goodbye")} disabled={!allDone} className="btn btn-accent btn-lg btn-full"
           style={{ opacity: allDone ? 1 : 0.4, transition: "opacity .3s" }}>
-          {allDone ? <><IconHeart size={18} stroke={2.2}/> Lascia un saluto</> : `Completa per continuare (${completedCount}/${steps.length})`}
+          {allDone
+            ? <><IconHeart size={18} stroke={2.2}/> {t('checkout.allDone')}</>
+            : t('checkout.progress').replace('{done}', completedCount).replace('{total}', steps.length)}
         </button>
       </div>
     </div>

@@ -2,8 +2,10 @@ import React from 'react'
 import { IconChevronL, IconChevronR, IconSparkle } from '../Icons'
 import { APARTMENT as AP, HOUSE_RULES, APPLIANCES } from '../../data'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
 export function DailyTip({ back, go }) {
+  const { t } = useLang()
   const [tip, setTip] = React.useState(null)
   const [loading, setLoading] = React.useState(true)
   const [err, setErr] = React.useState(false)
@@ -81,14 +83,14 @@ Solo JSON, nessun altro testo.`
 
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Cosa fare oggi" />
+      <NavBar back={back} title={t('tip.title')} />
 
       <div style={{ padding: "0 20px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          Il consiglio <em style={{ fontStyle: "italic", color: "var(--accent)" }}>di oggi</em>.
+          {t('daily.heading')}
         </div>
         <div className="t-13 muted" style={{ marginTop: 8, lineHeight: 1.5 }}>
-          Pensato per quest'ora, qui e ora — tocca per averne un altro.
+          {t('daily.sub')}
         </div>
       </div>
 
@@ -99,7 +101,7 @@ Solo JSON, nessun altro testo.`
             borderTopColor: "var(--accent)", animation: "sp 0.9s linear infinite", margin: "0 auto",
           }}/>
           <style>{`@keyframes sp { to { transform: rotate(360deg); } }`}</style>
-          <div className="t-14 muted" style={{ marginTop: 16 }}>Sto pensando…</div>
+          <div className="t-14 muted" style={{ marginTop: 16 }}>{t('daily.thinking')}</div>
         </div>
       )}
 
@@ -138,16 +140,16 @@ Solo JSON, nessun altro testo.`
 
           <div style={{ padding: "16px 16px 0" }}>
             <button onClick={fetchTip} disabled={loading} className="btn btn-ghost btn-lg btn-full">
-              <IconSparkle size={18} stroke={2}/> Dammene un altro
+              <IconSparkle size={18} stroke={2}/> {t('daily.another')}
             </button>
           </div>
 
           <div style={{ padding: "26px 20px 0" }}>
             <div className="t-13 muted" style={{ lineHeight: 1.5, marginBottom: 14 }}>
-              Vuoi un programma completo della giornata?
+              {t('daily.itinerary_prompt')}
             </div>
             <button onClick={() => go("itinerary")} className="btn btn-accent btn-lg btn-full">
-              Crea un itinerario su misura →
+              {t('daily.create_itinerary')}
             </button>
           </div>
         </>
@@ -155,11 +157,11 @@ Solo JSON, nessun altro testo.`
 
       {err && (
         <div style={{ padding: "40px 20px", textAlign: "center" }}>
-          <div className="t-14 muted" style={{ lineHeight: 1.5 }}>
-            Non riesco a connettermi al momento.<br/>Riprova o crea un itinerario.
+          <div className="t-14 muted" style={{ lineHeight: 1.5, whiteSpace: "pre-line" }}>
+            {t('daily.error')}
           </div>
           <button onClick={fetchTip} className="btn btn-ghost btn-lg" style={{ marginTop: 20 }}>
-            Riprova
+            {t('daily.retry')}
           </button>
         </div>
       )}
@@ -168,6 +170,7 @@ Solo JSON, nessun altro testo.`
 }
 
 export function Host({ back, guest }) {
+  const { t } = useLang()
   const name = guest?.firstName || AP.guest.firstName
   const [msgs, setMsgs] = React.useState(() => {
     try {
@@ -258,10 +261,10 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
           <IconSparkle size={20} stroke={2} />
         </div>
         <div className="grow">
-          <div className="t-15 w-600" style={{ lineHeight: 1.2 }}>Concierge AI</div>
+          <div className="t-15 w-600" style={{ lineHeight: 1.2 }}>{t('host.ai_title')}</div>
           <div className="t-11 muted" style={{ marginTop: 2, display: "inline-flex", alignItems: "center", gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: 999, background: "var(--ok)" }} />
-            Online · conosce la casa
+            {t('host.status')}
           </div>
         </div>
       </div>
@@ -300,7 +303,7 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
 
       {msgs.length <= 2 &&
         <div style={{ padding: "8px 16px 0", display: "flex", gap: 6, overflowX: "auto" }}>
-          {["Dove mangio stasera?", "Come arrivo a Venezia?", "La lavatrice come va?", "Piove, che faccio?"].map((s) =>
+          {[t('host.chip1'), t('host.chip2'), t('host.chip3'), t('host.chip4')].map((s) =>
             <button key={s} onClick={() => send(s)} className="chip chip-ghost"
               style={{ whiteSpace: "nowrap", cursor: "pointer", flexShrink: 0, fontWeight: 600 }}>
               {s}
@@ -311,7 +314,7 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
 
       <div style={{ padding: "10px 12px 90px", display: "flex", gap: 8 }}>
         <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
-          placeholder="Chiedi qualunque cosa…"
+          placeholder={t('host.placeholder')}
           style={{
             flex: 1, padding: "14px 16px", borderRadius: 22, border: "none",
             background: "var(--surface)", fontSize: 16, fontFamily: "inherit",

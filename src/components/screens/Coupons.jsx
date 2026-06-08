@@ -3,18 +3,19 @@ import { IconCheck, IconChevronL, IconChevronR, IconStar } from '../Icons'
 import { APARTMENT as AP, COUPONS_RICH } from '../../data'
 import { wrapText, roundRect } from '../../utils'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
-export function Coupons({ back, go, guest }) {
-  const lang = guest?.lang || "it"
+export function Coupons({ back, go }) {
+  const { lang, t } = useLang()
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Vantaggi" />
+      <NavBar back={back} title={t('coupons.title')} />
       <div style={{ padding: "0 20px 8px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          Sconti e <em style={{ fontStyle: "italic", color: "var(--accent)" }}>vantaggi</em>.
+          {t('coupons.heading')}
         </div>
         <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-          Tocca un partner per vedere il coupon dedicato.
+          {t('coupons.sub')}
         </div>
       </div>
 
@@ -48,9 +49,9 @@ export function Coupons({ back, go, guest }) {
   )
 }
 
-export function CouponDetail({ back, item, guest }) {
+export function CouponDetail({ back, item }) {
+  const { lang, t } = useLang()
   const c = item || COUPONS_RICH[0]
-  const lang = guest?.lang || "it"
   const [downloaded, setDownloaded] = React.useState(false)
 
   const download = () => {
@@ -132,12 +133,6 @@ export function CouponDetail({ back, item, guest }) {
     setTimeout(() => setDownloaded(false), 2500)
   }
 
-  const L = {
-    it: { useAt: "Usa qui", howUse: "Come usarlo", howUseDesc: "Mostra il coupon scaricato in cassa con il codice ben visibile. Il commerciante lo verifica con un tocco.", download: "Scarica coupon", downloaded: "Scaricato!" },
-    en: { useAt: "Use at", howUse: "How to use", howUseDesc: "Show the downloaded coupon at the till with the code clearly visible.", download: "Download coupon", downloaded: "Downloaded!" },
-    de: { useAt: "Gültig in", howUse: "Verwendung", howUseDesc: "Zeige den heruntergeladenen Coupon an der Kasse mit gut sichtbarem Code.", download: "Coupon herunterladen", downloaded: "Heruntergeladen!" },
-    fr: { useAt: "À utiliser à", howUse: "Comment l'utiliser", howUseDesc: "Présente le coupon téléchargé en caisse avec le code bien visible.", download: "Télécharger", downloaded: "Téléchargé !" },
-  }[lang] || {}
 
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
@@ -154,7 +149,7 @@ export function CouponDetail({ back, item, guest }) {
             <IconChevronL size={18} stroke={2.5} />
           </button>
           <div style={{ color: "#fff" }}>
-            <div className="t-11 w-600" style={{ opacity: 0.85, textTransform: "uppercase", letterSpacing: 0.5 }}>{L.useAt}</div>
+            <div className="t-11 w-600" style={{ opacity: 0.85, textTransform: "uppercase", letterSpacing: 0.5 }}>{t('coupon.useAt')}</div>
             <div className="serif" style={{ fontSize: 30, lineHeight: 1.1, fontWeight: 500, marginTop: 6 }}>{c.shop}</div>
           </div>
         </div>
@@ -185,7 +180,7 @@ export function CouponDetail({ back, item, guest }) {
             opacity: 0.5
           }} />
           <div className="t-11 w-600" style={{ opacity: 0.7, textTransform: "uppercase", letterSpacing: 0.5, position: "relative" }}>
-            Codice coupon
+            {t('coupon.code_label')}
           </div>
           <div style={{
             fontFamily: "ui-monospace, monospace", fontSize: 28, fontWeight: 700,
@@ -200,16 +195,16 @@ export function CouponDetail({ back, item, guest }) {
             display: "inline-flex", alignItems: "center", gap: 8, position: "relative"
           }}>
             {downloaded
-              ? <><IconCheck size={14} stroke={3} /> {L.downloaded}</>
-              : <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v14M5 12l7 7 7-7M5 21h14"/></svg> {L.download}</>
+              ? <><IconCheck size={14} stroke={3} /> {t('coupon.downloaded')}</>
+              : <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v14M5 12l7 7 7-7M5 21h14"/></svg> {t('coupon.download')}</>
             }
           </button>
         </div>
       </div>
 
       <div style={{ padding: "20px 20px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{L.howUse}</div>
-        <div className="t-14" style={{ marginTop: 8, lineHeight: 1.6, color: "var(--ink-2)" }}>{L.howUseDesc}</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{t('coupon.howUse')}</div>
+        <div className="t-14" style={{ marginTop: 8, lineHeight: 1.6, color: "var(--ink-2)" }}>{t('coupon.howUseDesc')}</div>
       </div>
     </div>
   )

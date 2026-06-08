@@ -8,6 +8,7 @@ import {
   APPLIANCES, FAQ, EMERGENCY,
 } from '../../data'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
 function CollapsibleSection({ title, sub, icon, open, onToggle, children }) {
   return (
@@ -42,21 +43,29 @@ function CollapsibleSection({ title, sub, icon, open, onToggle, children }) {
 }
 
 export function Wifi({ back }) {
+  const { t, tData } = useLang()
   const [copied, setCopied] = React.useState(null)
   const copy = (what, value) => {
     try { navigator.clipboard?.writeText(value) } catch {}
     setCopied(what)
     setTimeout(() => setCopied(null), 2000)
   }
+
+  const troubleshootItems = tData('wifiTroubleshoot') || [
+    { icon: "🔁", t: "Si è disconnesso?", d: "Vai nelle impostazioni Wi-Fi del telefono, dimentica la rete, poi riconnettiti." },
+    { icon: "🔌", t: "Niente segnale?", d: "Il router è dietro la TV. Stacca la spina per 10 secondi e riattacca. Aspetta 2 minuti." },
+    { icon: "📍", t: "Lento in una stanza?", d: "Avvicinati al router o usa la rete '5GHz' che è più veloce nel raggio breve." },
+  ]
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Wi-Fi" />
+      <NavBar back={back} title={t('wifi.title')} />
       <div style={{ padding: "8px 20px 0" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.1, fontWeight: 500 }}>
-          Collegati in <em style={{ fontStyle: "italic", color: "var(--accent)" }}>un tocco</em>.
+          {t('wifi.heading').split(' ').slice(0, -1).join(' ')} <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{t('wifi.heading').split(' ').slice(-1)[0]}</em>
         </div>
         <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-          Wi-Fi gratuito, veloce, sempre attivo. Copre tutto l'appartamento.
+          {t('wifi.sub')}
         </div>
       </div>
 
@@ -81,7 +90,7 @@ export function Wifi({ back }) {
             <circle cx="12" cy="20" r="1" fill="#fff"/>
           </svg>
 
-          <div className="t-11 w-600" style={{ opacity: 0.65, letterSpacing: 0.5, textTransform: "uppercase", position: "relative" }}>Rete</div>
+          <div className="t-11 w-600" style={{ opacity: 0.65, letterSpacing: 0.5, textTransform: "uppercase", position: "relative" }}>{t('wifi.network')}</div>
           <div style={{
             marginTop: 6, position: "relative",
             color: "#fff", fontFamily: "ui-monospace, monospace", fontSize: 20, fontWeight: 700,
@@ -91,7 +100,7 @@ export function Wifi({ back }) {
 
           <div style={{ height: 1, background: "rgba(255,255,255,0.1)", margin: "18px 0", position: "relative" }}/>
 
-          <div className="t-11 w-600" style={{ opacity: 0.65, letterSpacing: 0.5, textTransform: "uppercase", position: "relative" }}>Password</div>
+          <div className="t-11 w-600" style={{ opacity: 0.65, letterSpacing: 0.5, textTransform: "uppercase", position: "relative" }}>{t('wifi.password')}</div>
           <button onClick={() => copy("pwd", AP.wifi.password)} style={{
             background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left",
             width: "100%", marginTop: 6, position: "relative",
@@ -107,7 +116,7 @@ export function Wifi({ back }) {
               fontSize: 11, fontWeight: 700,
               display: "inline-flex", alignItems: "center", gap: 4,
             }}>
-              {copied === "pwd" ? <><IconCheck size={12} stroke={3}/> Copiata</> : <><IconCopy size={12} stroke={2.5}/> Copia</>}
+              {copied === "pwd" ? <><IconCheck size={12} stroke={3}/> {t('wifi.copied')}</> : <><IconCopy size={12} stroke={2.5}/> {t('wifi.copy')}</>}
             </span>
           </button>
         </div>
@@ -115,14 +124,10 @@ export function Wifi({ back }) {
 
       <div style={{ padding: "26px 16px 0" }}>
         <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>
-          Se non funziona
+          {t('wifi.troubleshoot')}
         </div>
         <div className="card-tight">
-          {[
-            { icon: "🔁", t: "Si è disconnesso?", d: "Vai nelle impostazioni Wi-Fi del telefono, dimentica la rete, poi riconnettiti." },
-            { icon: "🔌", t: "Niente segnale?", d: "Il router è dietro la TV. Stacca la spina per 10 secondi e riattacca. Aspetta 2 minuti." },
-            { icon: "📍", t: "Lento in una stanza?", d: "Avvicinati al router o usa la rete '5GHz' che è più veloce nel raggio breve." },
-          ].map((r, i) => (
+          {troubleshootItems.map((r, i) => (
             <div key={i} className="row">
               <div style={{ fontSize: 22, flexShrink: 0, width: 32, textAlign: "center" }}>{r.icon}</div>
               <div className="grow">
@@ -136,7 +141,7 @@ export function Wifi({ back }) {
 
       <div style={{ padding: "20px 20px 0" }}>
         <div className="t-12 muted" style={{ lineHeight: 1.5 }}>
-          La rete è privata e protetta. Solo gli ospiti del Loft possono accedervi.
+          {t('wifi.private')}
         </div>
       </div>
     </div>
@@ -144,10 +149,17 @@ export function Wifi({ back }) {
 }
 
 export function Appliance({ back, item, go }) {
-  const a = item || APPLIANCES[0]
+  const { t, tData } = useLang()
+  const localAppliances = tData('appliances')
+  const getAppliance = (it) => {
+    if (!localAppliances) return it
+    return localAppliances.find(a => a.id === it.id) || it
+  }
+  const a = getAppliance(item || APPLIANCES[0])
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Aiuto" />
+      <NavBar back={back} title={t('appliance.title')} />
 
       <div style={{ padding: "0 20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -185,19 +197,19 @@ export function Appliance({ back, item, go }) {
           <div style={{
             position: "absolute", bottom: 12, left: 16, color: "#fff",
             fontSize: 12, fontWeight: 600, opacity: 0.9
-          }}>Video tutorial · 0:45</div>
+          }}>{t('appliance.videoLabel')}</div>
         </div>
       </div>
 
       <div style={{ padding: "20px 20px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>In breve</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>{t('appliance.brief')}</div>
         <div className="t-15" style={{ marginTop: 8, lineHeight: 1.6, color: "var(--ink-2)" }}>
           {a.desc}
         </div>
       </div>
 
       <div style={{ padding: "20px 16px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 4px 10px" }}>Passo per passo</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 4px 10px" }}>{t('appliance.steps')}</div>
         <div className="card">
           {a.steps.map((s, i) =>
             <div key={i} style={{ display: "flex", gap: 14, padding: "8px 0", alignItems: "flex-start" }}>
@@ -215,7 +227,7 @@ export function Appliance({ back, item, go }) {
 
       <div style={{ padding: "20px 20px 0" }}>
         <div className="t-13 muted" style={{ lineHeight: 1.5 }}>
-          Non funziona? <button onClick={() => go?.("host")} style={{ background: "none", border: "none", color: "var(--accent)", fontWeight: 600, cursor: "pointer", padding: 0 }}>Scrivi al Concierge</button>
+          {t('appliance.help')} <button onClick={() => go?.("host")} style={{ background: "none", border: "none", color: "var(--accent)", fontWeight: 600, cursor: "pointer", padding: 0 }}>{t('appliance.concierge')}</button>
         </div>
       </div>
     </div>
@@ -223,34 +235,44 @@ export function Appliance({ back, item, go }) {
 }
 
 export function House({ back, go }) {
+  const { t, tData } = useLang()
   const [open, setOpen] = React.useState({})
   const [openFaq, setOpenFaq] = React.useState(null)
   const [doneCO, setDoneCO] = React.useState({})
   const toggle = (k) => setOpen((o) => ({ ...o, [k]: !o[k] }))
   const toggleCO = (i) => setDoneCO((d) => ({ ...d, [i]: !d[i] }))
 
-  const coTotal = CHECKOUT_STEPS.length
+  const localRules = tData('houseRules') || HOUSE_RULES
+  const localCheckoutSteps = tData('checkoutSteps') || CHECKOUT_STEPS
+  const localFaq = tData('faq') || FAQ
+  const localAppliances = tData('appliances') || APPLIANCES
+
+  const coTotal = localCheckoutSteps.length
   const coDone = Object.values(doneCO).filter(Boolean).length
   React.useEffect(() => {
     if (coDone === coTotal && coTotal > 0) {
-      const t = setTimeout(() => go("goodbye"), 700)
-      return () => clearTimeout(t)
+      const timer = setTimeout(() => go("goodbye"), 700)
+      return () => clearTimeout(timer)
     }
   }, [coDone, coTotal])
 
+  const coTimeNote = t('house.checkout.timeNote').replace('{time}', AP.checkout.until)
+
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Casa" />
+      <NavBar back={back} title={t('house.title')} />
       <div style={{ padding: "0 20px 8px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          La casa, <em style={{ fontStyle: "italic", color: "var(--accent)" }}>istruzioni per l'uso</em>.
+          {t('house.heading')}
         </div>
       </div>
 
-      <CollapsibleSection title="Regole della casa" sub={`${HOUSE_RULES.length} regole · da leggere all'arrivo`}
+      <CollapsibleSection
+        title={t('house.rules.title')}
+        sub={`${localRules.length} ${t('house.rules.sub')}`}
         icon="📜" open={!!open.rules} onToggle={() => toggle("rules")}>
         <div className="card-tight" style={{ background: "transparent", boxShadow: "none" }}>
-          {HOUSE_RULES.map((r, i) =>
+          {localRules.map((r, i) =>
             <div key={i} className="row">
               <div style={{ fontSize: 22, flexShrink: 0, width: 32, textAlign: "center" }}>{r.icon}</div>
               <div className="grow">
@@ -262,13 +284,15 @@ export function House({ back, go }) {
         </div>
       </CollapsibleSection>
 
-      <CollapsibleSection title="Regole di check-out" sub={`${CHECKOUT_STEPS.length} passaggi · prima di andare`}
+      <CollapsibleSection
+        title={t('house.checkout.title')}
+        sub={`${localCheckoutSteps.length} ${t('house.checkout.sub')}`}
         icon="🧳" open={!!open.checkout} onToggle={() => toggle("checkout")}>
         <div style={{ padding: "0 6px 12px" }}>
           <div className="t-13 muted" style={{ lineHeight: 1.5, padding: "0 10px 10px" }}>
-            Entro le <strong style={{ color: "var(--ink)" }}>{AP.checkout.until}</strong>. Spunta man mano che li fai — niente di che, ci mettiamo 5 minuti.
+            {coTimeNote}
           </div>
-          {CHECKOUT_STEPS.map((s, i) =>
+          {localCheckoutSteps.map((s, i) =>
             <button key={i} onClick={() => toggleCO(i)} style={{
               display: "flex", alignItems: "center", gap: 12, width: "100%",
               padding: "10px 12px", background: "none", border: "none", cursor: "pointer",
@@ -308,14 +332,14 @@ export function House({ back, go }) {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="t-11 w-600" style={{ opacity: 0.7, letterSpacing: 0.5, textTransform: "uppercase" }}>
-                    {coDone === coTotal ? "Tutto fatto" : "Sorpresa in arrivo"}
+                    {coDone === coTotal ? t('house.checkout.allDoneTitle') : t('house.checkout.unlockTitle')}
                   </div>
                   <div className="t-14 w-600" style={{ marginTop: 3, lineHeight: 1.3 }}>
                     {coDone === coTotal
-                      ? "Ti porto al tuo regalo…"
+                      ? t('house.checkout.allDoneSub')
                       : coDone === 0
-                        ? "Completa i passaggi per scoprirla"
-                        : `Manca poco — ${coTotal - coDone} su ${coTotal}`}
+                        ? t('house.checkout.unlockSub')
+                        : t('house.checkout.almostSub').replace('{remaining}', coTotal - coDone).replace('{total}', coTotal)}
                   </div>
                 </div>
               </div>
@@ -333,28 +357,33 @@ export function House({ back, go }) {
         </div>
       </CollapsibleSection>
 
-      <CollapsibleSection title="Aiuto elettrodomestici" sub="Wi-Fi, lavatrice, termostato e altro"
+      <CollapsibleSection
+        title={t('house.appliances.title')}
+        sub={t('house.appliances.sub')}
         icon="🔧" open={!!open.appliances} onToggle={() => toggle("appliances")}>
         <div className="card-tight" style={{ background: "transparent", boxShadow: "none" }}>
-          {APPLIANCES.map((a) =>
-            <button key={a.id} onClick={() => go("appliance", a)} className="row" style={{
-              border: "none", background: "none", cursor: "pointer", width: "100%", textAlign: "left"
-            }}>
-              <div style={{ fontSize: 22, flexShrink: 0, width: 32, textAlign: "center" }}>{a.icon}</div>
-              <div className="grow">
-                <div className="t-15 w-600">{a.t}</div>
-                <div className="t-12 muted" style={{ marginTop: 2 }}>{a.sub}</div>
-              </div>
-              <IconChevronR size={16} stroke={2.2} style={{ color: "var(--ink-4)" }} />
-            </button>
-          )}
+          {APPLIANCES.map((a) => {
+            const locA = localAppliances.find(la => la.id === a.id) || a
+            return (
+              <button key={a.id} onClick={() => go("appliance", a)} className="row" style={{
+                border: "none", background: "none", cursor: "pointer", width: "100%", textAlign: "left"
+              }}>
+                <div style={{ fontSize: 22, flexShrink: 0, width: 32, textAlign: "center" }}>{a.icon}</div>
+                <div className="grow">
+                  <div className="t-15 w-600">{locA.t}</div>
+                  <div className="t-12 muted" style={{ marginTop: 2 }}>{locA.sub}</div>
+                </div>
+                <IconChevronR size={16} stroke={2.2} style={{ color: "var(--ink-4)" }} />
+              </button>
+            )
+          })}
         </div>
       </CollapsibleSection>
 
       <div style={{ padding: "24px 16px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>Domande frequenti</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>{t('house.faq.title')}</div>
         <div className="card-tight">
-          {FAQ.map((f, i) =>
+          {localFaq.map((f, i) =>
             <div key={i}>
               <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
                 display: "flex", alignItems: "center", gap: 12, width: "100%",
@@ -379,7 +408,7 @@ export function House({ back, go }) {
       </div>
 
       <div style={{ padding: "24px 16px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>Se succede qualcosa</div>
+        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5, padding: "0 6px 10px" }}>{t('house.emergency.title')}</div>
         <div className="card-tight">
           {EMERGENCY.map((e, i) =>
             <a key={i} href={`tel:${e.value}`} className="row" style={{ textDecoration: "none" }}>
@@ -406,7 +435,7 @@ export function House({ back, go }) {
           padding: "12px 4px", cursor: "pointer"
         }}>
           <div className="t-11 muted" style={{ lineHeight: 1.5 }}>
-            Casa gestita da <strong style={{ color: "var(--accent)" }}>{AP.pmName}</strong> · Scopri chi siamo
+            {t('house.managedBy')} <strong style={{ color: "var(--accent)" }}>{AP.pmName}</strong> · {t('house.discoverUs')}
           </div>
         </button>
       </div>

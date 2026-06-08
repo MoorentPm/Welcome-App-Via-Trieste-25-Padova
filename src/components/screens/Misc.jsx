@@ -2,35 +2,37 @@ import React from 'react'
 import { IconCheck, IconChevronL, IconChevronR, IconHeart, IconStar } from '../Icons'
 import { APARTMENT as AP } from '../../data'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
 export function Review({ back, guest, go }) {
+  const { t } = useLang()
   const name = guest?.firstName || AP.guest.firstName
-  const [stage, setStage] = React.useState("rate") // rate → coupon
+  const [stage, setStage] = React.useState("rate")
   const [stars, setStars] = React.useState(0)
   const [feedback, setFeedback] = React.useState("")
 
   if (stage === "hello") {
     return (
       <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-        <NavBar back={back} title="Arrivederci" />
+        <NavBar back={back} title={t('review.goodbye.title')} />
         <div style={{ padding: "0 20px" }}>
           <div style={{ fontSize: 60, marginBottom: 14 }}>👋</div>
           <div className="serif" style={{ fontSize: 36, lineHeight: 1.05, fontWeight: 500, letterSpacing: -0.02 }}>
-            Grazie, <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{name}</em>.
+            {t('review.goodbye.thanks')} <em style={{ fontStyle: "italic", color: "var(--accent)" }}>{name}</em>.
           </div>
           <div className="t-15 muted-2" style={{ marginTop: 16, lineHeight: 1.6 }}>
-            È stato un piacere ospitarti. Speriamo che Padova ti abbia conquistato e che il Loft ti sia sembrato casa.
+            {t('review.goodbye.sub1')}
           </div>
           <div className="t-15 muted-2" style={{ marginTop: 14, lineHeight: 1.6 }}>
-            Se ti va, due parole sulla tua esperienza ci aiutano davvero — e abbiamo preparato un piccolo regalo per ringraziarti.
+            {t('review.goodbye.sub2')}
           </div>
         </div>
         <div style={{ padding: "32px 16px 0" }}>
           <button onClick={() => setStage("rate")} className="btn btn-accent btn-lg btn-full">
-            Lascia un feedback →
+            {t('review.goodbye.cta')}
           </button>
           <button onClick={back} className="btn btn-ghost btn-lg btn-full" style={{ marginTop: 10 }}>
-            Magari più tardi
+            {t('review.goodbye.later')}
           </button>
         </div>
       </div>
@@ -39,15 +41,16 @@ export function Review({ back, guest, go }) {
 
   if (stage === "rate") {
     const isHigh = stars >= 3
+    const starLabel = stars === 5 ? t('review.rate.5') : stars === 4 ? t('review.rate.4') : stars === 3 ? t('review.rate.3') : t('review.rate.low')
     return (
       <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-        <NavBar back={back} title="Recensione" />
+        <NavBar back={back} title={t('review.rate.title')} />
         <div style={{ padding: "0 20px" }}>
           <div className="serif" style={{ fontSize: 30, lineHeight: 1.1, fontWeight: 500 }}>
-            Com'è <em style={{ fontStyle: "italic", color: "var(--accent)" }}>andata</em>?
+            {t('review.rate.heading')}
           </div>
           <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-            Tocca le stelle. Onesto è meglio di gentile.
+            {t('review.rate.sub')}
           </div>
         </div>
 
@@ -66,18 +69,13 @@ export function Review({ back, guest, go }) {
 
         {stars > 0 &&
           <div style={{ padding: "4px 20px", textAlign: "center" }}>
-            <div className="t-14 w-600" style={{ color: "var(--accent-deep)" }}>
-              {stars === 5 ? "Wow, grazie davvero! 🙏" :
-               stars === 4 ? "Felici che sia andata bene" :
-               stars === 3 ? "Ti ascoltiamo — dicci cosa migliorare" :
-               "Mi dispiace. Ci aiuti a capire?"}
-            </div>
+            <div className="t-14 w-600" style={{ color: "var(--accent-deep)" }}>{starLabel}</div>
           </div>
         }
 
         <div style={{ padding: "20px 16px 0" }}>
           <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)}
-            placeholder={stars >= 4 ? "Cosa ti è piaciuto di più? (facoltativo)" : "Cosa avremmo potuto fare meglio? Davvero, ci serve"}
+            placeholder={stars >= 4 ? t('review.rate.placeholder.high') : t('review.rate.placeholder.low')}
             style={{
               width: "100%", minHeight: 110, padding: 16, borderRadius: 18,
               background: "var(--surface)", border: "none", fontFamily: "inherit",
@@ -94,10 +92,10 @@ export function Review({ back, guest, go }) {
               border: "1px solid var(--hairline)"
             }}>
               <div className="t-13 w-600" style={{ color: "var(--accent-deep)", textTransform: "uppercase", letterSpacing: 0.4 }}>
-                Un piccolo favore
+                {t('review.rate.favor.title')}
               </div>
               <div className="t-14" style={{ marginTop: 8, lineHeight: 1.55, color: "var(--ink-2)" }}>
-                Le recensioni col massimo punteggio ci aiutano tantissimo a continuare a fare questo lavoro come piace a noi. Se condividi anche su <strong>Booking</strong> o <strong>Airbnb</strong>, riceverai un codice sconto più generoso.
+                {t('review.rate.favor.text')}
               </div>
             </div>
           </div>
@@ -106,7 +104,7 @@ export function Review({ back, guest, go }) {
         <div style={{ padding: "20px 16px 0" }}>
           <button onClick={() => setStage("coupon")} disabled={!stars} className="btn btn-accent btn-lg btn-full"
             style={{ opacity: stars ? 1 : 0.4 }}>
-            {isHigh ? "Invia e ricevi il codice" : "Invia feedback"}
+            {isHigh ? t('review.rate.submitHigh') : t('review.rate.submit')}
           </button>
         </div>
       </div>
@@ -124,7 +122,7 @@ export function Review({ back, guest, go }) {
   }
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Il tuo regalo" />
+      <NavBar back={back} title={t('review.coupon.title')} />
       <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
         <div style={{
           width: 80, height: 80, borderRadius: 999, margin: "0 auto",
@@ -134,12 +132,10 @@ export function Review({ back, guest, go }) {
           <IconHeart size={40} stroke={2} style={{ fill: "var(--accent)" }} />
         </div>
         <div className="serif" style={{ fontSize: 30, marginTop: 20, fontWeight: 500, lineHeight: 1.15 }}>
-          {isHigh ? "Grazie di cuore." : "Grazie del feedback."}
+          {isHigh ? t('review.coupon.thanksHigh') : t('review.coupon.thanks')}
         </div>
         <div className="t-14 muted-2" style={{ marginTop: 12, lineHeight: 1.55, padding: "0 8px" }}>
-          {isHigh
-            ? "Lo apprezziamo davvero. Ecco il tuo codice sconto per la prossima volta che vieni a Padova."
-            : "Ne facciamo tesoro. Tieni questo codice: vale per la tua prossima prenotazione."}
+          {isHigh ? t('review.coupon.subHigh') : t('review.coupon.sub')}
         </div>
       </div>
 
@@ -155,13 +151,13 @@ export function Review({ back, guest, go }) {
             opacity: 0.4
           }} />
           <div className="t-11 w-600" style={{ opacity: 0.7, textTransform: "uppercase", letterSpacing: 0.5, position: "relative" }}>
-            Sconto sulla prossima prenotazione
+            {t('review.coupon.discount')}
           </div>
           <div className="serif" style={{ fontSize: 56, fontWeight: 500, marginTop: 8, lineHeight: 1, position: "relative" }}>
             {discount}
           </div>
           <div className="t-13" style={{ opacity: 0.8, marginTop: 16, position: "relative" }}>
-            Codice da usare su <strong style={{ color: "#fff" }}>{AP.website}</strong>
+            {t('review.coupon.codeUsedOn')} <strong style={{ color: "#fff" }}>{AP.website}</strong>
           </div>
           <div style={{
             marginTop: 10, padding: "12px 16px", borderRadius: 12,
@@ -178,7 +174,7 @@ export function Review({ back, guest, go }) {
               fontWeight: 700, cursor: "pointer", display: "inline-flex",
               alignItems: "center", gap: 4, transition: "background .2s",
             }}>
-              {copiedCoupon ? <><IconCheck size={12} stroke={3}/> Copiato</> : "Copia"}
+              {copiedCoupon ? <><IconCheck size={12} stroke={3}/> {t('review.coupon.copied')}</> : t('review.coupon.copy')}
             </button>
           </div>
         </div>
@@ -191,28 +187,28 @@ export function Review({ back, guest, go }) {
             target="_blank" rel="noreferrer"
             className="btn btn-ghost btn-lg btn-full" style={{ background: "var(--surface)", textDecoration: "none" }}
           >
-            <IconHeart size={18} /> Lascia recensione su Booking
+            <IconHeart size={18} /> {t('review.coupon.booking')}
           </a>
           <a
             href="https://www.airbnb.it/s/Padova--Italy/homes"
             target="_blank" rel="noreferrer"
             className="btn btn-ghost btn-lg btn-full" style={{ background: "var(--surface)", textDecoration: "none" }}
           >
-            <IconHeart size={18} /> Lascia recensione su Airbnb
+            <IconHeart size={18} /> {t('review.coupon.airbnb')}
           </a>
         </div>
       }
 
       <div style={{ padding: "16px 16px 0" }}>
         <button onClick={() => go ? go("home") : back()} className="btn btn-primary btn-lg btn-full">
-          Torna alla home
+          {t('review.coupon.home')}
         </button>
       </div>
 
       <div style={{ padding: "24px 20px 0", textAlign: "center" }}>
         <div className="t-13 muted" style={{ lineHeight: 1.5 }}>
-          Torna a trovarci, {name}. <br />
-          Padova è sempre la stessa, ma cambia con te.
+          {t('review.coupon.footer_pre')} {name}. <br />
+          {t('review.coupon.footer')}
         </div>
       </div>
     </div>

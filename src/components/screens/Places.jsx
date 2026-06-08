@@ -3,8 +3,10 @@ import { IconChevronL, IconHeart, IconMap } from '../Icons'
 import { PLACES } from '../../data'
 import { loadFavorites, toggleFavorite } from '../../utils'
 import { NavBar } from './NavBar'
+import { useLang } from '../../i18n'
 
 export function Places({ back, go }) {
+  const { t } = useLang()
   const [favs, setFavs] = React.useState(() => loadFavorites())
   const sorted = [...PLACES].sort((a, b) => {
     const af = favs.includes(a.id) ? 0 : 1
@@ -13,13 +15,13 @@ export function Places({ back, go }) {
   })
   return (
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
-      <NavBar back={back} title="Padova" />
+      <NavBar back={back} title={t('places.title')} />
       <div style={{ padding: "0 20px 16px" }}>
         <div className="serif" style={{ fontSize: 32, lineHeight: 1.05, fontWeight: 500 }}>
-          Da non <em style={{ fontStyle: "italic", color: "var(--accent)" }}>perdere</em>.
+          {t('places.heading')}
         </div>
         <div className="t-14 muted" style={{ marginTop: 10, lineHeight: 1.5 }}>
-          Solo le cose che consigliamo davvero — i nostri preferiti.
+          {t('places.sub')}
         </div>
       </div>
 
@@ -57,6 +59,7 @@ export function Places({ back, go }) {
 }
 
 export function PlaceDetail({ back, place }) {
+  const { t } = useLang()
   const p = place || PLACES[0]
   const [favs, setFavs] = React.useState(() => loadFavorites())
   const isFav = favs.includes(p.id)
@@ -82,7 +85,7 @@ export function PlaceDetail({ back, place }) {
           {p.name}
         </div>
         <div className="t-14 muted-2" style={{ marginTop: 12, lineHeight: 1.6 }}>
-          {p.sub}. {p.dist} dal Loft.
+          {p.sub}. {p.dist}.
         </div>
       </div>
 
@@ -92,7 +95,7 @@ export function PlaceDetail({ back, place }) {
           target="_blank" rel="noreferrer"
           className="btn btn-accent btn-lg grow" style={{ textDecoration: "none" }}
         >
-          <IconMap size={18} stroke={2} /> Indicazioni
+          <IconMap size={18} stroke={2} /> {t('places.openMaps')}
         </a>
         <button onClick={handleFav} className="btn btn-ghost btn-lg" style={{
           flexShrink: 0, width: 56,
@@ -101,13 +104,6 @@ export function PlaceDetail({ back, place }) {
         }}>
           <IconHeart size={20} stroke={2} style={{ fill: isFav ? "var(--accent)" : "none" }} />
         </button>
-      </div>
-
-      <div style={{ padding: "20px 20px 0" }}>
-        <div className="t-13 w-600 muted" style={{ textTransform: "uppercase", letterSpacing: 0.5 }}>Perché vale</div>
-        <div className="t-15" style={{ marginTop: 10, lineHeight: 1.6, color: "var(--ink-2)" }}>
-          Un consiglio del cuore: vai presto, prima delle 10. La luce della mattina qui è un'altra cosa, e non c'è ancora la fila turistica.
-        </div>
       </div>
     </div>
   )
