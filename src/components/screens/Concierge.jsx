@@ -20,14 +20,14 @@ async function callConcierge({ messages, system }) {
 
 // Maps screen keys to labels and emojis for navigation buttons
 const SCREEN_NAV = {
-  checkin:   { label: 'Check-in',    emoji: '🔑' },
-  checkout:  { label: 'Checkout',    emoji: '🧳' },
-  wifi:      { label: 'Wi-Fi',       emoji: '📶' },
-  house:     { label: 'Regole casa', emoji: '🏠' },
-  coupons:   { label: 'Coupon',      emoji: '🎫' },
-  places:    { label: 'Luoghi',      emoji: '📍' },
-  itinerary: { label: 'Itinerario',  emoji: '🗺️' },
-  tip:       { label: 'Consiglio',   emoji: '✨' },
+  checkin:   { label: 'Arrivo & Casa', emoji: '🔑', route: 'arrival_checkin' },
+  checkout:  { label: 'Checkout',      emoji: '🧳' },
+  wifi:      { label: 'Wi-Fi',         emoji: '📶' },
+  house:     { label: 'Regole casa',   emoji: '🏠' },
+  coupons:   { label: 'Coupon',        emoji: '🎫' },
+  places:    { label: 'Luoghi',        emoji: '📍' },
+  itinerary: { label: 'Itinerario',    emoji: '🗺️' },
+  tip:       { label: 'Consiglio',     emoji: '✨' },
 }
 
 // ── DailyTip ──────────────────────────────────────────────────────────────────
@@ -453,7 +453,7 @@ User: "What time is check-in?"
                   const nav = SCREEN_NAV[screen]
                   if (!nav || !go) return null
                   return (
-                    <button key={screen} onClick={() => go(screen)}
+                    <button key={screen} onClick={() => go(nav.route || screen)}
                       className="chip chip-ghost"
                       style={{
                         cursor: "pointer", fontWeight: 600, fontSize: 13,
