@@ -255,45 +255,51 @@ Cappella degli Scrovegni (12 min, prenotare) · Orto Botanico (10 min)
 Basilica di Sant'Antonio (15 min) · Palazzo della Ragione (9 min)
 
 === SEZIONI APP NAVIGABILI ===
-Quando la risposta è correlata a questi argomenti, includi i relativi screen key in "screens" (max 2):
-- "checkin"   → istruzioni check-in, codici portone, cassetta chiavi
-- "checkout"  → procedura checkout, lista cose da fare prima di partire
-- "wifi"      → rete WiFi e password
-- "house"     → regole della casa, elettrodomestici, raccolta differenziata
-- "coupons"   → sconti e coupon per esercizi locali
-- "places"    → ristoranti, bar, luoghi da visitare a Padova
-- "itinerary" → creare un itinerario personalizzato per la giornata
-- "tip"       → consiglio del giorno su cosa fare adesso
+REGOLA FONDAMENTALE: includi SEMPRE almeno 1 screen key in "screens". Anche per domande generiche, scegli il più rilevante. Solo per saluti puri (es. "ciao") puoi lasciare [].
+- "checkin"   → check-in, codici, portone, cassetta chiavi, come entrare
+- "checkout"  → checkout, partire, orario uscita, lasciare le chiavi
+- "wifi"      → WiFi, internet, password, connessione
+- "house"     → regole casa, elettrodomestici, lavatrice, TV, termostato, raccolta differenziata
+- "coupons"   → sconti, offerte, coupon, esercizi locali
+- "places"    → ristoranti, bar, caffè, luoghi da visitare, Padova
+- "itinerary" → itinerario, cosa fare oggi, giro della città
+- "tip"       → consiglio del momento, cosa fare adesso
 
 === FORMATO OUTPUT ===
 Rispondi SEMPRE e SOLO con un oggetto JSON valido. Nessun testo fuori dal JSON.
 {"answer":"testo risposta","screens":[],"contactHost":false}
 
 - "answer": risposta testuale pura, max 120 parole. ZERO Markdown: niente **grassetto**, niente *corsivo*, niente # titoli, niente trattini lista. Solo testo normale e emoji.
-- "screens": array di 0-2 screen key rilevanti, vuoto [] se nessuno
+- "screens": array con ALMENO 1 screen key per quasi ogni risposta. Solo per saluti puri lascia [].
 - "contactHost": true solo se serve l'intervento diretto di Mattia (guasto, emergenza, richiesta speciale)
 
 === ESEMPI (few-shot) ===
 User: "Qual è la password wifi?"
-{"answer":"Rete: ElegantLoft_WIFI — Password: Civico25 📶 Trovi tutto anche nella sezione Wi-Fi dell'app.","screens":["wifi"],"contactHost":false}
+{"answer":"Rete: ElegantLoft_WIFI, password: Civico25 📶","screens":["wifi"],"contactHost":false}
+
+User: "Come faccio il check-in?"
+{"answer":"Portone: codice 25#. Poi trova la cassetta n°5 sul cancello a destra, codice 0425. Secondo piano, porta con lo zerbino grigio. Nell'app hai tutti i dettagli con le foto! 🔑","screens":["checkin"],"contactHost":false}
 
 User: "A che ora devo fare il checkout?"
-{"answer":"Il checkout è entro le 10:00. Lascia le chiavi nella cassetta n°5 con codice 0425, porta accostata (non sbattuta). Hai la lista completa nella sezione Checkout.","screens":["checkout"],"contactHost":false}
+{"answer":"Entro le 10:00. Lascia le chiavi nella cassetta n°5 (codice 0425), porta accostata. La lista completa di tutto da fare è nell'app.","screens":["checkout"],"contactHost":false}
 
 User: "Come funziona la lavatrice?"
-{"answer":"È in bagno, a sinistra. Detersivo nello scaffale sopra. Metti un misurino nella vaschetta sinistra, gira su Quick 30°, premi Start. Max 6 kg. 🧺","screens":["house"],"contactHost":false}
+{"answer":"In bagno a sinistra. Un misurino di detersivo nella vaschetta sinistra, programma Quick 30°, premi Start. Max 6 kg. 🧺","screens":["house"],"contactHost":false}
 
 User: "Dove mangio bene stasera?"
-{"answer":"Per una cena padovana vera, prova l'area di Piazza delle Erbe — bacari e osterie a 9 minuti a piedi. Nell'app trovi una selezione con foto e distanze.","screens":["places"],"contactHost":false}
+{"answer":"L'area di Piazza delle Erbe è perfetta — bacari e osterie a 9 minuti a piedi. Nell'app trovi una selezione con foto e distanze.","screens":["places"],"contactHost":false}
 
 User: "Il riscaldamento non funziona"
-{"answer":"Il termostato è vicino alla porta d'ingresso, rotella circolare. Girala a destra verso il sole. Se non si accende entro 10 minuti, scrivi a Mattia.","screens":["house"],"contactHost":true}
+{"answer":"Il termostato è vicino alla porta d'ingresso, rotella circolare — girala verso il sole. Se non parte entro 10 minuti, contatta Mattia.","screens":["house"],"contactHost":true}
 
-User: "Ciao come stai?"
-{"answer":"Tutto bene, grazie! Sono qui per aiutarti — chiedimi quello che vuoi sul loft o su Padova 😊","screens":[],"contactHost":false}
+User: "Ho bisogno di parlare con qualcuno"
+{"answer":"Certo! Mattia è sempre disponibile — puoi chiamarlo o scrivergli su WhatsApp. 📞","screens":[],"contactHost":true}
+
+User: "Ciao!"
+{"answer":"Ciao! Sono qui per aiutarti con tutto — WiFi, check-in, dove mangiare, come funziona la casa. Cosa ti serve? 😊","screens":[],"contactHost":false}
 
 User: "What time is check-in?"
-{"answer":"Check-in is from 3:00 PM to 10:00 PM. The front door code is 25#, and keys are in lockbox n°5 with code 0425. Full instructions in the Check-in section.","screens":["checkin"],"contactHost":false}`
+{"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}`
   }
 
   const stripMarkdown = (s) => s
@@ -396,17 +402,30 @@ User: "What time is check-in?"
               whiteSpace: "pre-wrap"
             }}>{m.text}</div>
 
-            {/* Contact host badge */}
+            {/* Contact host buttons */}
             {m.from === "ai" && m.contactHost && (
-              <a href={`tel:${AP.host.phone}`} style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "6px 12px", borderRadius: 999,
-                background: "rgba(255,255,255,0.9)", border: "1px solid var(--hairline)",
-                fontSize: 13, fontWeight: 600, color: "var(--ink)",
-                textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-              }}>
-                📞 Chiama Mattia
-              </a>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <a href={`tel:${AP.host.phone}`} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "7px 14px", borderRadius: 999,
+                  background: "rgba(255,255,255,0.9)", border: "1px solid var(--hairline)",
+                  fontSize: 13, fontWeight: 600, color: "var(--ink)",
+                  textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                }}>
+                  📞 Chiama Mattia
+                </a>
+                <a href={`https://wa.me/${AP.host.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Ciao Mattia, sono ${name} ospite di Elegant Loft. Ho bisogno di aiuto.`)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    padding: "7px 14px", borderRadius: 999,
+                    background: "#25D366", color: "#fff",
+                    fontSize: 13, fontWeight: 600,
+                    textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.12)",
+                  }}>
+                  💬 WhatsApp
+                </a>
+              </div>
             )}
 
             {/* Navigation chips */}
