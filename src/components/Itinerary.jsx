@@ -7,6 +7,7 @@ import { ItineraryLeafletMap } from './Padova'
 import { MOODS,
   imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
   imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
+  imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione,
 } from '../data'
 import { loadItineraries, saveItinerary, deleteItinerary } from '../utils'
 import { NavBar } from './screens/NavBar'
@@ -40,6 +41,7 @@ const PLACE_COORDS = {
   "zita":                    [45.40750, 11.87600],
   "borromeo":                [45.41000, 11.87514],
   "galleria borromeo":       [45.41000, 11.87514],
+  "via del santo":           [45.40200, 11.88200],
   "banale":                  [45.40160, 11.88100],
   "padovanelle":             [45.40660, 11.87620],
   "al sasso":                [45.40690, 11.87520],
@@ -67,6 +69,11 @@ const PHOTO_MAP = [
   { keys: ['prato della valle', 'loggia amulea', 'prato della'],                        img: imgPrato      },
   { keys: ['sant\'antonio', 'basilica di', 'oratorio di san giorgio', 'san giorgio'],   img: imgBasilica   },
   { keys: ['palazzo della ragione', 'ragione'],                                          img: imgRagione    },
+  { keys: ['via del santo', 'drink in via'],                                             img: imgViaDelSanto  },
+  { keys: ['calandre'],                                                                  img: imgCalandre     },
+  { keys: ['colli euganei', 'pista ciclabile'],                                         img: imgColliEuganei },
+  { keys: ['abano terme', 'terme preistoriche'],                                        img: imgAbanoTerme   },
+  { keys: ['bacchiglione'],                                                              img: imgBacchiglione },
   { keys: ['piazza delle erbe', 'piazza dei signori', 'piazzetta', 'spritz', 'mercato',
             'dalla zita', 'folperia', 'graziati', 'bar nazionale', 'padovanelle',
             'al sasso', 'belle parti', 'al pero', 'osteria', 'trattoria',
@@ -287,7 +294,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     night: [
       { t: "19:00", title: "Aperitivo a Piazzetta Pedrocchi", sub: "Locali studenteschi, vivace", tag: "Aperitivo", tint: "#E08762" },
       { t: "21:00", title: "Cena alla Birreria Padovanelle", sub: "Veneto rustico, porzioni vere", tag: "Cena", tint: "#5A4434" },
-      { t: "23:00", title: "Live music al Banale", sub: "Jazz e blues, atmosfera intima", tag: "Musica", tint: "#2C2740" },
+      { t: "23:00", title: "Drink in Via del Santo", sub: "Locali piccoli, zero turisti, musica bassa", tag: "Dopo cena", tint: "#2C2740" },
     ],
     rain: [
       { t: "10:30", title: "Musei Civici agli Eremitani", sub: "3 ore tranquille al coperto", tag: "Museo", tint: "#5C5099" },
@@ -323,7 +330,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     night: [
       { t: "19:00", title: "Aperitivo in Piazza dei Signori", sub: "Meno frequentata di Piazza delle Erbe, uguale atmosfera", tag: "Aperitivo", tint: "#E08762" },
       { t: "21:00", title: "Cena alla Birreria Padovanelle", sub: "Birra locale, cucina veneta rustica, porzioni serie", tag: "Cena", tint: "#5A4434" },
-      { t: "23:00", title: "Il Banale — musica live", sub: "Jazz, blues, qualche sera anche cantautorato", tag: "Musica", tint: "#2C2740" },
+      { t: "23:00", title: "Drink in Via del Santo", sub: "Atmosfera autentica, ritmo lento, niente turisti", tag: "Dopo cena", tint: "#2C2740" },
     ],
     rain: [
       { t: "10:00", title: "Palazzo Bo — tour guidato", sub: "Teatro Anatomico + aula magna, tutto al coperto", tag: "Tour", tint: "#5C5099" },

@@ -12,11 +12,18 @@ import imgPalazzoBo  from './assets/places/palazzo_bo.jpg'
 import imgEremitani  from './assets/places/eremitani.jpg'
 import imgBattistero from './assets/places/battistero.jpg'
 
+import imgViaDelSanto  from './assets/places/via_del_santo.jpg'
+import imgCalandre     from './assets/places/calandre.jpg'
+import imgColliEuganei from './assets/places/colli_euganei.jpg'
+import imgAbanoTerme   from './assets/places/abano_terme.jpg'
+import imgBacchiglione from './assets/places/bacchiglione.jpg'
+
 import imgCheckinFacciata from './assets/checkin/facciata.jpg'
 import imgCheckinInterno  from './assets/checkin/interno.jpg'
 
 export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
-         imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione }
+         imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
+         imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione }
 
 export const APARTMENT = {
   name: "Elegant Loft",
