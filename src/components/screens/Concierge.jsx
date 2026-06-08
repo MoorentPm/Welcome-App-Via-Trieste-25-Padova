@@ -1,6 +1,6 @@
 import React from 'react'
 import { IconChevronL, IconChevronR, IconSparkle } from '../Icons'
-import { APARTMENT as AP, HOUSE_RULES, APPLIANCES } from '../../data'
+import { APARTMENT as AP, HOUSE_RULES, APPLIANCES, FAQ } from '../../data'
 import { NavBar } from './NavBar'
 import { useLang } from '../../i18n'
 
@@ -17,6 +17,20 @@ async function callConcierge({ messages, system }) {
   if (data.error) throw new Error(data.error)
   return data.text
 }
+
+// Maps screen keys to labels and emojis for navigation buttons
+const SCREEN_NAV = {
+  checkin:   { label: 'Check-in',    emoji: '🔑' },
+  checkout:  { label: 'Checkout',    emoji: '🧳' },
+  wifi:      { label: 'Wi-Fi',       emoji: '📶' },
+  house:     { label: 'Regole casa', emoji: '🏠' },
+  coupons:   { label: 'Coupon',      emoji: '🎫' },
+  places:    { label: 'Luoghi',      emoji: '📍' },
+  itinerary: { label: 'Itinerario',  emoji: '🗺️' },
+  tip:       { label: 'Consiglio',   emoji: '✨' },
+}
+
+// ── DailyTip ──────────────────────────────────────────────────────────────────
 
 export function DailyTip({ back, go }) {
   const { t } = useLang()
@@ -175,16 +189,20 @@ Solo JSON, nessun altro testo.`
   )
 }
 
-export function Host({ back, guest }) {
+// ── Host (chatbot) ─────────────────────────────────────────────────────────────
+
+export function Host({ back, guest, go }) {
   const { t } = useLang()
   const name = guest?.firstName || AP.guest.firstName
+  const nights = guest?.nights || 3
+
   const [msgs, setMsgs] = React.useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("elegant-loft-chat") || "null")
       if (saved && saved.length) return saved
     } catch {}
     return [
-      { from: "ai", text: `Ciao ${name}! Sono il Concierge del Loft ✨ Posso suggerirti dove mangiare, come arrivare ovunque, o aiutarti con la casa. Cosa ti serve?` },
+      { from: "ai", text: `Ciao ${name}! Sono il Concierge del Loft ✨ Chiedimi tutto: WiFi, check-in, dove mangiare, come funzionano gli elettrodomestici. Cosa ti serve?`, screens: [], contactHost: false },
     ]
   })
   const [draft, setDraft] = React.useState("")
@@ -196,24 +214,101 @@ export function Host({ back, guest }) {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   }, [msgs, typing])
 
-  const systemContext = () => {
-    const rules = HOUSE_RULES.map((r) => `• ${r.t}: ${r.d}`).join("\n")
-    const appliances = APPLIANCES.map((a) => `• ${a.t}: ${a.desc}`).join("\n")
-    return `Sei il Concierge AI dell'appartamento "Elegant Loft" a Padova, in Via Trieste 25.
-Rispondi sempre in italiano (o nella lingua dell'utente) con tono caldo, breve, di amico locale. Mai formale, mai elenchi puntati lunghi. Frasi corte. Una emoji ogni tanto, non di più.
-Non inventare informazioni. Se non sai, dillo e suggerisci di scrivere a Mattia l'host al +39 351 988 6489.
+  const buildSystemPrompt = () => {
+    const rules = HOUSE_RULES.map(r => `${r.icon} ${r.t}: ${r.d}`).join('\n')
+    const appliances = APPLIANCES.map(a => `${a.icon} ${a.t}: ${a.desc}`).join('\n')
+    const faqs = FAQ.map(f => `Q: ${f.q} → A: ${f.a}`).join('\n')
 
-Ospite: ${name}, ${guest?.nights || 3} notti.
-Wi-Fi: ${AP.wifi.ssid} / password ${AP.wifi.password}.
-Check-in dalle ${AP.checkin.from}, check-out entro ${AP.checkout.until}.
+    return `=== IDENTITÀ ===
+Sei il Concierge AI di "Elegant Loft", Via Trieste 25, Padova. Gestito da Moorent Pm.
+Tono: amico locale, caldo, diretto. Mai formale. Frasi corte. Una emoji ogni tanto va bene, non di più.
+Non inventare informazioni non presenti in questa knowledge base. Se non sai, di' di contattare Mattia.
+Rispondi nella lingua del messaggio dell'utente (italiano, inglese, tedesco, francese...).
 
-REGOLE DELLA CASA:
+=== KNOWLEDGE BASE ===
+WIFI-RETE: ElegantLoft_WIFI
+WIFI-PASSWORD: Civico25
+PORTONE-CODICE: 25#
+CHIAVI-CASSETTA: n°5
+CHIAVI-CODICE: 0425
+CHECK-IN: dalle 15:00 alle 22:00
+CHECKOUT: entro le 10:00
+TASSA-SOGGIORNO: €3/persona/notte, max 5 notti, contanti al check-in
+HOST-NOME: Mattia
+HOST-TELEFONO: +39 351 988 6489
+INDIRIZZO: Via Trieste 25, 35121 Padova
+OSPITE-NOME: ${name}
+OSPITE-NOTTI: ${nights}
+
+=== REGOLE DELLA CASA ===
 ${rules}
 
-ELETTRODOMESTICI:
+=== ELETTRODOMESTICI ===
 ${appliances}
 
-Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, Caffè Pedrocchi, Basilica di Sant'Antonio, Palazzo della Ragione.`
+=== FAQ ===
+${faqs}
+
+=== LUOGHI CONSIGLIATI (a piedi da Via Trieste 25) ===
+Caffè Pedrocchi (7 min) · Piazza delle Erbe (9 min) · Prato della Valle (8 min)
+Cappella degli Scrovegni (12 min, prenotare) · Orto Botanico (10 min)
+Basilica di Sant'Antonio (15 min) · Palazzo della Ragione (9 min)
+
+=== SEZIONI APP NAVIGABILI ===
+Quando la risposta è correlata a questi argomenti, includi i relativi screen key in "screens" (max 2):
+- "checkin"   → istruzioni check-in, codici portone, cassetta chiavi
+- "checkout"  → procedura checkout, lista cose da fare prima di partire
+- "wifi"      → rete WiFi e password
+- "house"     → regole della casa, elettrodomestici, raccolta differenziata
+- "coupons"   → sconti e coupon per esercizi locali
+- "places"    → ristoranti, bar, luoghi da visitare a Padova
+- "itinerary" → creare un itinerario personalizzato per la giornata
+- "tip"       → consiglio del giorno su cosa fare adesso
+
+=== FORMATO OUTPUT ===
+Rispondi SEMPRE e SOLO con un oggetto JSON valido. Nessun testo fuori dal JSON.
+{"answer":"testo risposta","screens":[],"contactHost":false}
+
+- "answer": risposta testuale (stringa, max 120 parole)
+- "screens": array di 0-2 screen key rilevanti, vuoto [] se nessuno
+- "contactHost": true solo se serve l'intervento diretto di Mattia (guasto, emergenza, richiesta speciale)
+
+=== ESEMPI (few-shot) ===
+User: "Qual è la password wifi?"
+{"answer":"Rete: ElegantLoft_WIFI — Password: Civico25 📶 Trovi tutto anche nella sezione Wi-Fi dell'app.","screens":["wifi"],"contactHost":false}
+
+User: "A che ora devo fare il checkout?"
+{"answer":"Il checkout è entro le 10:00. Lascia le chiavi nella cassetta n°5 con codice 0425, porta accostata (non sbattuta). Hai la lista completa nella sezione Checkout.","screens":["checkout"],"contactHost":false}
+
+User: "Come funziona la lavatrice?"
+{"answer":"È in bagno, a sinistra. Detersivo nello scaffale sopra. Metti un misurino nella vaschetta sinistra, gira su Quick 30°, premi Start. Max 6 kg. 🧺","screens":["house"],"contactHost":false}
+
+User: "Dove mangio bene stasera?"
+{"answer":"Per una cena padovana vera, prova l'area di Piazza delle Erbe — bacari e osterie a 9 minuti a piedi. Nell'app trovi una selezione con foto e distanze.","screens":["places"],"contactHost":false}
+
+User: "Il riscaldamento non funziona"
+{"answer":"Il termostato è vicino alla porta d'ingresso, rotella circolare. Girala a destra verso il sole. Se non si accende entro 10 minuti, scrivi a Mattia.","screens":["house"],"contactHost":true}
+
+User: "Ciao come stai?"
+{"answer":"Tutto bene, grazie! Sono qui per aiutarti — chiedimi quello che vuoi sul loft o su Padova 😊","screens":[],"contactHost":false}
+
+User: "What time is check-in?"
+{"answer":"Check-in is from 3:00 PM to 10:00 PM. The front door code is 25#, and keys are in lockbox n°5 with code 0425. Full instructions in the Check-in section.","screens":["checkin"],"contactHost":false}`
+  }
+
+  const parseReply = (raw) => {
+    try {
+      const match = raw.match(/\{[\s\S]*\}/)
+      if (!match) throw new Error('no-json')
+      const parsed = JSON.parse(match[0])
+      return {
+        text: parsed.answer || raw,
+        screens: Array.isArray(parsed.screens) ? parsed.screens.filter(s => SCREEN_NAV[s]) : [],
+        contactHost: !!parsed.contactHost,
+      }
+    } catch {
+      return { text: raw, screens: [], contactHost: false }
+    }
   }
 
   const send = async (textOverride) => {
@@ -225,17 +320,23 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
     setTyping(true)
 
     try {
-      const conversation = newMsgs.slice(-10).map((m) => ({
+      const conversation = newMsgs.slice(-6).map(m => ({
         role: m.from === "me" ? "user" : "assistant",
         content: m.text,
       }))
-      const reply = await callConcierge({
+      const raw = await callConcierge({
         messages: conversation,
-        system: systemContext(),
+        system: buildSystemPrompt(),
       })
-      setMsgs((m) => [...m, { from: "ai", text: (reply || "Scusa, riprova tra un attimo 🙏").trim() }])
+      const { text: answer, screens, contactHost } = parseReply(raw)
+      setMsgs(m => [...m, { from: "ai", text: answer.trim() || "Scusa, riprova 🙏", screens, contactHost }])
     } catch {
-      setMsgs((m) => [...m, { from: "ai", text: "Ops, problema di connessione. Riprova, o scrivi a Mattia al +39 351 988 6489." }])
+      setMsgs(m => [...m, {
+        from: "ai",
+        text: "Ops, problema di connessione. Riprova, o scrivi a Mattia al +39 351 988 6489.",
+        screens: [],
+        contactHost: true,
+      }])
     } finally {
       setTyping(false)
     }
@@ -243,6 +344,7 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", height: "100%", background: "var(--bg)" }}>
+      {/* Header */}
       <div style={{
         display: "flex", alignItems: "center", gap: 12,
         padding: "max(44px, calc(env(safe-area-inset-top, 0px) + 12px)) 16px 12px",
@@ -268,28 +370,71 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
         </div>
       </div>
 
+      {/* Messages */}
       <div ref={scrollRef} className="screen-scroll grow" style={{ padding: "4px 16px 8px", display: "flex", flexDirection: "column", gap: 8 }}>
-        {msgs.map((m, i) =>
-          <div key={i} style={{
-            alignSelf: m.from === "me" ? "flex-end" : "flex-start",
-            maxWidth: "82%",
-            background: m.from === "me" ? "var(--accent)" : "#fff",
-            color: m.from === "me" ? "#fff" : "var(--ink)",
-            padding: "10px 14px", borderRadius: 18,
-            borderBottomRightRadius: m.from === "me" ? 6 : 18,
-            borderBottomLeftRadius: m.from === "me" ? 18 : 6,
-            fontSize: 15, lineHeight: 1.45,
-            boxShadow: m.from === "me" ? "none" : "0 1px 3px rgba(0,0,0,0.05)",
-            whiteSpace: "pre-wrap"
-          }}>{m.text}</div>
-        )}
-        {typing &&
+        {msgs.map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.from === "me" ? "flex-end" : "flex-start", gap: 6 }}>
+            {/* Bubble */}
+            <div style={{
+              maxWidth: "82%",
+              background: m.from === "me" ? "var(--accent)" : "#fff",
+              color: m.from === "me" ? "#fff" : "var(--ink)",
+              padding: "10px 14px", borderRadius: 18,
+              borderBottomRightRadius: m.from === "me" ? 6 : 18,
+              borderBottomLeftRadius: m.from === "me" ? 18 : 6,
+              fontSize: 15, lineHeight: 1.45,
+              boxShadow: m.from === "me" ? "none" : "0 1px 3px rgba(0,0,0,0.05)",
+              whiteSpace: "pre-wrap"
+            }}>{m.text}</div>
+
+            {/* Contact host badge */}
+            {m.from === "ai" && m.contactHost && (
+              <a href={`tel:${AP.host.phone}`} style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "6px 12px", borderRadius: 999,
+                background: "rgba(255,255,255,0.9)", border: "1px solid var(--hairline)",
+                fontSize: 13, fontWeight: 600, color: "var(--ink)",
+                textDecoration: "none", boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              }}>
+                📞 Chiama Mattia
+              </a>
+            )}
+
+            {/* Navigation chips */}
+            {m.from === "ai" && m.screens && m.screens.length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {m.screens.map(screen => {
+                  const nav = SCREEN_NAV[screen]
+                  if (!nav || !go) return null
+                  return (
+                    <button key={screen} onClick={() => go(screen)}
+                      className="chip chip-ghost"
+                      style={{
+                        cursor: "pointer", fontWeight: 600, fontSize: 13,
+                        display: "inline-flex", alignItems: "center", gap: 5,
+                        padding: "7px 13px", borderRadius: 999,
+                        background: "rgba(255,255,255,0.9)",
+                        border: "1.5px solid var(--accent-soft)",
+                        color: "var(--accent-deep)",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                      }}>
+                      {nav.emoji} {nav.label} →
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {/* Typing indicator */}
+        {typing && (
           <div style={{
             alignSelf: "flex-start", padding: "12px 16px", borderRadius: 18,
             background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
             display: "flex", gap: 4
           }}>
-            {[0, 1, 2].map((i) =>
+            {[0, 1, 2].map(i =>
               <span key={i} style={{
                 width: 7, height: 7, borderRadius: 999, background: "var(--ink-3)",
                 animation: "tbounce 1.2s infinite", animationDelay: `${i * 0.15}s`
@@ -297,22 +442,24 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
             )}
             <style>{`@keyframes tbounce { 0%,80%,100%{transform:translateY(0);opacity:0.4} 40%{transform:translateY(-4px);opacity:1}}`}</style>
           </div>
-        }
+        )}
       </div>
 
-      {msgs.length <= 2 &&
+      {/* Quick chips — only on first 2 messages */}
+      {msgs.length <= 2 && (
         <div style={{ padding: "8px 16px 0", display: "flex", gap: 6, overflowX: "auto" }}>
-          {[t('host.chip1'), t('host.chip2'), t('host.chip3'), t('host.chip4')].map((s) =>
+          {[t('host.chip1'), t('host.chip2'), t('host.chip3'), t('host.chip4')].map(s =>
             <button key={s} onClick={() => send(s)} className="chip chip-ghost"
               style={{ whiteSpace: "nowrap", cursor: "pointer", flexShrink: 0, fontWeight: 600 }}>
               {s}
             </button>
           )}
         </div>
-      }
+      )}
 
+      {/* Input */}
       <div style={{ padding: "10px 12px 90px", display: "flex", gap: 8 }}>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
+        <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
           placeholder={t('host.placeholder')}
           style={{
             flex: 1, padding: "14px 16px", borderRadius: 22, border: "none",

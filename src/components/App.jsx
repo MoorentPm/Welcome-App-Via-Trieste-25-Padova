@@ -132,7 +132,7 @@ export default function App() {
     case 'home':           screen = <HomeChiavi go={go} stage={guest.stage || tweaks.stage} guest={guest} />; break
     case 'padova':         screen = <Padova go={go} />; break
     case 'itinerary':      screen = <Itinerary back={back} go={go} />; break
-    case 'host':           screen = <Host back={back} guest={guest} />; break
+    case 'host':           screen = <Host back={back} guest={guest} go={go} />; break
     case 'checkin':        screen = <Checkin back={back} />; break
     case 'checkout':       screen = <Checkout back={back} go={go} />; break
     case 'wifi':           screen = <Wifi back={back} />; break
