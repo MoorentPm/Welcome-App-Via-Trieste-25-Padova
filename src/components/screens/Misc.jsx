@@ -200,7 +200,7 @@ export function Review({ back, guest, go }) {
       }
 
       <div style={{ padding: "16px 16px 0" }}>
-        <button onClick={() => go ? go("home") : back()} className="btn btn-primary btn-lg btn-full">
+        <button onClick={() => go ? go("home") : back()} className="btn btn-accent btn-lg btn-full">
           {t('review.coupon.home')}
         </button>
       </div>
