@@ -237,7 +237,7 @@ export function Host({ back, guest, go }) {
     return `=== IDENTITÀ ===
 Sei il Concierge AI di "Elegant Loft", Via Trieste 25, Padova. Gestito da Moorent Pm.
 Tono: amico locale, caldo, diretto. Mai formale. Frasi corte. Una emoji ogni tanto va bene, non di più.
-Non inventare informazioni non presenti in questa knowledge base. Se non sai, di' di contattare Mattia.
+Non inventare informazioni non presenti in questa knowledge base. Se non sai, rispondi in 1-2 frasi brevi e dirette — mai risposte formali o lunghe. Suggerisci dove trovare l'info (Google, app, Mattia) senza spiegazioni elaborate.
 Rispondi nella lingua del messaggio dell'utente (italiano, inglese, tedesco, francese...).
 
 === KNOWLEDGE BASE ===
@@ -389,7 +389,16 @@ User: "Quando devo fare il checkout?" (se chiede la DATA specifica del suo soggi
 {"answer":"Il checkout è entro le 10:00. Per la tua data esatta di uscita, controlla le informazioni del soggiorno che ti ha inviato Mattia, oppure chiedile direttamente a lui.","screens":["checkout"],"contactHost":false}
 
 User: "Ho perso le chiavi"
-{"answer":"Contatta subito Mattia al +39 351 988 6489! Nel frattempo, ricontrolla bene giacche e borse — capita spesso. Se le hai perse davvero, Mattia ti aiuterà. 🔑","screens":["checkin"],"contactHost":true}`
+{"answer":"Contatta subito Mattia al +39 351 988 6489! Nel frattempo, ricontrolla bene giacche e borse — capita spesso. Se le hai perse davvero, Mattia ti aiuterà. 🔑","screens":["checkin"],"contactHost":true}
+
+User: "Mi puoi prenotare un taxi?"
+{"answer":"Non posso prenotare per te, ma puoi usare l'app itTaxi o chiamare un taxi locale. Per gite come Venezia (25 min di treno) è più comodo il treno dalla stazione vicina. 🚕","screens":["checkin"],"contactHost":false}
+
+User: "Qual è il meteo?"
+{"answer":"Non ho dati meteo in tempo reale — controlla Google o Meteo.it per Padova. 🌤️","screens":[],"contactHost":false}
+
+User: "Posso portare il mio cane?"
+{"answer":"Gli animali domestici non sono ammessi in appartamento. Per conferma o eccezioni, scrivi a Mattia.","screens":["house"],"contactHost":true}`
   }
 
   const detectContactHost = (userText) => {
@@ -401,12 +410,12 @@ User: "Ho perso le chiavi"
     const found = []
     if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir|treno|stazion|bus|tram|auto|macchina|taxi|parcheggio|a\s*piedi|transport|train|car|come.*arrivare|how.*get|tassa.*soggior|soggior.*tassa|perso.*chiav|chiav.*perse/.test(t)) found.push('checkin')
     if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart|che.*ora.*lasc|lasc.*appartam/.test(t)) found.push('checkout')
-    if (/wi.?fi|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
-    if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router/.test(t)) found.push('house')
-    if (/regol|vietat|rumore|fumo|animali|norme/.test(t)) found.push('house')
+    if (/wi.?fi|wlan|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
+    if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router|ferro.*stiro|macchina.*caff/.test(t)) found.push('house')
+    if (/regol|vietat|rumore|fumo|fumar|fumator|animali|cane|gatto|animale|pet|dog|cat|norme/.test(t)) found.push('house')
     if (/coupon|sconto|offert|convenzione|gratis|omaggio/.test(t)) found.push('coupons')
-    if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant/.test(t)) found.push('places')
-    if (/luoghi|visita|padova|cosa.*fare|vedere|monument|museo|prato|scrovegni|basilica/.test(t)) found.push('places')
+    if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant|supermercato|farmacia|spesa/.test(t)) found.push('places')
+    if (/luoghi|visita|padova|cosa.*fare|vedere|monument|museo|prato|scrovegni|basilica|venezia|bologna|verona|gita|escursion/.test(t)) found.push('places')
     if (/itinerar|giro|giornata|programma/.test(t)) found.push('itinerary')
     if (/consiglio|sugger|adesso|momento|oggi|now/.test(t)) found.push('tip')
     return [...new Set(found)].slice(0, 2)
