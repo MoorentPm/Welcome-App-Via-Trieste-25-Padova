@@ -285,7 +285,7 @@ export function About({ back }) {
           <div className="moo-anim" style={{ padding: "30px 24px 0", position: "relative", animationDelay: "0.15s" }}>
             <h1 style={{
               fontSize: 44, lineHeight: 1.02, fontWeight: 800, margin: 0,
-              letterSpacing: -1.2, color: "#FFFFFF"
+              letterSpacing: -1.2, color: "#FFFFFF", overflowWrap: 'break-word',
             }}>
               {t('moorent.headline1')}<br />
               <span style={{ color: "#f3dfd9", fontStyle: "italic", fontWeight: 700 }}>{t('moorent.headline_em')}</span>

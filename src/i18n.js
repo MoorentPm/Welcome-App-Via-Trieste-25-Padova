@@ -790,7 +790,7 @@ const TRANSLATIONS = {
     'padova.mustSeeTitle': 'Padova — nicht verpassen',
     'padova.discoverMore': 'Mehr entdecken',
     'padova.walkFromLoft': 'Fußweg vom Loft',
-    'moorent.headline1': 'Kurzzeitvermietung,',
+    'moorent.headline1': 'Kurzzeit-vermietung,',
     'moorent.headline_em': 'richtig gemacht.',
     'moorent.intro': 'Padova und Umgebung. Vollständiges Management für Eigentümer, die ihr Haus vermieten möchten.',
     'moorent.stat1': 'Immobilien',
