@@ -9,7 +9,7 @@ import { MOODS,
   imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
   imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione,
   imgPiovego, imgSpritz, imgTramezzino, imgPolpo, imgCraftBeer, imgTrattoria, imgRisotto,
-  imgGraziati, imgPiazzaSignori,
+  imgGraziati, imgPiazzaSignori, imgViaAltinate,
 } from '../data'
 import { loadItineraries, saveItinerary, deleteItinerary } from '../utils'
 import { NavBar } from './screens/NavBar'
@@ -85,7 +85,8 @@ const PHOTO_MAP = [
   { keys: ['al sasso', 'al pero', 'fabbri', 'osteria', 'trattoria'],                    img: imgTrattoria    },
   { keys: ['graziati'],                                                                  img: imgGraziati     },
   { keys: ['piazza dei signori', 'aperitivo in piazza'],                                 img: imgPiazzaSignori},
-  { keys: ['piazza delle erbe', 'piazzetta', 'mercato', 'via altinate', 'bici'],        img: imgPiazzaErbe   },
+  { keys: ['via altinate', 'caffè in via', 'passeggiata in via'],                        img: imgViaAltinate  },
+  { keys: ['piazza delle erbe', 'piazzetta', 'mercato', 'bici'],                        img: imgPiazzaErbe   },
 ]
 
 function lookupPhoto(title) {

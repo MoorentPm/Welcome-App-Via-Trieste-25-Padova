@@ -27,6 +27,7 @@ import imgTrattoria    from './assets/places/trattoria.webp'
 import imgRisotto      from './assets/places/risotto.webp'
 import imgGraziati     from './assets/places/graziati.webp'
 import imgPiazzaSignori from './assets/places/piazza_signori.webp'
+import imgViaAltinate  from './assets/places/via_altinate.webp'
 
 import imgCheckinFacciata from './assets/checkin/facciata.webp'
 import imgCheckinCassetta from './assets/checkin/cassetta.webp'
@@ -37,7 +38,7 @@ export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
          imgScrovegni, imgPrato, imgOrto, imgBasilica, imgPedrocchi, imgRagione,
          imgViaDelSanto, imgCalandre, imgColliEuganei, imgAbanoTerme, imgBacchiglione,
          imgPiovego, imgSpritz, imgTramezzino, imgPolpo, imgCraftBeer, imgTrattoria, imgRisotto,
-         imgGraziati, imgPiazzaSignori }
+         imgGraziati, imgPiazzaSignori, imgViaAltinate }
 
 export const APARTMENT = {
   name: "Elegant Loft",
@@ -109,7 +110,7 @@ export const CHECKIN_STEPS = [
   { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", photo: imgCheckinFacciata },
   { t: "Portone esterno",          d: "Codice 25#. Premi a fondo fino al click.",            photo: imgCheckinCassetta },
   { t: "Cassetta chiavi n°5",      d: "La cassetta è sul cancello a destra. Codice 0425.",   photo: imgCheckinCassetta },
-  { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. La tua porta è quella con lo zerbino bordeaux.", photo: imgCheckinPorta },
+  { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. La tua porta è quella con lo zerbino grigio.", photo: imgCheckinPorta },
   { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          photo: imgCheckinInterno },
 ];
 
