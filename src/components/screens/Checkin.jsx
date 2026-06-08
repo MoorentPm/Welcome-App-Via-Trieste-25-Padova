@@ -20,7 +20,14 @@ const ArrivalMap = React.memo(function ArrivalMap() {
       doubleClickZoom: false, touchZoom: false, keyboard: false,
     })
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map)
-    L.marker(AP.coords).addTo(map)
+    const icon = L.divIcon({
+      html: `<div style="transform:translate(-50%,-50%);width:44px;height:44px;position:relative;">
+        <div style="position:absolute;inset:0;border-radius:999px;background:var(--accent,#C27248);opacity:.18;animation:ping 2s infinite;"></div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:999px;background:var(--accent,#C27248);border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.3);"></div>
+      </div>`,
+      className: '', iconSize: [0, 0], iconAnchor: [0, 0],
+    })
+    L.marker(AP.coords, { icon, interactive: false }).addTo(map)
     mapRef.current = map
     return () => { map.remove(); mapRef.current = null }
   }, [])
