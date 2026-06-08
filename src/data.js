@@ -29,6 +29,8 @@ import imgGraziati     from './assets/places/graziati.webp'
 import imgPiazzaSignori from './assets/places/piazza_signori.webp'
 
 import imgCheckinFacciata from './assets/checkin/facciata.webp'
+import imgCheckinCassetta from './assets/checkin/cassetta.webp'
+import imgCheckinPorta    from './assets/checkin/porta.webp'
 import imgCheckinInterno  from './assets/checkin/interno.webp'
 
 export { imgPiazzaErbe, imgPalazzoBo, imgEremitani, imgBattistero,
@@ -104,11 +106,11 @@ export const PLACES = [
 ];
 
 export const CHECKIN_STEPS = [
-  { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", img: "Foto: facciata", photo: imgCheckinFacciata },
-  { t: "Portone esterno",          d: "Codice 25#. Premi a fondo fino al click.",            img: "Foto: portone" },
-  { t: "Cassetta",                 d: "Prendi le chiavi dalla cassetta 5. Codice 0425.",     img: "Foto: cassetta" },
-  { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. Porta con targhetta 'Elegant Loft'.", img: "Foto: porta" },
-  { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          img: "Foto: interno", photo: imgCheckinInterno },
+  { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", photo: imgCheckinFacciata },
+  { t: "Portone esterno",          d: "Codice 25#. Premi a fondo fino al click.",            photo: imgCheckinCassetta },
+  { t: "Cassetta chiavi n°5",      d: "La cassetta è sul cancello a destra. Codice 0425.",   photo: imgCheckinCassetta },
+  { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. La tua porta è quella con lo zerbino bordeaux.", photo: imgCheckinPorta },
+  { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          photo: imgCheckinInterno },
 ];
 
 export const HOUSE_RULES = [
