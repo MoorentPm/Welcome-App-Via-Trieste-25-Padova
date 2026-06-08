@@ -196,18 +196,33 @@ export function Host({ back, guest, go }) {
   const name = guest?.firstName || AP.guest.firstName
   const nights = guest?.nights || 3
 
+  const welcomeMsg = { from: "ai", text: `Ciao ${name}! Sono il Concierge del Loft ✨ Chiedimi tutto: WiFi, check-in, dove mangiare, come funzionano gli elettrodomestici. Cosa ti serve?`, screens: [], contactHost: false }
+
   const [msgs, setMsgs] = React.useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("elegant-loft-chat") || "null")
       if (saved && saved.length) return saved
     } catch {}
-    return [
-      { from: "ai", text: `Ciao ${name}! Sono il Concierge del Loft ✨ Chiedimi tutto: WiFi, check-in, dove mangiare, come funzionano gli elettrodomestici. Cosa ti serve?`, screens: [], contactHost: false },
-    ]
+    return [welcomeMsg]
   })
   const [draft, setDraft] = React.useState("")
   const [typing, setTyping] = React.useState(false)
+  const [confirmClear, setConfirmClear] = React.useState(false)
+  const confirmTimer = React.useRef(null)
   const scrollRef = React.useRef(null)
+
+  const clearChat = () => {
+    if (!confirmClear) {
+      setConfirmClear(true)
+      confirmTimer.current = setTimeout(() => setConfirmClear(false), 2500)
+    } else {
+      clearTimeout(confirmTimer.current)
+      setConfirmClear(false)
+      const fresh = [welcomeMsg]
+      setMsgs(fresh)
+      try { localStorage.setItem("elegant-loft-chat", JSON.stringify(fresh)) } catch {}
+    }
+  }
 
   React.useEffect(() => {
     try { localStorage.setItem("elegant-loft-chat", JSON.stringify(msgs)) } catch {}
@@ -467,6 +482,18 @@ User: "What time is check-in?"
             {t('host.status')}
           </div>
         </div>
+        {msgs.length > 1 && (
+          <button onClick={clearChat} style={{
+            padding: "7px 13px", borderRadius: 999, border: "none", cursor: "pointer",
+            background: confirmClear ? "var(--accent)" : "rgba(26,25,22,0.06)",
+            color: confirmClear ? "#fff" : "var(--ink-3)",
+            fontSize: 12, fontWeight: 700,
+            transition: "all .2s",
+            flexShrink: 0,
+          }}>
+            {confirmClear ? "Conferma" : "Nuova chat"}
+          </button>
+        )}
       </div>
 
       {/* Messages */}
