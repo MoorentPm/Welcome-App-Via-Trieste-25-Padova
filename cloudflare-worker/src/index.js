@@ -7,13 +7,24 @@ const ALLOWED_ORIGINS = [
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 
 async function callGroq(messages, env) {
-  const delays = [0, 3000, 6000]
-  let lastError
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.GROQ_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'llama-3.1-8b-instant',
+      messages,
+      max_tokens: 400,
+      temperature: 0.4,
+    }),
+  })
 
-  for (let i = 0; i < delays.length; i++) {
-    if (delays[i] > 0) await sleep(delays[i])
-
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  // On rate limit: one quick retry after 2s
+  if (res.status === 429) {
+    await sleep(2000)
+    const retry = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,29 +37,21 @@ async function callGroq(messages, env) {
         temperature: 0.4,
       }),
     })
-
-    if (res.status === 429) {
-      // Rate limited — wait for retry-after header or use fixed delay
-      const retryAfter = parseInt(res.headers.get('retry-after') || '0', 10) * 1000
-      if (i < delays.length - 1) {
-        await sleep(retryAfter > 0 ? retryAfter : 2000)
-        continue
-      }
-      lastError = 'rate-limit'
-      break
+    if (!retry.ok) {
+      const err = await retry.json().catch(() => ({}))
+      throw new Error(err.error?.message || `groq-${retry.status}`)
     }
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      lastError = data.error?.message || 'groq-error'
-      break
-    }
-
+    const data = await retry.json()
     return data.choices?.[0]?.message?.content || ''
   }
 
-  throw new Error(lastError || 'groq-failed')
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error?.message || `groq-${res.status}`)
+  }
+
+  const data = await res.json()
+  return data.choices?.[0]?.message?.content || ''
 }
 
 export default {

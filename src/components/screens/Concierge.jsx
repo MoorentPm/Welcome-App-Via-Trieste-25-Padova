@@ -267,7 +267,7 @@ STREAMING: Netflix, Prime Video, Disney+ già attivi sulla TV (non modificare gl
 
 === CHECK-IN / CHECK-OUT SPECIALE ===
 CHECK-IN-TARDIVO: il self check-in funziona a qualsiasi ora — l'ospite può entrare quando vuole purché non prima delle 15:00
-EARLY-CHECK-IN: contattare l'host — se l'appartamento è libero si può anticipare
+EARLY-CHECK-IN: NON garantito — richiede autorizzazione esplicita di Mattia, dipende dalla disponibilità del giorno
 LATE-CHECK-OUT: su richiesta fino alle 12:00 — chiedere il giorno prima a Mattia
 BAGAGLI-ANTICIPATI: se si arriva prima delle 15 e l'appartamento non è pronto, c'è un armadietto bagagli a 2 minuti
 
@@ -398,7 +398,13 @@ User: "Qual è il meteo?"
 {"answer":"Non ho dati meteo in tempo reale — controlla Google o Meteo.it per Padova. 🌤️","screens":[],"contactHost":false}
 
 User: "Posso portare il mio cane?"
-{"answer":"Gli animali domestici non sono ammessi in appartamento. Per conferma o eccezioni, scrivi a Mattia.","screens":["house"],"contactHost":true}`
+{"answer":"Gli animali domestici non sono ammessi in appartamento. Per conferma o eccezioni, scrivi a Mattia.","screens":["house"],"contactHost":true}
+
+User: "Posso fare il check-in anticipato? Arrivo alle 11."
+{"answer":"Il check-in standard è dalle 15:00. Per arrivare prima devi chiedere a Mattia — non è sempre possibile, dipende dalla disponibilità. Scrivili per verificare.","screens":["checkin"],"contactHost":true}
+
+User: "Posso lasciare le valigie prima del check-in?"
+{"answer":"Se l'appartamento non è ancora pronto, c'è un armadietto bagagli a 2 minuti. Per lasciare i bagagli in casa prima delle 15:00, chiedi a Mattia.","screens":["checkin"],"contactHost":true}`
   }
 
   const detectContactHost = (userText) => {
