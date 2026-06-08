@@ -52,6 +52,12 @@ const PLACE_COORDS = {
   "via altinate":            [45.40749, 11.88528],
   "piovego":                 [45.40700, 11.88500],
   "argine":                  [45.41050, 11.88200],
+  "abano terme":             [45.3618,  11.7918],
+  "colli euganei":           [45.3850,  11.8100],
+  "bacchiglione":            [45.4090,  11.8820],
+  "teolo":                   [45.3610,  11.8240],
+  "brenta":                  [45.4080,  11.9150],
+  "villa pisani":            [45.4100,  11.9510],
 }
 
 function lookupCoord(title) {
@@ -88,6 +94,8 @@ const PHOTO_MAP = [
   { keys: ['piazza dei signori', 'aperitivo in piazza'],                                 img: imgPiazzaSignori},
   { keys: ['via altinate', 'caffè in via', 'passeggiata in via'],                        img: imgViaAltinate  },
   { keys: ['piazza delle erbe', 'piazzetta', 'mercato', 'bici'],                        img: imgPiazzaErbe   },
+  { keys: ['teolo', 'brenta', 'ciclovia', 'villa pisani', 'stra'],                     img: imgColliEuganei },
+  { keys: ['loggia amulea', 'amulea'],                                                  img: imgPrato        },
 ]
 
 function lookupPhoto(title) {
@@ -312,7 +320,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     night: [
       { t: "19:00", title: "Aperitivo a Piazzetta Pedrocchi", sub: "Locali studenteschi, vivace", tag: "Aperitivo", tint: "#E08762" },
       { t: "21:00", title: "Cena alla Birreria Padovanelle", sub: "Veneto rustico, porzioni vere", tag: "Cena", tint: "#5A4434" },
-      { t: "23:00", title: "Drink in Via del Santo", sub: "Locali piccoli, zero turisti, musica bassa", tag: "Dopo cena", tint: "#2C2740" },
+      { t: "23:00", title: "Drink in Via Altinate", sub: "Bar piccoli tra i portici, musica bassa, niente turisti", tag: "Dopo cena", tint: "#2C2740" },
     ],
     rain: [
       { t: "10:30", title: "Musei Civici agli Eremitani", sub: "3 ore tranquille al coperto", tag: "Museo", tint: "#5C5099" },
@@ -330,9 +338,9 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     ],
     art: [
       { t: "10:00", title: "Teatro Anatomico — Palazzo Bo", sub: "Sala operatoria del 1594, unica al mondo", tag: "Raro", tint: "#5C5099" },
-      { t: "12:00", title: "Battistero del Duomo", sub: "Cupola di Giusto de' Menabuoi: vertigine medievale", tag: "Arte", tint: "#7E6CE8" },
+      { t: "12:00", title: "Loggia Amulea — architettura gotica", sub: "Angolo di Prato della Valle spesso ignorato. Bella luce al mattino.", tag: "Architettura", tint: "#7E6CE8" },
       { t: "14:00", title: "Pranzo all'Osteria al Pero", sub: "Classica, niente turisti", tag: "Pranzo", tint: "#7A5A3F" },
-      { t: "16:30", title: "Oratorio di San Giorgio", sub: "Altichiero, 1380. Cinque minuti che valgono tutto il giorno.", tag: "Tesoro", tint: "#A88560" },
+      { t: "16:30", title: "Piazza dei Signori — Torre dell'Orologio", sub: "Orologio astronomico del 1344, uno dei più antichi d'Europa", tag: "Storia", tint: "#A88560" },
     ],
     food: [
       { t: "10:30", title: "Caffè in Via Altinate", sub: "Una zona con bar, negozi e portici — il centro senza turisti", tag: "Zona", tint: "#C99E6E" },
@@ -342,18 +350,54 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     ],
     green: [
       { t: "09:00", title: "Pista ciclabile verso i Colli Euganei", sub: "20 km su pista dedicata, aria buona", tag: "Attività", tint: "#4A7C5A" },
-      { t: "12:30", title: "Sosta ad Abano Terme", sub: "Terme Preistoriche: piscina outdoor tra le colline", tag: "Terme", tint: "#7A9D6E" },
+      { t: "12:30", title: "Sosta a Teolo tra i castagni", sub: "Paesino sui Colli, vista su Padova, trattoria in piazza", tag: "Colli", tint: "#7A9D6E" },
       { t: "16:00", title: "Rientro lungo il Bacchiglione", sub: "Il fiume che attraversa Padova, percorso tranquillo", tag: "Bici", tint: "#A8B97A" },
     ],
     night: [
       { t: "19:00", title: "Aperitivo in Piazza dei Signori", sub: "Meno frequentata di Piazza delle Erbe, uguale atmosfera", tag: "Aperitivo", tint: "#E08762" },
-      { t: "21:00", title: "Cena alla Birreria Padovanelle", sub: "Birra locale, cucina veneta rustica, porzioni serie", tag: "Cena", tint: "#5A4434" },
-      { t: "23:00", title: "Drink in Via del Santo", sub: "Atmosfera autentica, ritmo lento, niente turisti", tag: "Dopo cena", tint: "#2C2740" },
+      { t: "21:00", title: "Cena all'Osteria al Pero", sub: "Padovano autentico, pochi coperti, ritmo lento", tag: "Cena", tint: "#5A4434" },
+      { t: "23:00", title: "Passeggiata notturna al Prato della Valle", sub: "La piazza di notte, vuota e silenziosa — completamente diversa", tag: "Dopo cena", tint: "#2C2740" },
     ],
     rain: [
       { t: "10:00", title: "Palazzo Bo — tour guidato", sub: "Teatro Anatomico + aula magna, tutto al coperto", tag: "Tour", tint: "#5C5099" },
-      { t: "12:30", title: "Pranzo in Galleria Borromeo", sub: "Portici del '400, shopping lento, caffè caldo", tag: "Coperto", tint: "#C99E6E" },
+      { t: "12:30", title: "Pranzo da Dalla Zita", sub: "Tramezzini storici — veloce, economico, buonissimo", tag: "Pranzo", tint: "#C99E6E" },
       { t: "15:00", title: "Battistero del Duomo", sub: "Pochi turisti con la pioggia — goditi gli affreschi", tag: "Arte", tint: "#7E6CE8" },
+    ],
+  }
+
+  const day4 = {
+    slow: [
+      { t: "09:30", title: "Giro in bici lungo il Piovego", sub: "Il canale fuori città, niente traffico, aria buona", tag: "Bici", tint: "#4A7C5A" },
+      { t: "11:30", title: "Palazzo Zuckermann", sub: "Museo di arti applicate — quasi sempre vuoto", tag: "Museo", tint: "#5C5099" },
+      { t: "13:30", title: "Pranzo all'Osteria dei Fabbri", sub: "Bigoli, baccalà, vino locale", tag: "Pranzo", tint: "#7A5A3F" },
+      { t: "16:30", title: "Spritz in Piazza dei Signori", sub: "La piazza alternativa — meno turisti delle Erbe", tag: "Aperitivo", tint: "#E08762" },
+    ],
+    art: [
+      { t: "10:00", title: "Basilica di Sant'Antonio", sub: "I bronzi del Donatello e le cappelle votive. Due ore piene.", tag: "Must", tint: "#A88560" },
+      { t: "12:00", title: "Piazza dei Signori — Torre dell'Orologio", sub: "Uno degli orologi astronomici più antichi d'Europa", tag: "Storia", tint: "#5C5099" },
+      { t: "14:00", title: "Pranzo da Graziati", sub: "Pasticceria storica, tavoli fuori in piazza", tag: "Pranzo", tint: "#C99E6E" },
+      { t: "16:00", title: "Prato della Valle — 78 statue", sub: "Il più grande museo a cielo aperto d'Italia — leggi le targhette", tag: "Arte", tint: "#7A9D6E" },
+    ],
+    food: [
+      { t: "10:30", title: "Caffè al Pedrocchi — banco bar", sub: "Ordina al banco come i padovani. Veloce, storico, la metà del prezzo.", tag: "Caffè", tint: "#CFB487" },
+      { t: "12:30", title: "Pranzo al mercato di Piazza delle Erbe", sub: "I banchi di salumi e formaggi veneti — nessuna guida turistica te lo dice", tag: "Mercato", tint: "#A8B97A" },
+      { t: "17:00", title: "Spritz lungo il Piovego", sub: "I bar del canale, fuori dai circuiti turistici, padovani veri", tag: "Aperitivo", tint: "#E08762" },
+      { t: "20:30", title: "Cena a Belle Parti", sub: "Cucina veneta contemporanea, carta dei vini seria", tag: "Cena", tint: "#5A4434" },
+    ],
+    green: [
+      { t: "09:00", title: "Ciclovia del Brenta", sub: "Pista ciclabile verso la Riviera del Brenta, 18 km di pianura", tag: "Bici", tint: "#4A7C5A" },
+      { t: "12:00", title: "Villa Pisani a Stra", sub: "Villa UNESCO sul Brenta — il labirinto del giardino è unico", tag: "Villa", tint: "#7A9D6E" },
+      { t: "15:30", title: "Rientro lungo il Piovego", sub: "Il canale interno di Padova, ombra e silenzio", tag: "Pausa", tint: "#A8B97A" },
+    ],
+    night: [
+      { t: "18:30", title: "Aperitivo al Birrificio Padova", sub: "Birra artigianale locale, tagliere veneto, zero turisti", tag: "Aperitivo", tint: "#5C7A5A" },
+      { t: "20:30", title: "Cena a Belle Parti", sub: "Cucina moderna, porzioni oneste, vino della casa", tag: "Cena", tint: "#5A4434" },
+      { t: "23:00", title: "Passeggiata notturna lungo il Piovego", sub: "Il canale illuminato di notte — silenzio, solo padovani", tag: "Dopo cena", tint: "#2C2740" },
+    ],
+    rain: [
+      { t: "10:00", title: "Basilica di Sant'Antonio — sotto la pioggia", sub: "Quando piove le cappelle laterali sono quasi vuote. Cercale.", tag: "Sacro", tint: "#A88560" },
+      { t: "12:30", title: "Pranzo alla Trattoria al Sasso", sub: "Piccola, vicino al Duomo, mai nei tour. Menu del giorno.", tag: "Pranzo", tint: "#7A5A3F" },
+      { t: "15:00", title: "Oratorio di San Giorgio", sub: "Gli affreschi di Altichiero del 1384 — coperto, sempre vuoto con la pioggia", tag: "Arte", tint: "#7E6CE8" },
     ],
   }
 
@@ -368,7 +412,7 @@ export function ItineraryResult({ mood, days, loading, back, go, reopen }) {
     }
     return out
   }
-  const allDays = [day1, day2, day3, day3].map((d, i) => overlayDay(d, ['day1', 'day2', 'day3', 'day3'][i]))
+  const allDays = [day1, day2, day3, day4].map((d, i) => overlayDay(d, ['day1', 'day2', 'day3', 'day4'][i]))
   const plans = allDays.slice(0, days).map((d) => mood ? d[mood.id] || d.slow : d.slow)
 
   if (loading) {
