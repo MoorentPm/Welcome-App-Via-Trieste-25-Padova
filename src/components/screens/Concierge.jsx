@@ -4,6 +4,20 @@ import { APARTMENT as AP, HOUSE_RULES, APPLIANCES } from '../../data'
 import { NavBar } from './NavBar'
 import { useLang } from '../../i18n'
 
+const WORKER_URL = 'https://moorent-concierge.moorentpm.workers.dev'
+
+async function callConcierge({ messages, system }) {
+  const res = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages, system }),
+  })
+  if (!res.ok) throw new Error('worker-error')
+  const data = await res.json()
+  if (data.error) throw new Error(data.error)
+  return data.text
+}
+
 export function DailyTip({ back, go }) {
   const { t } = useLang()
   const [tip, setTip] = React.useState(null)
@@ -26,21 +40,13 @@ export function DailyTip({ back, go }) {
   const fetchTip = async () => {
     setLoading(true); setErr(false)
     try {
-      if (!window.claude?.complete) {
-        const idx = staticIdxRef.current
-        staticIdxRef.current = (idx + 1) % STATIC_TIPS.length
-        await new Promise(r => setTimeout(r, 600))
-        setTip(STATIC_TIPS[idx])
-        return
-      }
       const now = new Date()
       const hh = now.getHours()
       const timeContext = hh < 11 ? "mattina presto" : hh < 14 ? "mezzogiorno" : hh < 18 ? "pomeriggio" : hh < 21 ? "ora di aperitivo" : "sera"
       const dayName = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][now.getDay()]
       const month = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"][now.getMonth()]
 
-      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000))
-      const reply = await Promise.race([window.claude.complete({
+      const reply = await callConcierge({
         messages: [{
           role: "user",
           content: `Sei un amico padovano che dà UN solo consiglio breve e ispirante su cosa fare a Padova ORA.
@@ -57,8 +63,8 @@ Rispondi in formato JSON valido:
   "emoji": "una sola emoji"
 }
 Solo JSON, nessun altro testo.`
-        }]
-      }), timeout])
+        }],
+      })
 
       const match = reply.match(/\{[\s\S]*\}/)
       if (match) {
@@ -219,20 +225,13 @@ Luoghi consigliati: Cappella degli Scrovegni, Prato della Valle, Orto Botanico, 
     setTyping(true)
 
     try {
-      if (!window.claude?.complete) {
-        await new Promise(r => setTimeout(r, 800))
-        setMsgs((m) => [...m, { from: "ai", text: `Scusa, il Concierge AI non è disponibile in questo momento. Per qualsiasi necessità scrivi direttamente a Mattia al +39 351 988 6489 — risponde sempre. 🙏` }])
-        return
-      }
       const conversation = newMsgs.slice(-10).map((m) => ({
         role: m.from === "me" ? "user" : "assistant",
-        content: m.text
+        content: m.text,
       }))
-      const reply = await window.claude.complete({
-        messages: [
-          { role: "user", content: systemContext() + "\n\n---\n\nRispondi al prossimo messaggio dell'utente con tono breve e diretto." },
-          ...conversation
-        ]
+      const reply = await callConcierge({
+        messages: conversation,
+        system: systemContext(),
       })
       setMsgs((m) => [...m, { from: "ai", text: (reply || "Scusa, riprova tra un attimo 🙏").trim() }])
     } catch {
