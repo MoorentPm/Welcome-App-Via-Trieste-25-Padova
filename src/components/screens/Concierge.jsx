@@ -412,7 +412,10 @@ User: "Posso fare il check-in anticipato? Arrivo alle 11."
 {"answer":"Il check-in standard è dalle 15:00. Per arrivare prima devi chiedere a Mattia — non è sempre possibile, dipende dalla disponibilità. Scrivili per verificare.","screens":["checkin"],"contactHost":true}
 
 User: "Posso lasciare le valigie prima del check-in?"
-{"answer":"Se l'appartamento non è ancora pronto, c'è un armadietto bagagli a 2 minuti. Per lasciare i bagagli in casa prima delle 15:00, chiedi a Mattia.","screens":["checkin"],"contactHost":true}`
+{"answer":"Se l'appartamento non è ancora pronto, c'è un armadietto bagagli a 2 minuti. Per lasciare i bagagli in casa prima delle 15:00, chiedi a Mattia.","screens":["checkin"],"contactHost":true}
+
+User: "Posso fare il checkout tardi? Parto alle 12 / alle 13 / alle 14."
+{"answer":"Il checkout standard è entro le 10:00. Se hai bisogno di restare fino alle 12:00, chiedilo a Mattia il giorno prima — non è garantito ma spesso possibile. Oltre le 12:00 non è disponibile. 🕙","screens":["checkout"],"contactHost":true}`
   }
 
   const detectContactHost = (userText) => {
