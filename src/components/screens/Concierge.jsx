@@ -356,7 +356,10 @@ User: "Dove mangio bene stasera?"
 {"answer":"L'area di Piazza delle Erbe è perfetta — bacari e osterie a 9 minuti a piedi. Nell'app trovi una selezione con foto e distanze.","screens":["places"],"contactHost":false}
 
 User: "Il riscaldamento non funziona"
-{"answer":"Il termostato è vicino alla porta d'ingresso, rotella circolare — girala verso il sole. Se non parte entro 10 minuti, contatta Mattia.","screens":["house"],"contactHost":true}
+{"answer":"Il termostato è vicino alla porta d'ingresso, rotella circolare — girala verso il sole 🌞. Se non parte entro 10 minuti, contatta Mattia.","screens":["house"],"contactHost":true}
+
+User: "L'aria condizionata non funziona / fa troppo caldo"
+{"answer":"Controlla che il termostato vicino alla porta sia impostato sul simbolo del freddo ❄️ (non sul sole). Se non riesci o non funziona, contatta Mattia direttamente.","screens":["house"],"contactHost":true}
 
 User: "Ho bisogno di parlare con qualcuno"
 {"answer":"Certo! Mattia è sempre disponibile — puoi chiamarlo o scrivergli su WhatsApp. 📞","screens":[],"contactHost":true}
@@ -417,10 +420,10 @@ User: "Posso lasciare le valigie prima del check-in?"
     if (/check.?in|entrar|chiav|portone|cassetta|arriv|come\s*(si\s*)?(entra|arriv)|codice\s*(portone|ingresso)|aprir|treno|stazion|bus|tram|auto|macchina|taxi|parcheggio|a\s*piedi|transport|train|car|come.*arrivare|how.*get|tassa.*soggior|soggior.*tassa|perso.*chiav|chiav.*perse/.test(t)) found.push('checkin')
     if (/check.?out|partir|lasci|uscit|orario.*us|when.*leav|leave|depart|che.*ora.*lasc|lasc.*appartam/.test(t)) found.push('checkout')
     if (/wi.?fi|wlan|internet|password|rete|connessione|pw|accedo/.test(t)) found.push('wifi')
-    if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|differen|appl|elettrodom|forno|induzion|router|ferro.*stiro|macchina.*caff/.test(t)) found.push('house')
+    if (/lavatr|lavastovigh|termostato|climatiz|aria.condi|riscald|tv|televi|netflix|prime.*video|disney|streaming|differen|appl|elettrodom|forno|induzion|router|ferro.*stiro|macchina.*caff/.test(t)) found.push('house')
     if (/regol|vietat|rumore|fumo|fumar|fumator|animali|cane|gatto|animale|pet|dog|cat|norme/.test(t)) found.push('house')
     if (/coupon|sconto|offert|convenzione|gratis|omaggio/.test(t)) found.push('coupons')
-    if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant|supermercato|farmacia|spesa/.test(t)) found.push('places')
+    if (/mangi|ristorante|caffè|caffe|bar|spritz|pizza|trattoria|osteria|dove.*mangi|cosa.*mangi|food|eat|restaurant|supermercato|farmacia|spesa|colazione|breakfast|cornetto|brioche/.test(t)) found.push('places')
     if (/luoghi|visita|padova|cosa.*fare|vedere|monument|museo|prato|scrovegni|basilica|venezia|bologna|verona|gita|escursion/.test(t)) found.push('places')
     if (/itinerar|giro|giornata|programma/.test(t)) found.push('itinerary')
     if (/consiglio|sugger|adesso|momento|oggi|now|meteo|piove|previsioni|weather/.test(t)) found.push('tip')
