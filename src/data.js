@@ -209,7 +209,8 @@ export const COUPONS_RICH = [
       fr: "Pâtisserie historique de Padoue depuis 1919. Cinq générations de pâtisseries faites main. La 'sfogliatina' est légendaire."
     },
     code: "ELEGANT10",
-    tint: "#C99E6E"
+    tint: "#C99E6E",
+    photo: imgGraziati
   },
   {
     id: "fabbri",
@@ -224,7 +225,8 @@ export const COUPONS_RICH = [
       fr: "Trattoria vénitienne authentique. Atmosphère familiale."
     },
     code: "FABBRI-LOFT",
-    tint: "#7A5A3F"
+    tint: "#7A5A3F",
+    photo: imgTrattoria
   },
   {
     id: "bike",
@@ -239,7 +241,8 @@ export const COUPONS_RICH = [
       fr: "Vélos de ville, électriques, VTT. Padoue est plate avec 150 km de pistes cyclables."
     },
     code: "LOFT-BIKE-20",
-    tint: "#4A7C5A"
+    tint: "#4A7C5A",
+    photo: imgViaAltinate
   }
 ];
 

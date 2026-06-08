@@ -138,17 +138,26 @@ export function CouponDetail({ back, item }) {
     <div className="screen-scroll page-enter" style={{ paddingBottom: 110 }}>
       <div style={{ position: "relative" }}>
         <div style={{
-          height: 200,
-          background: `linear-gradient(160deg, ${c.tint} 0%, ${c.tint}DD 70%, #1A1916 130%)`,
+          height: 220,
+          position: "relative", overflow: "hidden",
+          background: c.photo
+            ? `url(${c.photo}) center/cover no-repeat`
+            : `linear-gradient(160deg, ${c.tint} 0%, ${c.tint}DD 70%, #1A1916 130%)`,
           display: "flex", alignItems: "flex-end", padding: "20px 20px 24px"
         }}>
+          {c.photo && (
+            <div style={{
+              position: "absolute", inset: 0,
+              background: `linear-gradient(160deg, ${c.tint}99 0%, rgba(0,0,0,0.55) 100%)`
+            }} />
+          )}
           <button onClick={back} className="nav-btn" style={{
             position: "absolute", top: 56, left: 12,
             background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)"
           }}>
             <IconChevronL size={18} stroke={2.5} />
           </button>
-          <div style={{ color: "#fff" }}>
+          <div style={{ color: "#fff", position: "relative" }}>
             <div className="t-11 w-600" style={{ opacity: 0.85, textTransform: "uppercase", letterSpacing: 0.5 }}>{t('coupon.useAt')}</div>
             <div className="serif" style={{ fontSize: 30, lineHeight: 1.1, fontWeight: 500, marginTop: 6 }}>{c.shop}</div>
           </div>
