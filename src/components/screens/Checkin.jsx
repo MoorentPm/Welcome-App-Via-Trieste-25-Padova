@@ -164,11 +164,11 @@ export function ArrivalCheckin({ back, go }) {
               <div style={{
                 fontFamily: "ui-monospace, monospace", fontSize: 26, fontWeight: 800,
                 letterSpacing: 4, color: "var(--ink)"
-              }}>0425</div>
+              }}>1470</div>
               <div className="t-11 muted">{t('arrival.keyCode')}</div>
             </div>
           </div>
-          <button onClick={() => copyCode("0425")} style={{
+          <button onClick={() => copyCode("1470")} style={{
             height: 38, borderRadius: 10, border: "none",
             background: copiedCode ? "var(--ok)" : "rgba(26,25,22,0.06)",
             color: copiedCode ? "#fff" : "var(--ink)", cursor: "pointer",

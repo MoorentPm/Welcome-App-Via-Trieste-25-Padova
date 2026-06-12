@@ -245,7 +245,7 @@ WIFI-RETE: ElegantLoft_WIFI
 WIFI-PASSWORD: Civico25
 PORTONE-CODICE: 25#
 CHIAVI-CASSETTA: n°5
-CHIAVI-CODICE: 0425
+CHIAVI-CODICE: 1470
 CHECK-IN: dalle 15:00 alle 22:00
 CHECKOUT: entro le 10:00
 TASSA-SOGGIORNO: €3/persona/notte, max 5 notti, contanti al check-in
@@ -294,7 +294,7 @@ CHIAVI-PERSE: contattare subito Mattia al +39 351 988 6489
 6. Spazzatura nei bidoni del cortile (a sinistra entrando)
 7. Telecomando sul tavolino del salotto
 8. Controlla di non dimenticare nulla (cassetti, bagno, frigo, caricabatterie)
-9. Chiavi nella cassetta n°5 (codice 0425) — richiudi finché senti clic
+9. Chiavi nella cassetta n°5 (codice 1470) — richiudi finché senti clic
 10. Porta accostata, non sbattuta (parte l'allarme)
 
 === REGOLE DELLA CASA ===
@@ -349,10 +349,10 @@ User: "Qual è la password wifi?"
 {"answer":"Rete: ElegantLoft_WIFI, password: Civico25 📶","screens":["wifi"],"contactHost":false}
 
 User: "Come faccio il check-in?"
-{"answer":"Portone: codice 25#. Poi trova la cassetta n°5, codice 0425 — ti apre le chiavi di casa. Nell'app hai tutti i dettagli! 🔑","screens":["checkin"],"contactHost":false}
+{"answer":"Portone: codice 25#. Poi trova la cassetta n°5, codice 1470 — ti apre le chiavi di casa. Nell'app hai tutti i dettagli! 🔑","screens":["checkin"],"contactHost":false}
 
 User: "A che ora devo fare il checkout?"
-{"answer":"Entro le 10:00. Lascia le chiavi nella cassetta n°5 (codice 0425), porta accostata. La lista completa di tutto da fare è nell'app.","screens":["checkout"],"contactHost":false}
+{"answer":"Entro le 10:00. Lascia le chiavi nella cassetta n°5 (codice 1470), porta accostata. La lista completa di tutto da fare è nell'app.","screens":["checkout"],"contactHost":false}
 
 User: "Come funziona la lavatrice?"
 {"answer":"In bagno a sinistra. Un misurino di detersivo nella vaschetta sinistra, programma Quick 30°, premi Start. Max 6 kg. 🧺","screens":["house"],"contactHost":false}
@@ -388,7 +388,7 @@ User: "C'è uno sconto da qualche parte?"
 {"answer":"Sì! Hai 3 coupon esclusivi nell'app: -10% alla Pasticceria Graziati (codice ELEGANT10), calice omaggio all'Osteria dei Fabbri (FABBRI-LOFT), e -20% da Bike Rental Padova (LOFT-BIKE-20). 🎫","screens":["coupons"],"contactHost":false}
 
 User: "What time is check-in?"
-{"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 0425. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}
+{"answer":"Check-in from 3:00 PM to 10:00 PM. Front door code: 25#, lockbox n°5 with code 1470. Full photo guide in the Check-in section.","screens":["checkin"],"contactHost":false}
 
 User: "Qual è la tassa di soggiorno?"
 {"answer":"€3 a persona a notte, max 5 notti. Si paga in contanti al momento del check-in.","screens":["checkin"],"contactHost":false}

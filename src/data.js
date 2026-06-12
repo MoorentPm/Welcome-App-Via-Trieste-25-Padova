@@ -110,7 +110,7 @@ export const PLACES = [
 export const CHECKIN_STEPS = [
   { t: "Raggiungi Via Trieste 25", d: "5 min a piedi dalla stazione. Cerca il civico blu.", photo: imgCheckinFacciata },
   { t: "Portone esterno",          d: "Codice 25#. Premi a fondo fino al click.",            photo: imgCheckinCassetta },
-  { t: "Cassetta chiavi n°5",      d: "La cassetta è sul cancello a destra. Codice 0425.",   photo: imgCheckinCassetta },
+  { t: "Cassetta chiavi n°5",      d: "La cassetta è sul cancello a destra. Codice 1470.",   photo: imgCheckinCassetta },
   { t: "Secondo piano",            d: "Prendi l'ascensore o le scale. La tua porta è quella con lo zerbino grigio.", photo: imgCheckinPorta },
   { t: "Benvenuto!",               d: "Luci a sinistra entrando. Wi-Fi nella Home.",          photo: imgCheckinInterno },
 ];
@@ -140,7 +140,7 @@ export const CHECKOUT_STEPS = [
   { t: "Spazzatura fuori, nei bidoni",    d: "Bidoni nel cortile a sinistra entrando. Già divisa: basta portarla giù." },
   { t: "Riponi il telecomando",            d: "Sul tavolino del salotto, dove l'hai trovato." },
   { t: "Controlla di non dimenticare nulla", d: "Cassetti del comodino, bagno, frigo, presa del caricabatterie." },
-  { t: "Chiavi nella cassetta n° 5",       d: "Codice 0425. Richiudi finché senti clic." },
+  { t: "Chiavi nella cassetta n° 5",       d: "Codice 1470. Richiudi finché senti clic." },
   { t: "Porta accostata, non sbattuta",    d: "Parte l'allarme di sicurezza altrimenti." },
 ];
 
